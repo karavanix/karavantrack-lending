@@ -1,0 +1,218 @@
+{
+  "nav": {
+    "features": "Features",
+    "how": "How it works",
+    "pricing": "Pricing",
+    "faq": "FAQ",
+    "login": "Sign in",
+    "demo": "Request demo"
+  },
+  "hero": {
+    "eyebrow": "Cargo tracking platform",
+    "title": "Know where your cargo is. Live.",
+    "subtitle": "Yool turns every shipment into a live dot on the map — no more endless calls to the driver and Excel sheets.",
+    "ctaPrimary": "Request demo",
+    "ctaSecondary": "How it works",
+    "etaLabel": "Arriving in",
+    "etaValue": "2h 14m",
+    "routeFrom": "Tashkent",
+    "routeTo": "Samarkand",
+    "live": "On the road now"
+  },
+  "stats": {
+    "title": "Logistics that finally goes transparent",
+    "items": [
+      { "value": "$8.4B", "label": "Central Asia freight market by 2030*" },
+      { "value": "63%", "label": "Of shippers don't know the live location of their cargo*" },
+      { "value": "1 in 4", "label": "Delays caused by tracking blind spots*" },
+      { "value": "−40%", "label": "Driver calls after live tracking is rolled out*" }
+    ],
+    "footnote": "* Estimated indicators based on public industry sources and carrier surveys."
+  },
+  "pain": {
+    "eyebrow": "Sound familiar?",
+    "title": "You spend hours every day on what should just be automatic.",
+    "items": [
+      "Calling the driver to ask \"where are you?\"",
+      "Customer wants a precise ETA — and you guess",
+      "Excel sheets and Telegram chats instead of a system",
+      "No one remembers who confirmed what"
+    ],
+    "solutionEyebrow": "With Yool",
+    "solutionTitle": "One screen. Every cargo. In real time.",
+    "solutionItems": [
+      "Live map with every truck and status",
+      "Auto-ETA based on actual movement",
+      "Single feed: pickup, dropoff, confirmations",
+      "Per-trip history — nothing gets lost"
+    ]
+  },
+  "features": {
+    "eyebrow": "Features",
+    "title": "Everything you need to confidently run cargo operations",
+    "items": [
+      {
+        "title": "Live GPS tracking",
+        "desc": "Each trip is a dot on the map, updating in real time over a secure connection."
+      },
+      {
+        "title": "Driver assignment",
+        "desc": "By ID, email, phone or a one-time invite link. A driver joins your team in a minute."
+      },
+      {
+        "title": "Pickup & dropoff workflow",
+        "desc": "A transparent path: pickup confirmation, dropoff, photos and signed status changes."
+      },
+      {
+        "title": "Push notifications",
+        "desc": "Trip start, route deviations, arrivals — straight to the right person's phone."
+      },
+      {
+        "title": "Team & roles",
+        "desc": "Shipper, dispatcher, driver — each gets the right interface and scope."
+      },
+      {
+        "title": "History & analytics",
+        "desc": "Full history of trips, statuses and times — the foundation for reports and improvement."
+      }
+    ]
+  },
+  "how": {
+    "eyebrow": "How it works",
+    "title": "Three steps from request to control",
+    "steps": [
+      {
+        "title": "Create the cargo",
+        "desc": "From, to, what, when. Minimum fields, maximum meaning."
+      },
+      {
+        "title": "Assign a driver",
+        "desc": "Pick one from your team or send an invite link. The driver sees the trip in the app."
+      },
+      {
+        "title": "Watch on the map",
+        "desc": "Live dot, ETA, statuses and notifications — for you and your customer."
+      }
+    ]
+  },
+  "audiences": {
+    "eyebrow": "Who it's for",
+    "title": "One product, two sides of logistics",
+    "shipper": {
+      "tag": "Shippers",
+      "title": "Web dashboard",
+      "desc": "Create cargo, manage your team, track trips on a big screen.",
+      "cta": "Open dashboard"
+    },
+    "carrier": {
+      "tag": "Drivers & carriers",
+      "title": "Mobile app",
+      "desc": "Accept trips, confirm loads, run the track with a single swipe.",
+      "soon": "Coming soon to App Store and Google Play"
+    }
+  },
+  "pricing": {
+    "eyebrow": "Pricing",
+    "title": "Flexible plans for any fleet",
+    "betaBadge": "Beta pricing — locked-in rates for early customers",
+    "perMonth": "/ mo",
+    "plans": [
+      {
+        "name": "Start",
+        "price": "Free",
+        "desc": "For small teams just trying live tracking.",
+        "features": ["Up to 20 cargos / month", "Up to 3 drivers", "Live map and basic statuses", "Email support"],
+        "cta": "Start free"
+      },
+      {
+        "name": "Business",
+        "price": "On request",
+        "desc": "For growing logistics companies and active shippers.",
+        "features": ["Unlimited cargos", "Team and roles", "Push notifications", "Analytics and history", "Priority support"],
+        "cta": "Contact us",
+        "highlight": true
+      },
+      {
+        "name": "Enterprise",
+        "price": "Custom",
+        "desc": "For fleets of 50+ trucks, with integrations and SLA.",
+        "features": ["API and integrations", "SSO and audit log", "Dedicated manager", "24/7 SLA support"],
+        "cta": "Talk to sales"
+      }
+    ]
+  },
+  "trust": {
+    "eyebrow": "Security",
+    "title": "Your data, on your terms",
+    "items": [
+      { "title": "Encryption", "desc": "TLS everywhere, secure WebSocket connections." },
+      { "title": "Roles & access", "desc": "RBAC: each user sees only what they should." },
+      { "title": "Audit log", "desc": "User actions and status changes are recorded and reviewable." },
+      { "title": "Hosting region", "desc": "Infrastructure close to your customers and drivers." }
+    ]
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "title": "Frequently asked questions",
+    "items": [
+      {
+        "q": "Where does Yool work?",
+        "a": "The platform targets Central Asia: Uzbekistan, Kazakhstan and neighbouring countries. Maps and geocoding are tuned for local addresses."
+      },
+      {
+        "q": "What does the driver need?",
+        "a": "A smartphone with GPS and internet. The app runs in background, uses minimal data, and short connectivity drops don't lose track points."
+      },
+      {
+        "q": "What if the driver loses signal on the road?",
+        "a": "Track points are buffered on the device and uploaded automatically as soon as the network is back."
+      },
+      {
+        "q": "Can we integrate via API?",
+        "a": "Yes, the Enterprise plan offers API integration — connect your ERP, TMS or in-house system."
+      },
+      {
+        "q": "Who can see our cargo?",
+        "a": "Only members of your company with the right role. External partners get a temporary, scoped link."
+      },
+      {
+        "q": "How does billing work?",
+        "a": "Custom during the beta. We lock in early-customer pricing for a year."
+      }
+    ]
+  },
+  "finalCta": {
+    "title": "Ready to see your cargo live?",
+    "subtitle": "Leave your contact — we'll show the platform on your routes within one business day.",
+    "form": {
+      "name": "Your name",
+      "company": "Company",
+      "phone": "Phone",
+      "fleet": "Fleet size",
+      "fleetOptions": ["1–5", "6–20", "21–50", "50+"],
+      "submit": "Request demo",
+      "success": "Thanks! We'll get back to you within one business day.",
+      "error": "Something went wrong. Please try again or write to us."
+    }
+  },
+  "footer": {
+    "tagline": "Cargo tracking platform",
+    "product": "Product",
+    "company": "Company",
+    "legal": "Legal",
+    "links": {
+      "features": "Features",
+      "pricing": "Pricing",
+      "faq": "FAQ",
+      "about": "About",
+      "contacts": "Contact",
+      "privacy": "Privacy policy",
+      "terms": "Terms of service"
+    },
+    "rights": "© 2026 Yool by Karavantrack. All rights reserved."
+  },
+  "meta": {
+    "title": "Yool — real-time cargo tracking",
+    "description": "Yool is a B2B platform for shippers and carriers: live map, auto-ETA, driver assignment, trip history. Built for Uzbekistan and Central Asia."
+  }
+}

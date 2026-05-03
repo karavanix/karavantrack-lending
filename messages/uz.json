@@ -1,0 +1,218 @@
+{
+  "nav": {
+    "features": "Imkoniyatlar",
+    "how": "Qanday ishlaydi",
+    "pricing": "Tariflar",
+    "faq": "FAQ",
+    "login": "Kirish",
+    "demo": "Demo so'rash"
+  },
+  "hero": {
+    "eyebrow": "Yuk tashish kuzatuv platformasi",
+    "title": "Yukingiz qayerdaligini real vaqtda biling.",
+    "subtitle": "Yool har bir yukni xaritadagi jonli nuqtaga aylantiradi — haydovchiga tinimsiz qo'ng'iroqlar va Excel jadvallarsiz.",
+    "ctaPrimary": "Demo so'rash",
+    "ctaSecondary": "Qanday ishlaydi",
+    "etaLabel": "Yetib boradi",
+    "etaValue": "2 s 14 daq",
+    "routeFrom": "Toshkent",
+    "routeTo": "Samarqand",
+    "live": "Hozir yo'lda"
+  },
+  "stats": {
+    "title": "Logistika nihoyat shaffof bo'lishi vaqti keldi",
+    "items": [
+      { "value": "$8.4B", "label": "2030-yilga Markaziy Osiyo yuk tashish bozori*" },
+      { "value": "63%", "label": "Yuk egalari yukining aniq joylashuvini bilmaydi*" },
+      { "value": "1/4", "label": "Kechikishlar kuzatuv ko'r nuqtalari sababli*" },
+      { "value": "−40%", "label": "Live-kuzatuv joriy qilingach haydovchiga qo'ng'iroqlar*" }
+    ],
+    "footnote": "* Ochiq sanoat manbalari va tashuvchilar so'rovlari asosidagi taxminiy ko'rsatkichlar."
+  },
+  "pain": {
+    "eyebrow": "Tanish ko'rinadimi?",
+    "title": "Avtomatik bo'lishi kerak bo'lgan ishga har kuni soatlab vaqt sarflaysiz.",
+    "items": [
+      "Haydovchiga \"qayerdasan?\" deb tinimsiz qo'ng'iroq qilasiz",
+      "Mijoz aniq ETA so'raydi, sizda esa taxmin",
+      "Tizim o'rniga Excel jadvallar va Telegram yozishmalari",
+      "Kim nimani tasdiqlaganini hech kim eslab qolmaydi"
+    ],
+    "solutionEyebrow": "Yool bilan",
+    "solutionTitle": "Bitta ekran. Har bir yuk. Real vaqtda.",
+    "solutionItems": [
+      "Barcha mashinalar va statuslar bilan jonli xarita",
+      "Haqiqiy harakatga asoslangan avto-ETA",
+      "Yagona tasma: pickup, dropoff, tasdiqlar",
+      "Har bir reys bo'yicha tarix — yo'qolmaydi"
+    ]
+  },
+  "features": {
+    "eyebrow": "Imkoniyatlar",
+    "title": "Yuk tashishni ishonchli boshqarish uchun zarur bo'lgan hamma narsa",
+    "items": [
+      {
+        "title": "Live GPS-kuzatuv",
+        "desc": "Har bir reys — xaritadagi nuqta, himoyalangan ulanish orqali real vaqtda yangilanadi."
+      },
+      {
+        "title": "Haydovchini tayinlash",
+        "desc": "ID, email, telefon yoki bir martalik invite-havola bo'yicha. Haydovchi bir daqiqada jamoangizda."
+      },
+      {
+        "title": "Pickup & Dropoff jarayoni",
+        "desc": "Yukning shaffof yo'li: yuklash, tushirish, foto va imzolangan status o'zgarishlari."
+      },
+      {
+        "title": "Push-bildirishnomalar",
+        "desc": "Reys boshlanishi, marshrutdan chetga chiqish, yetib borish — to'g'ri odamga zudlik bilan."
+      },
+      {
+        "title": "Jamoa va rollar",
+        "desc": "Yuk egasi, dispetcher, haydovchi — har biriga o'z interfeysi va vakolati."
+      },
+      {
+        "title": "Tarix va analitika",
+        "desc": "Reyslar, statuslar va vaqtning to'liq tarixi — hisobotlar va yaxshilanish uchun asos."
+      }
+    ]
+  },
+  "how": {
+    "eyebrow": "Qanday ishlaydi",
+    "title": "Buyurtmadan nazoratgacha uch qadam",
+    "steps": [
+      {
+        "title": "Yuk yarating",
+        "desc": "Qayerdan, qayerga, nima va qachon. Minimum maydonlar — maksimum mazmun."
+      },
+      {
+        "title": "Haydovchini tayinlang",
+        "desc": "Jamoangizdan tanlang yoki invite-havola yuboring. Haydovchi reysni ilovada ko'radi."
+      },
+      {
+        "title": "Xaritada kuzating",
+        "desc": "Jonli nuqta, ETA, statuslar va bildirishnomalar — sizda va mijozingizda."
+      }
+    ]
+  },
+  "audiences": {
+    "eyebrow": "Kim uchun",
+    "title": "Bitta mahsulot, logistikaning ikki tarafi",
+    "shipper": {
+      "tag": "Yuk egalariga",
+      "title": "Veb-kabinet",
+      "desc": "Yuklar yarating, jamoani boshqaring, reyslarni katta ekranda kuzating.",
+      "cta": "Kabinetni ochish"
+    },
+    "carrier": {
+      "tag": "Haydovchi va tashuvchilarga",
+      "title": "Mobil ilova",
+      "desc": "Reyslarni qabul qiling, yuklashlarni tasdiqlang, bitta swipe bilan trekni boshqaring.",
+      "soon": "Tez orada App Store va Google Play'da"
+    }
+  },
+  "pricing": {
+    "eyebrow": "Tariflar",
+    "title": "Avtopark hajmiga moslashuvchan rejalar",
+    "betaBadge": "Beta davrida imtiyozli narxlar — erta mijozlar uchun qayd etiladi",
+    "perMonth": "/ oy",
+    "plans": [
+      {
+        "name": "Start",
+        "price": "Bepul",
+        "desc": "Live-kuzatuvni endi sinab ko'rayotgan kichik jamoalar uchun.",
+        "features": ["Oyiga 20 ta yukgacha", "3 ta haydovchigacha", "Jonli xarita va asosiy statuslar", "Email-yordam"],
+        "cta": "Bepul boshlash"
+      },
+      {
+        "name": "Business",
+        "price": "So'rov bo'yicha",
+        "desc": "O'sayotgan logistika kompaniyalari va faol yuk egalariga.",
+        "features": ["Cheksiz yuklar", "Jamoa va rollar", "Push-bildirishnomalar", "Analitika va tarix", "Ustuvor yordam"],
+        "cta": "Bog'lanish",
+        "highlight": true
+      },
+      {
+        "name": "Enterprise",
+        "price": "Individual",
+        "desc": "50+ mashinali parklar uchun, integratsiyalar va SLA bilan.",
+        "features": ["API va integratsiyalar", "SSO va audit-log", "Shaxsiy menejer", "24/7 SLA yordam"],
+        "cta": "Muhokama qilish"
+      }
+    ]
+  },
+  "trust": {
+    "eyebrow": "Xavfsizlik",
+    "title": "Sizning ma'lumotlaringiz — sizning nazoratingizda",
+    "items": [
+      { "title": "Shifrlash", "desc": "Hamma joyda TLS, himoyalangan WebSocket-ulanishlar." },
+      { "title": "Rollar va kirish", "desc": "RBAC: har bir foydalanuvchi faqat o'ziga tegishlisini ko'radi." },
+      { "title": "Audit-log", "desc": "Foydalanuvchi harakatlari va status o'zgarishlari yozib boriladi va tekshirish uchun ochiq." },
+      { "title": "Hosting hududi", "desc": "Infratuzilma sizning mijozlaringiz va haydovchilaringizga yaqin." }
+    ]
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "title": "Tez-tez beriladigan savollar",
+    "items": [
+      {
+        "q": "Yool qaysi hududlarda ishlaydi?",
+        "a": "Platforma Markaziy Osiyo bozori uchun ishlab chiqilgan: O'zbekiston, Qozog'iston, qo'shni davlatlar. Xaritalar va geokoding mahalliy manzillarga moslashtirilgan."
+      },
+      {
+        "q": "Haydovchiga nima kerak?",
+        "a": "GPS va internetli smartfon. Ilova fonda ishlaydi, trafikni tejaydi; qisqa ulanish uzilishlari marshrut nuqtalarini yo'qotmaydi."
+      },
+      {
+        "q": "Yo'lda haydovchining interneti uzilsa-chi?",
+        "a": "Marshrut nuqtalari qurilmada bufer qilinadi va tarmoq tiklanishi bilan avtomatik yuklanadi."
+      },
+      {
+        "q": "API orqali ulansa bo'ladimi?",
+        "a": "Ha, Enterprise rejada API orqali integratsiya mavjud — ERP, TMS yoki o'z tizimingizni ulang."
+      },
+      {
+        "q": "Yuklarimni kim ko'radi?",
+        "a": "Faqat tegishli rolga ega kompaniya a'zolari. Tashqi sheriklar cheklangan kirishli vaqtinchalik havola oladi."
+      },
+      {
+        "q": "To'lov qanday?",
+        "a": "Beta davrida — individual. Erta mijozlar uchun imtiyozli narxni bir yilga qayd etamiz."
+      }
+    ]
+  },
+  "finalCta": {
+    "title": "Yuklaringizni jonli ko'rishga tayyormisiz?",
+    "subtitle": "Kontaktlaringizni qoldiring — bir ish kuni ichida platformani sizning marshrutlaringizda ko'rsatamiz.",
+    "form": {
+      "name": "Ismingiz",
+      "company": "Kompaniya",
+      "phone": "Telefon",
+      "fleet": "Avtopark hajmi",
+      "fleetOptions": ["1–5", "6–20", "21–50", "50+"],
+      "submit": "Demo so'rash",
+      "success": "Rahmat! Bir ish kuni ichida bog'lanamiz.",
+      "error": "Nimadir noto'g'ri ketdi. Qayta urinib ko'ring yoki bizga yozing."
+    }
+  },
+  "footer": {
+    "tagline": "Yuk tashish kuzatuv platformasi",
+    "product": "Mahsulot",
+    "company": "Kompaniya",
+    "legal": "Huquqiy ma'lumot",
+    "links": {
+      "features": "Imkoniyatlar",
+      "pricing": "Tariflar",
+      "faq": "FAQ",
+      "about": "Biz haqimizda",
+      "contacts": "Kontaktlar",
+      "privacy": "Maxfiylik siyosati",
+      "terms": "Foydalanish shartlari"
+    },
+    "rights": "© 2026 Yool by Karavantrack. Barcha huquqlar himoyalangan."
+  },
+  "meta": {
+    "title": "Yool — real vaqtda yuk kuzatuvi",
+    "description": "Yool — yuk egalari va tashuvchilar uchun B2B platforma: jonli xarita, avto-ETA, haydovchini tayinlash, reyslar tarixi. O'zbekiston va Markaziy Osiyo uchun."
+  }
+}

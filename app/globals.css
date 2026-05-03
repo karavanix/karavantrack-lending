@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@theme {
+  /* Aligned with karavantrack-app dark theme */
+  --color-bg: hsl(222 20% 7%);
+  --color-bg-soft: hsl(222 20% 9%);
+  --color-surface: hsl(210 20% 97%);
+  --color-ink: hsl(222 25% 12%);
+  --color-ink-muted: hsl(215 15% 45%);
+  --color-line: hsl(215 20% 17%);
+  --color-line-soft: hsl(214 20% 88%);
+
+  --color-accent: hsl(213 94% 55%);
+  --color-accent-soft: hsl(213 94% 70%);
+  --color-accent-deep: hsl(213 94% 38%);
+  --color-accent-glow: color-mix(in oklab, hsl(213 94% 55%) 35%, transparent);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-manrope), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: 16px;
+  --radius-pill: 999px;
+
+  --shadow-glow: 0 10px 60px -20px var(--color-accent-glow);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: white;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer utilities {
+  .container-page {
+    width: 100%;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  .h-display {
+    font-family: var(--font-display);
+    font-weight: 800;
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+  }
+
+  .h-section {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    font-size: clamp(2rem, 4vw, 3.25rem);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .grid-bg {
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  html { scroll-behavior: auto; }
+}
