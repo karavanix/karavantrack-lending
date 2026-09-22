@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+const API_BASE_URL = process.env.API_BASE_URL || "https://api.yool.live/api/v1";
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -12,15 +14,23 @@ export async function POST(req: Request) {
       }
     }
 
-    // Placeholder sink: log on the server. Hook up Resend / KV / API later.
-    console.log("[lead]", {
-      at: new Date().toISOString(),
-      name: body.name,
-      company: body.company,
-      phone: body.phone,
-      fleet: body.fleet,
-      ua: req.headers.get("user-agent"),
+    const res = await fetch(`${API_BASE_URL}/leads`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "User-Agent": req.headers.get("user-agent") ?? "",
+      },
+      body: JSON.stringify({
+        name: body.name,
+        company: body.company,
+        phone: body.phone,
+        fleet: body.fleet,
+      }),
     });
+
+    if (!res.ok) {
+      return NextResponse.json({ ok: false }, { status: 502 });
+    }
 
     return NextResponse.json({ ok: true });
   } catch (e) {
