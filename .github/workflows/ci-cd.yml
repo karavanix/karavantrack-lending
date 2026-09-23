@@ -21,16 +21,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # The repo uses pnpm (pnpm-lock.yaml, same as the Dockerfile), so the
+      # pnpm binary must be on PATH before setup-node resolves `cache: pnpm`.
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Typecheck
-        run: npm run typecheck
+        run: pnpm typecheck
 
   # Docker image build + push. Only on push to main — this used to also run
   # (and its sibling `deploy` job below with it) on every pull_request,
