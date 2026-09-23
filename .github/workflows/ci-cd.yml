@@ -11,7 +11,39 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
+  # Runs on every push and PR — no tests exist yet, so this is a typecheck
+  # gate only. `next lint` has no eslint config committed in this repo yet
+  # (it prompts interactively to create one), so it isn't wired in here —
+  # that's a setup decision for a separate pass, not a phase-0 hotfix.
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # The repo uses pnpm (pnpm-lock.yaml, same as the Dockerfile), so the
+      # pnpm binary must be on PATH before setup-node resolves `cache: pnpm`.
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+  # Docker image build + push. Only on push to main — this used to also run
+  # (and its sibling `deploy` job below with it) on every pull_request,
+  # meaning opening a PR pushed an image and deployed it to production.
   build:
+    if: github.event_name == 'push'
+    needs: verify
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -44,6 +76,7 @@ jobs:
             NEXT_PUBLIC_APP_URL=${{ vars.NEXT_PUBLIC_APP_URL }}
 
   deploy:
+    if: github.event_name == 'push'
     needs: build
     runs-on: ubuntu-latest
 
