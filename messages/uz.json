@@ -1,218 +1,202 @@
 {
   "nav": {
-    "features": "Imkoniyatlar",
     "how": "Qanday ishlaydi",
-    "pricing": "Tariflar",
-    "faq": "FAQ",
+    "drivers": "Haydovchilarga",
+    "faq": "Savollar",
     "login": "Kirish",
-    "demo": "Demo so'rash"
+    "start": "Boshlash"
   },
-  "hero": {
-    "eyebrow": "Yuk tashish kuzatuv platformasi",
-    "title": "Yukingiz qayerdaligini real vaqtda biling.",
-    "subtitle": "Yool har bir yukni xaritadagi jonli nuqtaga aylantiradi — haydovchiga tinimsiz qo'ng'iroqlar va Excel jadvallarsiz.",
-    "ctaPrimary": "Demo so'rash",
-    "ctaSecondary": "Qanday ishlaydi",
-    "etaLabel": "Yetib boradi",
-    "etaValue": "2 s 14 daq",
-    "routeFrom": "Toshkent",
-    "routeTo": "Samarqand",
-    "live": "Hozir yo'lda"
-  },
-  "stats": {
-    "title": "Logistika nihoyat shaffof bo'lishi vaqti keldi",
-    "items": [
-      { "value": "$8.4B", "label": "2030-yilga Markaziy Osiyo yuk tashish bozori*" },
-      { "value": "63%", "label": "Yuk egalari yukining aniq joylashuvini bilmaydi*" },
-      { "value": "1/4", "label": "Kechikishlar kuzatuv ko'r nuqtalari sababli*" },
-      { "value": "−40%", "label": "Live-kuzatuv joriy qilingach haydovchiga qo'ng'iroqlar*" }
-    ],
-    "footnote": "* Ochiq sanoat manbalari va tashuvchilar so'rovlari asosidagi taxminiy ko'rsatkichlar."
-  },
-  "pain": {
-    "eyebrow": "Tanish ko'rinadimi?",
-    "title": "Avtomatik bo'lishi kerak bo'lgan ishga har kuni soatlab vaqt sarflaysiz.",
-    "items": [
-      "Haydovchiga \"qayerdasan?\" deb tinimsiz qo'ng'iroq qilasiz",
-      "Mijoz aniq ETA so'raydi, sizda esa taxmin",
-      "Tizim o'rniga Excel jadvallar va Telegram yozishmalari",
-      "Kim nimani tasdiqlaganini hech kim eslab qolmaydi"
-    ],
-    "solutionEyebrow": "Yool bilan",
-    "solutionTitle": "Bitta ekran. Har bir yuk. Real vaqtda.",
-    "solutionItems": [
-      "Barcha mashinalar va statuslar bilan jonli xarita",
-      "Haqiqiy harakatga asoslangan avto-ETA",
-      "Yagona tasma: pickup, dropoff, tasdiqlar",
-      "Har bir reys bo'yicha tarix — yo'qolmaydi"
-    ]
-  },
-  "features": {
-    "eyebrow": "Imkoniyatlar",
-    "title": "Yuk tashishni ishonchli boshqarish uchun zarur bo'lgan hamma narsa",
-    "items": [
-      {
-        "title": "Live GPS-kuzatuv",
-        "desc": "Har bir reys — xaritadagi nuqta, himoyalangan ulanish orqali real vaqtda yangilanadi."
-      },
-      {
-        "title": "Haydovchini tayinlash",
-        "desc": "ID, email, telefon yoki bir martalik invite-havola bo'yicha. Haydovchi bir daqiqada jamoangizda."
-      },
-      {
-        "title": "Pickup & Dropoff jarayoni",
-        "desc": "Yukning shaffof yo'li: yuklash, tushirish, foto va imzolangan status o'zgarishlari."
-      },
-      {
-        "title": "Push-bildirishnomalar",
-        "desc": "Reys boshlanishi, marshrutdan chetga chiqish, yetib borish — to'g'ri odamga zudlik bilan."
-      },
-      {
-        "title": "Jamoa va rollar",
-        "desc": "Yuk egasi, dispetcher, haydovchi — har biriga o'z interfeysi va vakolati."
-      },
-      {
-        "title": "Tarix va analitika",
-        "desc": "Reyslar, statuslar va vaqtning to'liq tarixi — hisobotlar va yaxshilanish uchun asos."
-      }
-    ]
-  },
-  "how": {
-    "eyebrow": "Qanday ishlaydi",
-    "title": "Buyurtmadan nazoratgacha uch qadam",
-    "steps": [
-      {
-        "title": "Yuk yarating",
-        "desc": "Qayerdan, qayerga, nima va qachon. Minimum maydonlar — maksimum mazmun."
-      },
-      {
-        "title": "Haydovchini tayinlang",
-        "desc": "Jamoangizdan tanlang yoki invite-havola yuboring. Haydovchi reysni ilovada ko'radi."
-      },
-      {
-        "title": "Xaritada kuzating",
-        "desc": "Jonli nuqta, ETA, statuslar va bildirishnomalar — sizda va mijozingizda."
-      }
-    ]
-  },
-  "audiences": {
-    "eyebrow": "Kim uchun",
-    "title": "Bitta mahsulot, logistikaning ikki tarafi",
-    "shipper": {
-      "tag": "Yuk egalariga",
-      "title": "Veb-kabinet",
-      "desc": "Yuklar yarating, jamoani boshqaring, reyslarni katta ekranda kuzating.",
-      "cta": "Kabinetni ochish"
+  "trip": {
+    "route": "Toshkent → Farg‘ona",
+    "scroll": "Pastga suring, Farg‘onaga yo‘l olamiz",
+    "chapterOf": "{n} / {total}",
+    "status": {
+      "created": "Yaratildi",
+      "accepted": "Qabul qilindi",
+      "loaded": "Yuklandi",
+      "transit": "Yo‘lda",
+      "delivered": "Yetkazildi"
     },
-    "carrier": {
-      "tag": "Haydovchi va tashuvchilarga",
-      "title": "Mobil ilova",
-      "desc": "Reyslarni qabul qiling, yuklashlarni tasdiqlang, bitta swipe bilan trekni boshqaring.",
-      "soon": "Tez orada App Store va Google Play'da"
+    "conn": {
+      "waiting": "Haydovchi kutilmoqda",
+      "moving": "Harakatda",
+      "stopped": "{time} dan beri turibdi",
+      "offline": "Tarmoq yo‘q · nuqtalar keyin keladi"
+    },
+    "units": { "kmh": "km/soat", "km": "km", "h": "soat", "min": "daq" },
+    "hero": {
+      "bubbleFrom": "Dispetcher",
+      "bubble": "Aka, qayerdasiz?",
+      "answer": "Turibdi · Toshkent, 3-ombor",
+      "title": "Endi so‘rash shart emas.",
+      "subtitle": "YoolLive butun reysni ko‘rsatadi: mashina qayerda, qayerda turibdi va aloqa nega yo‘qoldi. Haydovchi ilovada faqat qadamlarni belgilaydi.",
+      "cta": "Boshlash",
+      "driver": "Haydovchi ilovasi"
+    },
+    "chapters": [
+      {
+        "title": "Yuk bir daqiqada yaratildi",
+        "text": "2GIS, Yandex yoki Google Maps havolasini qo‘ying, manzil o‘zi topiladi. Kabinet yo‘l bo‘yicha marshrut va yo‘l vaqtini darhol hisoblaydi."
+      },
+      {
+        "title": "Haydovchi bitta havola orqali",
+        "text": "Haydovchining raqami kerak emas. Havolani Telegramda yuboring: haydovchi uni ochadi va yukni bir bosishda qabul qiladi."
+      },
+      {
+        "title": "Yuklandi. Rasm bilan va xaritada",
+        "text": "Har bir qadamni haydovchi tugma bilan belgilaydi va hujjatlar rasmini qo‘shadi. Sizga bildirishnoma keladi, xaritada esa bu qayerda bo‘lgani belgilanadi."
+      },
+      {
+        "title": "U qanday ketayotganini ko‘rasiz",
+        "text": "Kabinetdagi nuqta mashina bilan birga harakatlanadi: tezlik, bosib o‘tilgan kilometrlar, yetib kelish vaqti va hatto haydovchi telefonining quvvati."
+      },
+      {
+        "title": "Turibdi, sababi ham aniq",
+        "text": "Choyxonada tushlik. Telefon GPSni o‘zi o‘chiradi va batareyani tejaydi, kabinetda esa ko‘rinadi: 12:10 dan beri turibdi. Qo‘ng‘iroq qilish shart emas."
+      },
+      {
+        "title": "Dovon. Aloqa yo‘q",
+        "text": "Qamchiqda tarmoq yo‘qoladi. Ilova nuqtalarni yo‘qotmaydi, ularni telefonda yig‘adi, hatto ikki hafta. Kabinet rostini yozadi: «tarmoq yo‘q», yashil nuqta chizmaydi."
+      },
+      {
+        "title": "Tarmoq qaytdi, trek butun",
+        "text": "Aloqa paydo bo‘lishi bilan barcha nuqtalar birdaniga yuboriladi. Marshrut uzilishlarsiz chiziladi, go‘yo aloqa umuman yo‘qolmagandek."
+      },
+      {
+        "title": "Mijoz o‘zi kuzatadi",
+        "text": "Qabul qiluvchiga havola yuboring. U ro‘yxatdan o‘tmasdan mashinani xaritada ko‘radi va sizga har yarim soatda qo‘ng‘iroq qilmaydi."
+      },
+      {
+        "title": "Yetkazildi",
+        "text": "Haydovchi yuk xatini suratga oladi, siz yetkazishni tasdiqlaysiz. Reys tarixga o‘tadi: barcha qadamlar, rasmlar va trek saqlanadi."
+      }
+    ],
+    "ov": {
+      "load": {
+        "title": "Yangi yuk",
+        "from": "Qayerdan",
+        "to": "Qayerga",
+        "link": "2gis.uz/tashkent/geo/70000…",
+        "fromAddr": "Toshkent, Sergeli, 3-ombor",
+        "toAddr": "Farg‘ona, ulgurji baza",
+        "route": "≈ 318 km · ~5 soat 10 daq"
+      },
+      "invite": {
+        "chat": "Dispetcher",
+        "msg": "Farg‘onaga yuk, havola orqali qabul qiling:",
+        "link": "app.yool.live/invite/7Kq2…",
+        "app": "Sizga yuk taklif qilindi",
+        "accept": "Yukni qabul qilish",
+        "accepted": "Yuk qabul qilindi"
+      },
+      "loaded": {
+        "push": "Yuk yuklandi",
+        "pushText": "Haydovchi yuklashni tasdiqladi va rasm qo‘shdi",
+        "stamp": "Yuklandi",
+        "caption": "Rasm va xaritadagi nuqta yuk tarixida saqlandi"
+      },
+      "drive": {
+        "title": "Yuk #KT-2031",
+        "speed": "Tezlik",
+        "driven": "Bosib o‘tildi",
+        "eta": "Yetib kelishgacha",
+        "battery": "Batareya"
+      },
+      "stop": {
+        "since": "12:10 dan beri turibdi",
+        "parking": "To‘xtash",
+        "phone": "GPS dam olmoqda, batareya tejalmoqda"
+      },
+      "offline": {
+        "noNet": "Tarmoq yo‘q",
+        "saved": "nuqta yuborilishini kutmoqda",
+        "cabinet": "Tarmoq yo‘q · nuqtalar keyin keladi"
+      },
+      "back": {
+        "sent": "nuqta birdaniga keldi",
+        "restored": "Trek tiklandi"
+      },
+      "client": {
+        "url": "app.yool.live/track/…",
+        "title": "Yuk #KT-2031",
+        "status": "Yo‘lda · hozirgina yangilandi",
+        "caption": "Ro‘yxatdan o‘tmasdan"
+      },
+      "done": {
+        "photo": "Yuk xati",
+        "confirm": "Yetkazishni tasdiqlash",
+        "done": "Yetkazildi"
+      }
     }
   },
-  "pricing": {
-    "eyebrow": "Tariflar",
-    "title": "Avtopark hajmiga moslashuvchan rejalar",
-    "betaBadge": "Beta davrida imtiyozli narxlar — erta mijozlar uchun qayd etiladi",
-    "perMonth": "/ oy",
-    "plans": [
-      {
-        "name": "Start",
-        "price": "Bepul",
-        "desc": "Live-kuzatuvni endi sinab ko'rayotgan kichik jamoalar uchun.",
-        "features": ["Oyiga 20 ta yukgacha", "3 ta haydovchigacha", "Jonli xarita va asosiy statuslar", "Email-yordam"],
-        "cta": "Bepul boshlash"
-      },
-      {
-        "name": "Business",
-        "price": "So'rov bo'yicha",
-        "desc": "O'sayotgan logistika kompaniyalari va faol yuk egalariga.",
-        "features": ["Cheksiz yuklar", "Jamoa va rollar", "Push-bildirishnomalar", "Analitika va tarix", "Ustuvor yordam"],
-        "cta": "Bog'lanish",
-        "highlight": true
-      },
-      {
-        "name": "Enterprise",
-        "price": "Individual",
-        "desc": "50+ mashinali parklar uchun, integratsiyalar va SLA bilan.",
-        "features": ["API va integratsiyalar", "SSO va audit-log", "Shaxsiy menejer", "24/7 SLA yordam"],
-        "cta": "Muhokama qilish"
-      }
-    ]
-  },
-  "trust": {
-    "eyebrow": "Xavfsizlik",
-    "title": "Sizning ma'lumotlaringiz — sizning nazoratingizda",
-    "items": [
-      { "title": "Shifrlash", "desc": "Hamma joyda TLS, himoyalangan WebSocket-ulanishlar." },
-      { "title": "Rollar va kirish", "desc": "RBAC: har bir foydalanuvchi faqat o'ziga tegishlisini ko'radi." },
-      { "title": "Audit-log", "desc": "Foydalanuvchi harakatlari va status o'zgarishlari yozib boriladi va tekshirish uchun ochiq." },
-      { "title": "Hosting hududi", "desc": "Infratuzilma sizning mijozlaringiz va haydovchilaringizga yaqin." }
-    ]
+  "start": {
+    "title": "Birinchi yuk uch daqiqada",
+    "steps": [
+      "Telegram yoki pochta orqali kiring",
+      "Yuk yarating: manzil havolasini qo‘ying",
+      "Haydovchiga havola yuboring"
+    ],
+    "cta": "Boshlash",
+    "login": "Menda allaqachon akkaunt bor",
+    "driverTag": "Haydovchiga",
+    "driverTitle": "Yuk tashing. Pul ishlang.",
+    "driverText": "Bitta ekran va keyingi qadam uchun bitta tugma. Tarmoqsiz ishlaydi, to‘xtaganda batareyani tejaydi, joylashuvni faqat reys davomida kuzatadi. Telegram orqali kirish.",
+    "googlePlay": "Google Play",
+    "appStore": "App Store",
+    "soon": "tez kunda"
   },
   "faq": {
-    "eyebrow": "FAQ",
-    "title": "Tez-tez beriladigan savollar",
+    "title": "Savollar",
     "items": [
       {
-        "q": "Yool qaysi hududlarda ishlaydi?",
-        "a": "Platforma Markaziy Osiyo bozori uchun ishlab chiqilgan: O'zbekiston, Qozog'iston, qo'shni davlatlar. Xaritalar va geokoding mahalliy manzillarga moslashtirilgan."
+        "q": "Haydovchining interneti yo‘qolsa nima bo‘ladi?",
+        "a": "Hech narsa yo‘qolmaydi. Telefon marshrut nuqtalarini 14 kungacha saqlaydi va tarmoq paydo bo‘lishi bilan yuboradi. Bu vaqtda kabinetda eskirgan nuqta emas, «tarmoq yo‘q» ko‘rinadi."
       },
       {
-        "q": "Haydovchiga nima kerak?",
-        "a": "GPS va internetli smartfon. Ilova fonda ishlaydi, trafikni tejaydi; qisqa ulanish uzilishlari marshrut nuqtalarini yo'qotmaydi."
+        "q": "Ilova batareyani ko‘p sarflaydimi?",
+        "a": "Mashina turganda ilova GPSni o‘zi o‘chiradi. Joylashuv faqat haydovchida faol yuk bo‘lganda yoziladi, kabinetda esa uning telefoni quvvati ko‘rinadi."
       },
       {
-        "q": "Yo'lda haydovchining interneti uzilsa-chi?",
-        "a": "Marshrut nuqtalari qurilmada bufer qilinadi va tarmoq tiklanishi bilan avtomatik yuklanadi."
+        "q": "Mijoz havola orqali nimani ko‘radi?",
+        "a": "Yuk nomi va holatini, xaritadagi mashinani va bosib o‘tilgan yo‘lni. Ro‘yxatdan o‘tish shart emas. Havolani istalgan vaqtda bekor qilish mumkin."
       },
       {
-        "q": "API orqali ulansa bo'ladimi?",
-        "a": "Ha, Enterprise rejada API orqali integratsiya mavjud — ERP, TMS yoki o'z tizimingizni ulang."
-      },
-      {
-        "q": "Yuklarimni kim ko'radi?",
-        "a": "Faqat tegishli rolga ega kompaniya a'zolari. Tashqi sheriklar cheklangan kirishli vaqtinchalik havola oladi."
-      },
-      {
-        "q": "To'lov qanday?",
-        "a": "Beta davrida — individual. Erta mijozlar uchun imtiyozli narxni bir yilga qayd etamiz."
+        "q": "Haydovchi ro‘yxatdan o‘tishi kerakmi?",
+        "a": "Ha, YoolLive ilovasida. Bu bir daqiqa oladi: Telegram, Apple yoki pochta orqali kirish. Agar siz yuk havolasini yuborgan bo‘lsangiz, kirgandan keyin yuk o‘zi qabul qilinadi."
       }
     ]
   },
   "finalCta": {
-    "title": "Yuklaringizni jonli ko'rishga tayyormisiz?",
-    "subtitle": "Kontaktlaringizni qoldiring — bir ish kuni ichida platformani sizning marshrutlaringizda ko'rsatamiz.",
+    "title": "Avtoparkingiz kattami?",
+    "subtitle": "Kontaktlaringizni qoldiring. Haydovchilarni ulashga yordam beramiz va kabinetni sizning marshrutlaringizda ko‘rsatamiz.",
     "form": {
       "name": "Ismingiz",
       "company": "Kompaniya",
       "phone": "Telefon",
-      "fleet": "Avtopark hajmi",
+      "fleet": "Parkdagi mashinalar",
       "fleetOptions": ["1–5", "6–20", "21–50", "50+"],
-      "submit": "Demo so'rash",
-      "success": "Rahmat! Bir ish kuni ichida bog'lanamiz.",
-      "error": "Nimadir noto'g'ri ketdi. Qayta urinib ko'ring yoki bizga yozing."
+      "submit": "Yuborish",
+      "success": "Rahmat! Ish kuni davomida siz bilan bog‘lanamiz.",
+      "error": "Yuborib bo‘lmadi. Qayta urinib ko‘ring yoki support@yool.live manziliga yozing."
     }
   },
   "footer": {
-    "tagline": "Yuk tashish kuzatuv platformasi",
+    "tagline": "Yuk tashishni kuzatish: yuk egasi uchun kabinet va haydovchi uchun ilova.",
     "product": "Mahsulot",
     "company": "Kompaniya",
-    "legal": "Huquqiy ma'lumot",
+    "legal": "Huquqiy ma’lumot",
     "links": {
-      "features": "Imkoniyatlar",
-      "pricing": "Tariflar",
-      "faq": "FAQ",
-      "about": "Biz haqimizda",
+      "how": "Qanday ishlaydi",
+      "drivers": "Haydovchilarga",
+      "faq": "Savollar",
       "contacts": "Kontaktlar",
       "privacy": "Maxfiylik siyosati",
       "terms": "Foydalanish shartlari"
     },
-    "rights": "© 2026 Yool by Karavantrack. Barcha huquqlar himoyalangan."
+    "rights": "© 2026 YoolLive. Barcha huquqlar himoyalangan."
   },
   "meta": {
-    "title": "Yool — real vaqtda yuk kuzatuvi",
-    "description": "Yool — yuk egalari va tashuvchilar uchun B2B platforma: jonli xarita, avto-ETA, haydovchini tayinlash, reyslar tarixi. O'zbekiston va Markaziy Osiyo uchun."
+    "title": "YoolLive: yukingiz qayerda, qo‘ng‘iroqsiz ko‘rinadi",
+    "description": "Yuk egasi kabineti va haydovchi ilovasi. Butun reys xaritada: to‘xtashlar, aloqasiz qismlar, har qadamda rasm va mijoz uchun havola. O‘zbekiston."
   }
 }

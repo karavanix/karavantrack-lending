@@ -7,14 +7,14 @@ export function Logo({ className, withWordmark = true }: Props) {
     <span className={`inline-flex items-center gap-2 ${className ?? ""}`}>
       <Image
         src="/logo.svg"
-        alt="Yool"
+        alt="YoolLive"
         width={28}
         height={28}
         priority
         className="h-7 w-7"
       />
       {withWordmark && (
-        <span className="font-display text-xl font-extrabold tracking-tight">Yool</span>
+        <span className="font-display text-xl font-extrabold tracking-tight">YoolLive</span>
       )}
     </span>
   );
