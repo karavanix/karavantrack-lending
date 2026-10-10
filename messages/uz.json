@@ -10,25 +10,6 @@
     "route": "Toshkent → Farg‘ona",
     "scroll": "Pastga suring, Farg‘onaga yo‘l olamiz",
     "chapterOf": "{n} / {total}",
-    "status": {
-      "created": "Yaratildi",
-      "accepted": "Qabul qilindi",
-      "loaded": "Yuklandi",
-      "transit": "Yo‘lda",
-      "delivered": "Yetkazildi"
-    },
-    "conn": {
-      "waiting": "Haydovchi kutilmoqda",
-      "moving": "Harakatda",
-      "stopped": "{time} dan beri turibdi",
-      "offline": "Tarmoq yo‘q · nuqtalar keyin keladi"
-    },
-    "units": {
-      "kmh": "km/soat",
-      "km": "km",
-      "h": "soat",
-      "min": "daq"
-    },
     "hero": {
       "bubbleFrom": "Dispetcher",
       "bubble": "Aka, qayerdasiz?",
@@ -75,64 +56,7 @@
         "title": "Yetkazildi",
         "text": "Haydovchi yuk xatini suratga oladi, siz yetkazishni tasdiqlaysiz. Reys tarixga o‘tadi: barcha qadamlar, rasmlar va trek saqlanadi."
       }
-    ],
-    "ov": {
-      "load": {
-        "title": "Yangi yuk",
-        "from": "Qayerdan",
-        "to": "Qayerga",
-        "link": "2gis.uz/tashkent/geo/70000…",
-        "fromAddr": "Toshkent, Sergeli, 3-ombor",
-        "toAddr": "Farg‘ona, ulgurji baza",
-        "route": "≈ 318 km · ~5 soat 10 daq"
-      },
-      "invite": {
-        "chat": "Dispetcher",
-        "msg": "Farg‘onaga yuk, havola orqali qabul qiling:",
-        "link": "app.yool.live/invite/7Kq2…",
-        "app": "Sizga yuk taklif qilindi",
-        "accept": "Yukni qabul qilish",
-        "accepted": "Yuk qabul qilindi"
-      },
-      "loaded": {
-        "push": "Yuk yuklandi",
-        "pushText": "Haydovchi yuklashni tasdiqladi va rasm qo‘shdi",
-        "stamp": "Yuklandi",
-        "caption": "Rasm va xaritadagi nuqta yuk tarixida saqlandi"
-      },
-      "drive": {
-        "title": "Yuk #KT-2031",
-        "speed": "Tezlik",
-        "driven": "Bosib o‘tildi",
-        "eta": "Yetib kelishgacha",
-        "battery": "Batareya"
-      },
-      "stop": {
-        "since": "12:10 dan beri turibdi",
-        "parking": "To‘xtash",
-        "phone": "GPS dam olmoqda, batareya tejalmoqda"
-      },
-      "offline": {
-        "noNet": "Tarmoq yo‘q",
-        "saved": "nuqta yuborilishini kutmoqda",
-        "cabinet": "Tarmoq yo‘q · nuqtalar keyin keladi"
-      },
-      "back": {
-        "sent": "nuqta birdaniga keldi",
-        "restored": "Trek tiklandi"
-      },
-      "client": {
-        "url": "app.yool.live/track/…",
-        "title": "Yuk #KT-2031",
-        "status": "Yo‘lda · hozirgina yangilandi",
-        "caption": "Ro‘yxatdan o‘tmasdan"
-      },
-      "done": {
-        "photo": "Yuk xati",
-        "confirm": "Yetkazishni tasdiqlash",
-        "done": "Yetkazildi"
-      }
-    }
+    ]
   },
   "td": {
     "who": {

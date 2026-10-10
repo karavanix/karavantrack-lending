@@ -10,25 +10,6 @@
     "route": "Tashkent → Fergana",
     "scroll": "Scroll down, we’re driving to Fergana",
     "chapterOf": "{n} of {total}",
-    "status": {
-      "created": "Created",
-      "accepted": "Accepted",
-      "loaded": "Loaded",
-      "transit": "In transit",
-      "delivered": "Delivered"
-    },
-    "conn": {
-      "waiting": "Waiting for a driver",
-      "moving": "Moving",
-      "stopped": "Stopped since {time}",
-      "offline": "No network · points will catch up"
-    },
-    "units": {
-      "kmh": "km/h",
-      "km": "km",
-      "h": "h",
-      "min": "min"
-    },
     "hero": {
       "bubbleFrom": "Dispatcher",
       "bubble": "Where are you now?",
@@ -75,64 +56,7 @@
         "title": "Delivered",
         "text": "The driver photographs the waybill, you confirm delivery. The trip goes to history with every step, photo and the track."
       }
-    ],
-    "ov": {
-      "load": {
-        "title": "New load",
-        "from": "From",
-        "to": "To",
-        "link": "2gis.uz/tashkent/geo/70000…",
-        "fromAddr": "Tashkent, Sergeli, depot 3",
-        "toAddr": "Fergana, wholesale base",
-        "route": "≈ 318 km · ~5 h 10 min"
-      },
-      "invite": {
-        "chat": "Dispatcher",
-        "msg": "Load to Fergana, accept via the link:",
-        "link": "app.yool.live/invite/7Kq2…",
-        "app": "You’ve been offered a load",
-        "accept": "Accept load",
-        "accepted": "Load accepted"
-      },
-      "loaded": {
-        "push": "Load picked up",
-        "pushText": "The driver confirmed pickup and attached a photo",
-        "stamp": "Loaded",
-        "caption": "Photo and map point saved in the load history"
-      },
-      "drive": {
-        "title": "Load #KT-2031",
-        "speed": "Speed",
-        "driven": "Driven",
-        "eta": "Arrives in",
-        "battery": "Battery"
-      },
-      "stop": {
-        "since": "Stopped since 12:10",
-        "parking": "Stop",
-        "phone": "GPS resting, battery saved"
-      },
-      "offline": {
-        "noNet": "No network",
-        "saved": "points waiting to send",
-        "cabinet": "No network · points will catch up"
-      },
-      "back": {
-        "sent": "points arrived in one batch",
-        "restored": "Track restored"
-      },
-      "client": {
-        "url": "app.yool.live/track/…",
-        "title": "Load #KT-2031",
-        "status": "In transit · updated just now",
-        "caption": "No sign-up"
-      },
-      "done": {
-        "photo": "Waybill",
-        "confirm": "Confirm delivery",
-        "done": "Delivered"
-      }
-    }
+    ]
   },
   "td": {
     "who": {
