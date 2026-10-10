@@ -22,6 +22,8 @@ export type World = {
   toast: "none" | "accepted";
   gps: "0" | "1";
   net: "1" | "0"; // phone has mobile network
+  sync: "0" | "1"; // the points queued on the pass have reached the server
+  batch: "0" | "1"; // the cabinet just got them in one go: "+268 points"
   first: "0" | "1"; // the first track point is on the map
 };
 
@@ -38,6 +40,8 @@ const base: World = {
   toast: "none",
   gps: "0",
   net: "1",
+  sync: "0",
+  batch: "0",
   first: "0",
 };
 
@@ -51,7 +55,7 @@ const steps: Partial<World>[] = [
   { status: "transit", act: "beginDropoff", conn: "moving" },
   { conn: "stopped" },
   { conn: "nodata", net: "0" },
-  { conn: "moving", net: "1" },
+  { conn: "moving", net: "1", sync: "1" },
   { slot: "share" },
   { status: "delivered", act: "none", conn: "none", gps: "0" },
 ];
@@ -59,7 +63,7 @@ const steps: Partial<World>[] = [
 export const STATE_AFTER: World[] = steps.reduce<World[]>((acc, step, i) => {
   const prev = acc[i - 1] ?? base;
   const status = step.status ?? prev.status;
-  acc.push({ ...prev, ...step, status, pstatus: status, ch: i, active: "none", toast: "none" });
+  acc.push({ ...prev, ...step, status, pstatus: status, ch: i, active: "none", toast: "none", batch: "0" });
   return acc;
 }, []);
 

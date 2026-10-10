@@ -10,6 +10,7 @@
 import { memo, useMemo } from "react";
 import { anchorOf, DEPOT_END, OFFLINE_FROM, OFFLINE_TO } from "./chapters";
 import type { Layout, Road } from "./road";
+import s from "./topdown.module.css";
 
 const C = {
   land: "#efece3",
@@ -27,6 +28,7 @@ const C = {
   contour: "rgba(120, 100, 70, 0.32)",
   track: "#2563eb",
   pending: "#94a3b8",
+  coverage: "#3b82f6",
 };
 
 function rng(seed: number) {
@@ -244,7 +246,58 @@ function build(L: Layout, road: Road) {
   const lOn = road.lenAt(Y(OFFLINE_TO));
   for (let l = lOff + 8; l < lOn; l += 13 * k) dots.push(l);
 
-  return { buildings, fields, trees, parked, hills, grounds, dots, half, depots };
+  // ── coverage: two cell towers either side of the pass ───────────────────
+  // The road leaves the first circle exactly where the network drops and
+  // enters the second exactly where it comes back, so the map alone shows why
+  // the track goes grey. The centre lies along the road's direction at that
+  // point, turned by the smallest angle that keeps the mast on screen, clear
+  // of the road, and the whole offline stretch outside both circles.
+  const R = Math.min(0.42 * L.vh, 0.55 * L.roadW);
+  const roadPts: { x: number; y: number }[] = [];
+  for (let l = 0; l < road.total; l += 10) roadPts.push(road.at(l));
+  const offline = roadPts.filter((_, j) => j * 10 > lOff + 6 && j * 10 < lOn - 6);
+  const tower = (l: number, dir: -1 | 1) => {
+    const p = road.at(l);
+    const sl = road.slopeAt(p.y);
+    const n = Math.hypot(sl, 1);
+    const tx = sl / n;
+    const ty = 1 / n;
+    const at = (a: number, R: number) => {
+      const ux = tx * Math.cos(a) - ty * Math.sin(a);
+      const uy = tx * Math.sin(a) + ty * Math.cos(a);
+      return { x: p.x + ux * R * dir, y: p.y + uy * R * dir, R };
+    };
+    // narrow screens: chapter cards sit right under the truck, keep out of them
+    const underCard = (y: number) => !L.wide && L.anchors.some((ay) => y > ay + 30 && y < ay + 360);
+    const fits = (c: { x: number; y: number; R: number }) =>
+      c.x > 28 && c.x < L.roadW - 28 && !underCard(c.y) &&
+      roadPts.every((q) => Math.hypot(q.x - c.x, q.y - c.y) > 40 * k) &&
+      offline.every((q) => Math.hypot(q.x - c.x, q.y - c.y) > c.R);
+    // a smaller circle only if no turn works at full size
+    for (const rr of [R, R * 0.8, R * 0.62]) {
+      for (let j = 0; j <= 28; j++) {
+        for (const sign of j ? [1, -1] : [1]) {
+          const c = at(sign * j * 0.05, rr);
+          if (fits(c)) return c;
+        }
+      }
+    }
+    return at(0, R);
+  };
+  const towers = [tower(lOff, -1), tower(lOn, 1)];
+
+  // ── fog over the top of the pass ───────────────────────────────────────
+  const fog: { x: number; y: number; rx: number; ry: number }[] = [];
+  for (let i = 0; i < 9; i++) {
+    fog.push({
+      x: r() * W,
+      y: Y(6.08) + r() * (Y(6.85) - Y(6.08)),
+      rx: (0.22 + r() * 0.2) * W,
+      ry: (0.06 + r() * 0.06) * L.vh,
+    });
+  }
+
+  return { buildings, fields, trees, parked, hills, grounds, dots, half, depots, towers, fog };
 }
 
 export type Art = ReturnType<typeof build>;
@@ -256,124 +309,168 @@ export const MapArt = memo(function MapArt({ L, road }: { L: Layout; road: Road 
   const gx = road.xAt(gate);
 
   return (
-    <svg width={L.vw} height={L.height} viewBox={`0 0 ${L.vw} ${L.height}`} aria-hidden>
-      <defs>
-        <pattern id="td-rows-h" width="8" height="8" patternUnits="userSpaceOnUse">
-          <path d="M0 4h8" stroke="#8a9a5b" strokeOpacity="0.16" strokeWidth="2" />
-        </pattern>
-        <pattern id="td-rows-v" width="8" height="8" patternUnits="userSpaceOnUse">
-          <path d="M4 0v8" stroke="#8a9a5b" strokeOpacity="0.16" strokeWidth="2" />
-        </pattern>
-        <pattern id="td-cotton" width="9" height="9" patternUnits="userSpaceOnUse">
-          <circle cx="2.5" cy="2.5" r="1.6" fill="#fff" />
-          <circle cx="7" cy="6.5" r="1.3" fill="#fff" fillOpacity="0.85" />
-        </pattern>
-      </defs>
+    <>
+      <svg width={L.vw} height={L.height} viewBox={`0 0 ${L.vw} ${L.height}`} aria-hidden>
+        <defs>
+          <radialGradient id="td-fog">
+            <stop offset="0" stopColor="#fbfaf6" stopOpacity="0.85" />
+            <stop offset="0.6" stopColor="#fbfaf6" stopOpacity="0.45" />
+            <stop offset="1" stopColor="#fbfaf6" stopOpacity="0" />
+          </radialGradient>
+          <pattern id="td-rows-h" width="8" height="8" patternUnits="userSpaceOnUse">
+            <path d="M0 4h8" stroke="#8a9a5b" strokeOpacity="0.16" strokeWidth="2" />
+          </pattern>
+          <pattern id="td-rows-v" width="8" height="8" patternUnits="userSpaceOnUse">
+            <path d="M4 0v8" stroke="#8a9a5b" strokeOpacity="0.16" strokeWidth="2" />
+          </pattern>
+          <pattern id="td-cotton" width="9" height="9" patternUnits="userSpaceOnUse">
+            <circle cx="2.5" cy="2.5" r="1.6" fill="#fff" />
+            <circle cx="7" cy="6.5" r="1.3" fill="#fff" fillOpacity="0.85" />
+          </pattern>
+        </defs>
 
-      <rect width={L.vw} height={L.height} fill={C.land} />
-      <rect x="0" y={a.grounds[2].y} width={L.vw} height={a.grounds[2].h} fill="#e9e3d3" />
+        <rect width={L.vw} height={L.height} fill={C.land} />
+        <rect x="0" y={a.grounds[2].y} width={L.vw} height={a.grounds[2].h} fill="#e9e3d3" />
 
-      {a.fields.map((f, i) => (
-        <g key={i}>
-          <rect x={f.x} y={f.y} width={f.w} height={f.h} rx="3" fill={f.fill} />
-          <rect
-            x={f.x}
-            y={f.y}
-            width={f.w}
-            height={f.h}
-            rx="3"
-            fill={`url(#${f.rows === "c" ? "td-cotton" : f.rows === "h" ? "td-rows-h" : "td-rows-v"})`}
-          />
-        </g>
-      ))}
-
-      {a.depots.map((d, i) => (
-        <g key={i}>
-          <rect x="0" y={d.y0} width={L.vw} height={d.y1 - d.y0} fill={C.concrete} />
-          <rect
-            x="10"
-            y={d.y0 + (i ? 10 : -20)}
-            width={L.vw - 20}
-            height={d.y1 - d.y0 - (i ? 0 : -10)}
-            fill="none"
-            stroke={C.fence}
-            strokeWidth="2"
-            strokeDasharray="7 5"
-          />
-        </g>
-      ))}
-      {/* gate of the Tashkent depot */}
-      <rect x={gx - a.half - 26} y={gate - 22} width={a.half * 2 + 52} height="34" fill={C.concrete} />
-      <rect x={gx - a.half - 16} y={gate - 6} width="8" height="12" rx="2" fill="#7b8594" />
-      <rect x={gx + a.half + 8} y={gate - 6} width="8" height="12" rx="2" fill="#7b8594" />
-
-      {a.hills.map((h, i) => (
-        <g key={i}>
-          {h.levels.map((d, j) => (
-            <path
-              key={j}
-              d={d}
-              fill={j === h.levels.length - 1 && h.levels.length > 5 ? C.hills[5] : C.hills[Math.min(4, j)]}
-              stroke={C.contour}
-              strokeWidth="1"
+        {a.fields.map((f, i) => (
+          <g key={i}>
+            <rect x={f.x} y={f.y} width={f.w} height={f.h} rx="3" fill={f.fill} />
+            <rect
+              x={f.x}
+              y={f.y}
+              width={f.w}
+              height={f.h}
+              rx="3"
+              fill={`url(#${f.rows === "c" ? "td-cotton" : f.rows === "h" ? "td-rows-h" : "td-rows-v"})`}
             />
-          ))}
+          </g>
+        ))}
+
+        {a.depots.map((d, i) => (
+          <g key={i}>
+            <rect x="0" y={d.y0} width={L.vw} height={d.y1 - d.y0} fill={C.concrete} />
+            <rect
+              x="10"
+              y={d.y0 + (i ? 10 : -20)}
+              width={L.vw - 20}
+              height={d.y1 - d.y0 - (i ? 0 : -10)}
+              fill="none"
+              stroke={C.fence}
+              strokeWidth="2"
+              strokeDasharray="7 5"
+            />
+          </g>
+        ))}
+        {/* gate of the Tashkent depot */}
+        <rect x={gx - a.half - 26} y={gate - 22} width={a.half * 2 + 52} height="34" fill={C.concrete} />
+        <rect x={gx - a.half - 16} y={gate - 6} width="8" height="12" rx="2" fill="#7b8594" />
+        <rect x={gx + a.half + 8} y={gate - 6} width="8" height="12" rx="2" fill="#7b8594" />
+
+        {a.hills.map((h, i) => (
+          <g key={i}>
+            {h.levels.map((d, j) => (
+              <path
+                key={j}
+                d={d}
+                fill={j === h.levels.length - 1 && h.levels.length > 5 ? C.hills[5] : C.hills[Math.min(4, j)]}
+                stroke={C.contour}
+                strokeWidth="1"
+              />
+            ))}
+          </g>
+        ))}
+
+        {a.fog.map((f, i) => (
+          <ellipse key={i} cx={f.x} cy={f.y} rx={f.rx} ry={f.ry} fill="url(#td-fog)" />
+        ))}
+
+        {a.towers.map((t, i) => (
+          <circle
+            key={i}
+            cx={t.x}
+            cy={t.y}
+            r={t.R}
+            fill={C.coverage}
+            fillOpacity="0.07"
+            stroke={C.coverage}
+            strokeOpacity="0.38"
+            strokeWidth="1.5"
+            strokeDasharray="6 6"
+          />
+        ))}
+
+        {a.parked.map((b, i) => (
+          <g key={i}>
+            <rect x={b.x + 3} y={b.y + 4} width={b.w} height={b.h} rx="2" fill={C.shadow} />
+            <rect x={b.x} y={b.y} width={b.w} height={b.h} rx="2" fill="#f4f6f8" stroke="#b9c3cf" />
+            <rect x={b.x + 1} y={b.y + b.h - 11 * k} width={b.w - 2} height={10 * k} rx="2" fill={i % 3 ? "#8b98a8" : "#d9534f"} />
+          </g>
+        ))}
+
+        {a.buildings.map((b, i) => (
+          <g key={i}>
+            <rect x={b.x + 5} y={b.y + 7} width={b.w} height={b.h} rx="2" fill={C.shadow} />
+            <rect x={b.x} y={b.y} width={b.w} height={b.h} rx="2" fill={b.fill} stroke="rgba(0,0,0,0.08)" />
+            {b.kind !== "office" && b.w > 60 && (
+              <path d={`M${b.x + 4} ${b.y + b.h / 2}h${b.w - 8}`} stroke="rgba(0,0,0,0.08)" strokeWidth="2" />
+            )}
+            {b.kind === "dock" &&
+              Array.from({ length: Math.floor((b.h - 20) / (26 * k)) }, (_, j) => {
+                const right = b.x + b.w / 2 < road.xAt(b.y + b.h / 2);
+                return (
+                  <rect
+                    key={j}
+                    x={right ? b.x + b.w - 4 : b.x - 4}
+                    y={b.y + 14 + j * 26 * k}
+                    width="8"
+                    height={16 * k}
+                    rx="1.5"
+                    fill="#5b6675"
+                  />
+                );
+              })}
+          </g>
+        ))}
+
+        {a.trees.map((t, i) => (
+          <g key={i}>
+            <circle cx={t.x + 2} cy={t.y + 3} r={t.r} fill={C.shadow} />
+            <circle cx={t.x} cy={t.y} r={t.r} fill={t.fill} />
+          </g>
+        ))}
+
+        <path d={road.d} fill="none" stroke={C.casing} strokeWidth={22 * k} strokeLinecap="round" strokeLinejoin="round" />
+        <path d={road.d} fill="none" stroke={C.road} strokeWidth={17 * k} strokeLinecap="round" strokeLinejoin="round" />
+        <path d={road.d} fill="none" stroke={C.dash} strokeWidth={1.6 * k} strokeDasharray="10 12" />
+
+        {/* the track, drawn by TopDown along the same path */}
+        <path data-track="casing" d={road.d} fill="none" stroke="#fff" strokeWidth={10 * k} strokeLinecap="round" strokeDasharray={`0 ${road.total + 1}`} />
+        <path data-track="line" d={road.d} fill="none" stroke={C.track} strokeWidth={5.5 * k} strokeLinecap="round" strokeDasharray={`0 ${road.total + 1}`} />
+        <g data-track="dots">
+          {a.dots.map((l, i) => {
+            const p = road.at(l);
+            return <circle key={i} data-l={l.toFixed(1)} cx={p.x} cy={p.y} r={3.4 * k} fill={C.pending} stroke="#fff" strokeWidth="1.5" style={{ display: "none" }} />;
+          })}
         </g>
-      ))}
-
-      {a.parked.map((b, i) => (
-        <g key={i}>
-          <rect x={b.x + 3} y={b.y + 4} width={b.w} height={b.h} rx="2" fill={C.shadow} />
-          <rect x={b.x} y={b.y} width={b.w} height={b.h} rx="2" fill="#f4f6f8" stroke="#b9c3cf" />
-          <rect x={b.x + 1} y={b.y + b.h - 11 * k} width={b.w - 2} height={10 * k} rx="2" fill={i % 3 ? "#8b98a8" : "#d9534f"} />
+        {/* front of the wave that turns the queued points blue (chapter 7) */}
+        <g data-track="front" style={{ display: "none" }}>
+          <circle r={13 * k} fill={C.track} fillOpacity="0.22" />
+          <circle r={5.5 * k} fill={C.track} stroke="#fff" strokeWidth="2" />
         </g>
+      </svg>
+      {/* masts as HTML so their waves repaint a small box, not the whole map */}
+      {a.towers.map((t, i) => (
+        <span key={i} className={s.tower} data-tower={i} style={{ left: t.x, top: t.y }}>
+          <i />
+          <i />
+          <i />
+          <svg width="26" height="26" viewBox="-13 -13 26 26">
+            <circle r="12" fill="#fff" stroke="#334155" strokeWidth="1.5" />
+            <path d="M0 -7L6 5H-6Z M0 -7V5 M-3 -1H3 M-4.5 2H4.5" fill="none" stroke="#334155" strokeWidth="1.4" strokeLinejoin="round" />
+            <circle cy="-7" r="1.8" fill="#dc2626" />
+          </svg>
+        </span>
       ))}
-
-      {a.buildings.map((b, i) => (
-        <g key={i}>
-          <rect x={b.x + 5} y={b.y + 7} width={b.w} height={b.h} rx="2" fill={C.shadow} />
-          <rect x={b.x} y={b.y} width={b.w} height={b.h} rx="2" fill={b.fill} stroke="rgba(0,0,0,0.08)" />
-          {b.kind !== "office" && b.w > 60 && (
-            <path d={`M${b.x + 4} ${b.y + b.h / 2}h${b.w - 8}`} stroke="rgba(0,0,0,0.08)" strokeWidth="2" />
-          )}
-          {b.kind === "dock" &&
-            Array.from({ length: Math.floor((b.h - 20) / (26 * k)) }, (_, j) => {
-              const right = b.x + b.w / 2 < road.xAt(b.y + b.h / 2);
-              return (
-                <rect
-                  key={j}
-                  x={right ? b.x + b.w - 4 : b.x - 4}
-                  y={b.y + 14 + j * 26 * k}
-                  width="8"
-                  height={16 * k}
-                  rx="1.5"
-                  fill="#5b6675"
-                />
-              );
-            })}
-        </g>
-      ))}
-
-      {a.trees.map((t, i) => (
-        <g key={i}>
-          <circle cx={t.x + 2} cy={t.y + 3} r={t.r} fill={C.shadow} />
-          <circle cx={t.x} cy={t.y} r={t.r} fill={t.fill} />
-        </g>
-      ))}
-
-      <path d={road.d} fill="none" stroke={C.casing} strokeWidth={22 * k} strokeLinecap="round" strokeLinejoin="round" />
-      <path d={road.d} fill="none" stroke={C.road} strokeWidth={17 * k} strokeLinecap="round" strokeLinejoin="round" />
-      <path d={road.d} fill="none" stroke={C.dash} strokeWidth={1.6 * k} strokeDasharray="10 12" />
-
-      {/* the track, drawn by TopDown along the same path */}
-      <path data-track="casing" d={road.d} fill="none" stroke="#fff" strokeWidth={10 * k} strokeLinecap="round" strokeDasharray={`0 ${road.total + 1}`} />
-      <path data-track="line" d={road.d} fill="none" stroke={C.track} strokeWidth={5.5 * k} strokeLinecap="round" strokeDasharray={`0 ${road.total + 1}`} />
-      <g data-track="dots">
-        {a.dots.map((l, i) => {
-          const p = road.at(l);
-          return <circle key={i} data-l={l.toFixed(1)} cx={p.x} cy={p.y} r={3.4 * k} fill={C.pending} stroke="#fff" strokeWidth="1.5" style={{ display: "none" }} />;
-        })}
-      </g>
-    </svg>
+    </>
   );
 });

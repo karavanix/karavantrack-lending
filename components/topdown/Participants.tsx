@@ -10,6 +10,7 @@ import { useTranslations } from "next-intl";
 import { Check, Copy, Link2, MonitorSmartphone, Smartphone, Truck as TruckIcon } from "lucide-react";
 import s from "./topdown.module.css";
 import { when } from "./world";
+import { QUEUED } from "./chapters";
 
 type Status = "created" | "accepted" | "loaded" | "transit" | "delivered";
 const STATUSES: Status[] = ["created", "accepted", "loaded", "transit", "delivered"];
@@ -87,7 +88,7 @@ export function Panel() {
                 </span>
               </div>
               <div className={s.pRow}>
-                <span className={s.stack}>
+                <span className={s.stack} data-anchor="panel-conn">
                   <span {...when("conn=none|last")}>{t("cab.lastPoint")}</span>
                   <span className={s.conn} data-tone="go" {...when("conn=moving")}>
                     <i /> {t("cab.moving")}
@@ -104,8 +105,11 @@ export function Panel() {
                   <span className={s.conn} data-tone="go" {...when("conn=last")}>
                     <i /> {t("cab.justNow")}
                   </span>
-                  <span className={s.battery} {...when("conn=moving|stopped|nodata")}>
+                  <span className={s.battery} {...when("conn=moving|stopped|nodata; batch=0")}>
                     92%
+                  </span>
+                  <span className={s.batch} {...when("batch=1")}>
+                    {t("cab.batch", { count: QUEUED })}
                   </span>
                 </span>
               </div>
@@ -132,7 +136,7 @@ export function Panel() {
                   <Check size={13} /> {t("cab.copied")}
                 </span>
               </div>
-              <div className={s.pRoute} {...when("slot=none")}>
+              <div className={s.pRoute} {...when("slot=none; conn=none|last|moving")}>
                 <div className={s.pRow}>
                   <span>{t("cab.pickup")}</span>
                   <b>{t("load.from")}</b>
@@ -141,6 +145,13 @@ export function Panel() {
                   <span>{t("cab.dropoff")}</span>
                   <b>{t("load.to")}</b>
                 </div>
+              </div>
+              {/* why there are no points: the cabinet's own hint under the status */}
+              <div className={s.pHint} {...when("slot=none; conn=stopped|nodata")}>
+                <span className={s.stack}>
+                  <span {...when("conn=stopped")}>{t("cab.stoppedHint")}</span>
+                  <span {...when("conn=nodata")}>{t("cab.noDataHint")}</span>
+                </span>
               </div>
               <div className={s.pAction} {...when("slot=share")}>
                 <Btn ghost>{t("cab.share")}</Btn>
@@ -238,9 +249,15 @@ export function Phone() {
                 ))}
               </div>
               <div className={s.pills}>
-                <span className={s.pill} data-tone="go">
-                  <i />
-                  {t("app.online")}
+                <span className={s.stack}>
+                  <span className={s.pill} data-tone="go" {...when("net=1")}>
+                    <i />
+                    {t("app.online")}
+                  </span>
+                  <span className={s.pill} data-tone="warn" {...when("net=0")}>
+                    <i />
+                    {t("app.offline")}
+                  </span>
                 </span>
                 <span className={s.stack}>
                   <span className={s.pill} data-tone="go" {...when("gps=1")}>
@@ -251,6 +268,11 @@ export function Phone() {
                     <i />
                     {t("app.gpsWaiting")}
                   </span>
+                </span>
+                {/* points waiting on the phone: counted by TopDown as the truck drives */}
+                <span className={s.pill} data-tone="warn" data-queued data-on="0">
+                  <i />
+                  <span data-bind="queued" />
                 </span>
               </div>
               <span className={s.stack}>
@@ -289,7 +311,18 @@ export function Strip() {
           <span className={s.line} {...when("screen=active;toast=accepted")}>
             <Check size={13} /> {t("app.accepted")}
           </span>
-          <span className={s.line} {...when("screen=active;toast=none")}>
+          {/* one pill for room: the counter once points pile up, "Offline" before */}
+          <span className={s.line} {...when("screen=active; toast=none; net=0")}>
+            <span className={s.pill} data-tone="warn" data-queued data-on="0">
+              <i />
+              <span data-bind="queued" />
+            </span>
+            <span className={s.pill} data-tone="warn" data-offline>
+              <i />
+              {t("app.offline")}
+            </span>
+          </span>
+          <span className={s.line} {...when("screen=active; toast=none; net=1")}>
             <span className={s.stack}>
               <span className={s.pill} data-tone="go" {...when("gps=1")}>
                 <i />
@@ -303,7 +336,7 @@ export function Strip() {
           </span>
         </span>
       </div>
-      <div className={s.tile} data-tile="panel" data-anchor="panel panel-status">
+      <div className={s.tile} data-tile="panel" data-anchor="panel panel-status panel-conn">
         <Who who="dispatcher" />
         <span className={s.stack}>
           <span className={s.line} {...when("slot=hero")}>

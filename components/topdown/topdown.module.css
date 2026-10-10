@@ -118,6 +118,74 @@
   }
 }
 
+/* the pass: cell towers and the grey run of points waiting on the phone */
+.tower {
+  position: absolute;
+  width: 0;
+  height: 0;
+  z-index: 1;
+}
+.tower svg {
+  position: absolute;
+  left: -13px;
+  top: -13px;
+  filter: drop-shadow(0 2px 3px rgba(15, 20, 27, 0.25));
+}
+.tower i {
+  position: absolute;
+  left: -14px;
+  top: -14px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #2563eb;
+  opacity: 0;
+}
+/* network back: the tower below the pass sends out its waves */
+.td[data-ch="7"][data-net="1"] [data-tower="1"] i {
+  animation: wave 1.5s ease-out 2;
+}
+.td[data-ch="7"][data-net="1"] [data-tower="1"] i:nth-child(2) {
+  animation-delay: 0.3s;
+}
+.td[data-ch="7"][data-net="1"] [data-tower="1"] i:nth-child(3) {
+  animation-delay: 0.6s;
+}
+@keyframes wave {
+  from {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  to {
+    transform: scale(7);
+    opacity: 0;
+  }
+}
+
+.pend {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 3;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  font: 600 12px var(--font-sans);
+  white-space: nowrap;
+  box-shadow: 0 4px 14px -6px rgba(15, 20, 27, 0.35);
+  translate: 0 -50%;
+  transition: opacity 0.3s;
+  will-change: transform;
+}
+.pend[data-side="l"] {
+  translate: -100% -50%;
+}
+.pend[data-on="0"] {
+  opacity: 0;
+}
+
 /* ───────── chapter cards ───────── */
 
 .cards {
@@ -391,6 +459,32 @@
   background: #222833;
   color: var(--ui-muted);
 }
+.pill[data-tone="warn"] {
+  background: rgba(245, 158, 11, 0.16);
+  color: #fbbf4a;
+}
+.pill[data-queued] {
+  font-variant-numeric: tabular-nums;
+  transition: opacity 0.3s;
+}
+/* the counter's text is long in uz: let it wrap inside the card */
+.pills .pill[data-queued] {
+  height: auto;
+  min-height: 22px;
+  padding-block: 3px;
+  line-height: 1.25;
+  white-space: normal;
+}
+.pills,
+.aCard {
+  min-width: 0;
+}
+.pill[data-queued][data-on="0"] {
+  display: none;
+}
+.pill[data-queued][data-on="1"] + [data-offline] {
+  display: none;
+}
 
 /* ───────── desktop column ───────── */
 
@@ -530,6 +624,24 @@
 .battery {
   font: 500 11.5px var(--font-mono);
   color: var(--ui-muted);
+}
+.batch {
+  justify-self: end;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.2);
+  color: #8cc0ff;
+  font: 600 11.5px var(--font-sans);
+  white-space: nowrap;
+}
+.pHint {
+  padding: 2px 12px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ui-muted);
+}
+.pHint .stack {
+  display: grid;
 }
 .pAction {
   display: grid;

@@ -61,7 +61,7 @@
       },
       {
         "title": "The pass. No signal",
-        "text": "On Kamchik the network drops. The app doesn’t lose points, it keeps them on the phone for up to two weeks. The cabinet says “no network” instead of drawing a green dot."
+        "text": "On Kamchik the network drops. The app doesn’t lose points, it keeps them on the phone for up to two weeks. The cabinet says “no data” instead of drawing a green dot."
       },
       {
         "title": "Signal back, track whole",
@@ -171,7 +171,10 @@
       "stopped": "Stopped since 12:10",
       "noData": "No data since 13:05",
       "share": "Share tracking",
-      "hero": "Where are you now?"
+      "hero": "Where are you now?",
+      "batch": "{count, plural, =1 {+1 point} other {+# points}}",
+      "noDataHint": "The driver's phone hasn't sent points for a while. Usually there's no mobile network: the saved points arrive once it's back.",
+      "stoppedHint": "While the truck stands, the phone saves battery and sends nothing. The track resumes as soon as it moves."
     },
     "app": {
       "loads": "Loads",
@@ -196,10 +199,14 @@
         "startTransit": "Start Transit",
         "beginDropoff": "Begin Dropoff",
         "confirmDropoff": "Confirm Delivery"
-      }
+      },
+      "queued": "{count, plural, =1 {1 point waiting to be sent} other {# points waiting to be sent}}"
     },
     "pulse": {
       "telegram": "via Telegram"
+    },
+    "map": {
+      "onPhone": "on the driver's phone"
     }
   },
   "start": {

@@ -15,14 +15,14 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowDown, ArrowRight } from "lucide-react";
 import s from "./topdown.module.css";
-import { CAMERA, CHAPTERS, K, OFFLINE_FROM, OFFLINE_TO, SECTION_SCREENS, anchorOf, fmtClock } from "./chapters";
+import { CAMERA, CHAPTERS, K, LEAD, OFFLINE_FROM, OFFLINE_TO, QUEUED, SECTION_SCREENS, anchorOf, fmtClock } from "./chapters";
 import { Road, cameraOf, dashRanges, makeLayout, minuteAt, truckY, type Layout } from "./road";
 import { MapArt } from "./MapArt";
 import { Truck } from "./Truck";
 import { Panel, Phone, Strip } from "./Participants";
 import { createWorld, STATE_AFTER, when } from "./world";
 import { createPulses } from "./pulse";
-import { SCENES } from "./scenes";
+import { COLORS, SCENES } from "./scenes";
 import { SITE } from "@/lib/site";
 
 export function TopDown() {
@@ -33,7 +33,9 @@ export function TopDown() {
   const pulseRef = useRef<HTMLDivElement>(null);
   const [L, setL] = useState<Layout | null>(null);
   const road = useMemo(() => (L ? new Road(L) : null), [L]);
-  const labels = useRef({ telegram: td("pulse.telegram") });
+  const labels = useRef({ telegram: td("pulse.telegram"), batch: td("cab.batch", { count: QUEUED }) });
+  const queuedText = useRef((n: number) => td("app.queued", { count: n }));
+  queuedText.current = (n: number) => td("app.queued", { count: n });
 
   // Measure one screen (100svh, steady while mobile browser bars come and go).
   useEffect(() => {
@@ -72,7 +74,11 @@ export function TopDown() {
     const truck = q("[data-truck]");
     const casing = q<SVGPathElement>('[data-track="casing"]');
     const line = q<SVGPathElement>('[data-track="line"]');
-    const dots = qa<SVGCircleElement>('[data-track="dots"] circle').map((el) => ({ el, l: Number(el.dataset.l) }));
+    const dots = qa<SVGCircleElement>('[data-track="dots"] circle').map((el) => ({ el, l: Number(el.dataset.l), on: false }));
+    const front = q<SVGGElement>('[data-track="front"]');
+    const pend = q("[data-pend]");
+    const queuedPills = qa("[data-queued]");
+    const queuedTexts = qa("[data-bind='queued']");
     const clocks = qa("[data-bind='clock']");
 
     // The phone in the desktop column shrinks to fit what is left under the panel.
@@ -89,23 +95,33 @@ export function TopDown() {
     const lOn = road.lenAt(anchorOf(OFFLINE_TO) * L.vh);
     let lastDash = "";
     let lastClock = "";
-    let shown = 0;
+    let lastQueued = -1;
+    let lastCam = L.anchors[0];
+    // Share of the queued points already delivered (0 → 1 in chapter 7's wave).
+    const track = { wave: 0 };
 
     const draw = (cam: number) => {
+      lastCam = cam;
       const y = truckY(cam, L);
       const x = road.xAt(y);
       const angle = (-Math.atan(road.slopeAt(y)) * 180) / Math.PI;
       truck.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) rotate(${angle.toFixed(2)}deg) scale(${L.k})`;
 
       // Track: blue = the server has it; grey dots = still on the phone.
+      // On the pass the points recorded so far, [lOff, held], wait on the
+      // phone; the wave delivers them from the start, up to synced.
       const l = road.lenAt(y);
       let ranges: [number, number][] = [];
-      let pending = 0;
+      let synced = 0;
+      let held = 0;
       if (l > lStart) {
-        if (l > lOff && l < lOn) {
-          ranges = [[lStart, lOff]];
-          pending = l;
-        } else ranges = [[lStart, l]];
+        if (l <= lOff) ranges = [[lStart, l]];
+        else {
+          held = Math.min(l, lOn);
+          synced = lOff + (held - lOff) * track.wave;
+          ranges = [[lStart, synced]];
+          if (l > lOn) ranges.push([lOn, l]); // fresh points after the tower go straight
+        }
       }
       const dash = dashRanges(ranges, road.total);
       if (dash !== lastDash) {
@@ -113,12 +129,42 @@ export function TopDown() {
         casing.setAttribute("stroke-dasharray", dash);
         line.setAttribute("stroke-dasharray", dash);
       }
-      let n = 0;
-      if (pending) while (n < dots.length && dots[n].l <= pending) n++;
-      if (n !== shown) {
-        for (let i = Math.min(n, shown); i < Math.max(n, shown); i++) dots[i].el.style.display = i < n ? "" : "none";
-        shown = n;
+      for (const d of dots) {
+        const on = d.l > synced && d.l <= held;
+        if (on !== d.on) {
+          d.on = on;
+          d.el.style.display = on ? "" : "none";
+        }
       }
+      const waving = track.wave > 0 && track.wave < 1 && held > lOff;
+      front.style.display = waving ? "" : "none";
+      if (waving) {
+        const p = road.at(synced);
+        front.setAttribute("transform", `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})`);
+      }
+
+      // The phone counts the same points the map shows grey.
+      const queued = held > lOff ? Math.round((QUEUED * (held - lOff) * (1 - track.wave)) / (lOn - lOff)) : 0;
+      if (queued !== lastQueued) {
+        lastQueued = queued;
+        const on = queued > 0 ? "1" : "0";
+        for (const el of queuedPills) if (el.dataset.on !== on) el.dataset.on = on;
+        if (queued > 0) {
+          const text = queuedText.current(queued);
+          for (const el of queuedTexts) el.textContent = text;
+        }
+      }
+      // "on the driver's phone" beside the grey run, close enough to the
+      // truck to stay on screen
+      const run = held - synced;
+      if (run > 70 && track.wave < 1) {
+        const p = road.at(held - Math.min(run / 2, 0.22 * L.vh));
+        const side = p.x < L.roadW / 2 ? -1 : 1; // nx points left of the screen when heading down
+        const off = 26 * L.k;
+        pend.style.transform = `translate3d(${(p.x + p.nx * off * side).toFixed(1)}px, ${(p.y + p.ny * off * side).toFixed(1)}px, 0)`;
+        pend.dataset.side = side > 0 ? "l" : "r";
+        pend.dataset.on = "1";
+      } else pend.dataset.on = "0";
 
       const clock = fmtClock(minuteAt(cam, L));
       if (clock !== lastClock) {
@@ -144,7 +190,13 @@ export function TopDown() {
       gsap.set(qa("[data-ripple]"), { opacity: 0 });
     };
 
-    const ctx = { world, pulses, press, labels: labels.current, wide: L.wide };
+    // Chapter 7: the queued points arrive and turn blue from where the
+    // network dropped up to the truck.
+    const restore = (duration: number) =>
+      // fast where the drop point is off screen above, slow near the truck
+      gsap.timeline().to(track, { wave: 1, duration, ease: "power2.out", onUpdate: () => draw(lastCam) });
+
+    const ctx = { world, pulses, press, restore, labels: labels.current, wide: L.wide };
     let scene: gsap.core.Timeline | null = null;
     const stop = () => {
       scene?.kill();
@@ -157,11 +209,29 @@ export function TopDown() {
     const enter = (i: number, play: boolean) => {
       stop();
       const sceneOf = SCENES[i];
-      if (play && sceneOf && !reduce) {
-        world.set({ ...STATE_AFTER[i - 1], ch: i });
-        scene = sceneOf(ctx);
-      } else world.set(STATE_AFTER[i]);
+      const playing = play && !!sceneOf && !reduce;
+      const from = playing ? { ...STATE_AFTER[i - 1], ch: i } : STATE_AFTER[i];
+      world.set(from);
+      track.wave = from.sync === "1" ? 1 : 0;
+      draw(lastCam);
+      if (playing) scene = sceneOf!(ctx);
     };
+
+    // While the truck moves with network, points leave the phone on their
+    // own: a sparse stream of small impulses to the dispatcher's status line.
+    let inView = false;
+    const tick = () => {
+      const st = world.get();
+      if (inView && !reduce && st.conn === "moving" && st.net === "1" && !document.hidden) {
+        pulses.pulse("phone", "panel-conn", {
+          color: COLORS.point,
+          size: 3,
+          duration: 0.85,
+          ...(L.wide ? { bend: 0.28 } : { out: "top", in: "top", bend: -0.5 }),
+        });
+      }
+    };
+    const stream = window.setInterval(tick, 1300);
     world.set(STATE_AFTER[0]);
 
     const sc = gsap.context(() => {
@@ -176,11 +246,12 @@ export function TopDown() {
           start: "top top",
           end: `+=${span}`,
           scrub: reduce ? true : 0.35,
+          onToggle: (self) => (inView = self.isActive),
         },
       });
       for (let i = 1; i < K; i++) {
         // A beat before the truck pulls into the bend.
-        const at = L.anchors[i] - 0.04 * L.vh - CAMERA * L.vh;
+        const at = L.anchors[i] - LEAD * L.vh - CAMERA * L.vh;
         ScrollTrigger.create({
           trigger: root,
           start: `top+=${at.toFixed(0)} top`,
@@ -195,6 +266,7 @@ export function TopDown() {
     ScrollTrigger.refresh();
 
     return () => {
+      window.clearInterval(stream);
       stop();
       sc.revert();
     };
@@ -224,6 +296,9 @@ export function TopDown() {
             <i />
           </span>
         )}
+        <span className={s.pend} data-pend data-on="0">
+          {td("map.onPhone")}
+        </span>
       </div>
 
       <div className={s.cards}>

@@ -39,10 +39,16 @@ export const TAIL = 0.55 + CHAPTERS[K - 1].hold;
 export const anchorOf = (i: number) => CAMERA + i * STEP;
 export const SECTION_SCREENS = anchorOf(K - 1) + TAIL;
 
-// Stretch of road without coverage on the pass, as positions between bends
-// (5.55 = a bit past the chaikhana bend). Points pile up on the phone here.
-export const OFFLINE_FROM = 5.62;
-export const OFFLINE_TO = 7;
+// A chapter starts this share of a screen before the truck reaches its bend.
+export const LEAD = 0.04;
+
+// Stretch of road without coverage on the pass, as positions between bends.
+// It begins and ends exactly where chapters 6 and 7 start, so the phone, the
+// panel and the map change at the same moment. Points pile up on the phone
+// here, QUEUED of them by the time the network is back.
+export const OFFLINE_FROM = 6 - LEAD;
+export const OFFLINE_TO = 7 - LEAD;
+export const QUEUED = 268;
 
 // Depot compound in Tashkent ends a bit after the loading dock bend.
 export const DEPOT_END = 3.45;

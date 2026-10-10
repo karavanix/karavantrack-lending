@@ -61,7 +61,7 @@
       },
       {
         "title": "Dovon. Aloqa yo‘q",
-        "text": "Qamchiqda tarmoq yo‘qoladi. Ilova nuqtalarni yo‘qotmaydi, ularni telefonda yig‘adi, hatto ikki hafta. Kabinet rostini yozadi: «tarmoq yo‘q», yashil nuqta chizmaydi."
+        "text": "Qamchiqda tarmoq yo‘qoladi. Ilova nuqtalarni yo‘qotmaydi, ularni telefonda yig‘adi, hatto ikki hafta. Kabinet rostini yozadi: «ma’lumot yo‘q», yashil nuqta chizmaydi."
       },
       {
         "title": "Tarmoq qaytdi, trek butun",
@@ -171,7 +171,10 @@
       "stopped": "12:10 dan beri turibdi",
       "noData": "13:05 dan beri ma'lumot yo'q",
       "share": "Kuzatuvni ulashish",
-      "hero": "Aka, qayerdasiz?"
+      "hero": "Aka, qayerdasiz?",
+      "batch": "+{count} ta nuqta",
+      "noDataHint": "Haydovchining telefoni ancha vaqtdan beri nuqta yubormadi. Ko'pincha mobil tarmoq yo'q bo'ladi: to'plangan nuqtalar tarmoq paydo bo'lganda keladi.",
+      "stoppedHint": "Turganda telefon GPS uchun quvvat sarflamaydi va hech narsa yubormaydi. Mashina yurishi bilan trek davom etadi."
     },
     "app": {
       "loads": "Yuklar",
@@ -196,10 +199,14 @@
         "startTransit": "Tashishni boshlash",
         "beginDropoff": "Tushirishni boshlash",
         "confirmDropoff": "Yetkazishni tasdiqlash"
-      }
+      },
+      "queued": "{count} ta nuqta yuborilishini kutmoqda"
     },
     "pulse": {
       "telegram": "Telegram orqali"
+    },
+    "map": {
+      "onPhone": "haydovchi telefonida"
     }
   },
   "start": {

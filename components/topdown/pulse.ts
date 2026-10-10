@@ -18,6 +18,11 @@ export type PulseOpts = {
   // facing the other end.
   out?: Side;
   in?: Side;
+  // Never arrives: stops at this share of the way, greys out and fades
+  // (a point sent into no network).
+  fail?: number;
+  // Small dots trailing the main one: many points travelling as one batch.
+  pack?: number;
 };
 
 type Side = "left" | "right" | "top" | "bottom";
@@ -100,6 +105,15 @@ export function createPulses(root: HTMLElement, layer: HTMLElement) {
     ring.setAttribute("stroke", color);
     ring.setAttribute("stroke-width", "2.5");
     ring.style.opacity = "0";
+    const trail = Array.from({ length: opts.pack ?? 0 }, (_, j) => {
+      const el = add(document.createElementNS(SVG, "circle"));
+      el.setAttribute("r", String(Math.max(2.5, size * (0.55 - j * 0.06))));
+      el.setAttribute("fill", color);
+      el.setAttribute("stroke", "#fff");
+      el.setAttribute("stroke-width", "1.5");
+      el.style.opacity = "0";
+      return el;
+    });
     let tag: HTMLElement | null = null;
     if (opts.label) {
       tag = add(document.createElement("span"), layer);
@@ -124,9 +138,16 @@ export function createPulses(root: HTMLElement, layer: HTMLElement) {
         y: (a.y + b.y) / 2 + ((b.x - a.x) / (len || 1)) * len * bend,
       };
       const p = st.p;
-      const q = 1 - p;
-      const x = q * q * a.x + 2 * q * p * c.x + p * p * b.x;
-      const y = q * q * a.y + 2 * q * p * c.y + p * p * b.y;
+      const bez = (p: number) => {
+        const q = 1 - p;
+        return [q * q * a.x + 2 * q * p * c.x + p * p * b.x, q * q * a.y + 2 * q * p * c.y + p * p * b.y];
+      };
+      const [x, y] = bez(Math.min(1, p)); // a batch head waits at the end for its trail
+      trail.forEach((el, j) => {
+        const [tx, ty] = bez(Math.min(1, Math.max(0, p - (j + 1) * 0.055)));
+        el.setAttribute("cx", String(tx));
+        el.setAttribute("cy", String(ty));
+      });
       wire.setAttribute("d", `M${a.x} ${a.y}Q${c.x} ${c.y} ${b.x} ${b.y}`);
       wire.setAttribute("stroke-dasharray", `${p} 1`);
       for (const el of [dot, halo]) {
@@ -141,17 +162,30 @@ export function createPulses(root: HTMLElement, layer: HTMLElement) {
     };
 
     const tl = gsap.timeline({ onUpdate: draw });
+    const duration = opts.duration ?? 1;
     tl.set(dot, { opacity: 1 }, 0);
     tl.set(halo, { opacity: 0.22 }, 0);
     tl.set(wire, { opacity: 0.55 }, 0);
-    if (tag) tl.fromTo(tag, { opacity: 0 }, { opacity: 1, duration: 0.2 }, (opts.duration ?? 1) * 0.2);
-    tl.to(st, { p: 1, duration: opts.duration ?? 1, ease: "power1.inOut" }, 0);
-    tl.set(st, { ring: 0.9 });
-    tl.to(st, { r: size * 4, ring: 0, duration: 0.55, ease: "power2.out" });
-    tl.to([dot, halo], { opacity: 0, duration: 0.25 }, "<");
+    if (trail.length) tl.set(trail, { opacity: 0.9 }, 0.05);
+    if (tag) tl.fromTo(tag, { opacity: 0 }, { opacity: 1, duration: 0.2 }, duration * 0.2);
+    if (opts.fail != null) {
+      // runs out of road: slows down, turns grey and fades where it stopped
+      tl.to(st, { p: opts.fail, duration: duration * opts.fail * 1.3, ease: "power2.out" }, 0);
+      tl.set([dot, halo], { attr: { fill: "#94a3b8" } });
+      tl.set(wire, { attr: { stroke: "#94a3b8" } }, "<");
+      tl.to([dot, halo, ...trail], { opacity: 0, duration: 0.6, ease: "power1.in" }, "+=0.15");
+      tl.to(wire, { opacity: 0, duration: 0.5 }, "<");
+    } else {
+      tl.to(st, { p: 1 + (trail.length ? (trail.length + 1) * 0.055 : 0), duration, ease: "power1.inOut" }, 0);
+      // the ring goes off when the head arrives (p = 1), the trail drains in after it
+      tl.set(st, { ring: 0.9 }, trail.length ? duration * 0.82 : duration);
+      tl.to(st, { r: size * 4, ring: 0, duration: 0.55, ease: "power2.out" }, ">");
+      tl.to([dot, halo], { opacity: 0, duration: 0.25 }, "<");
+      if (trail.length) tl.to(trail, { opacity: 0, duration: 0.25 }, duration - 0.05);
+      tl.to(wire, { opacity: 0, duration: 0.5 }, "<0.1");
+    }
     if (tag) tl.to(tag, { opacity: 0, duration: 0.25 }, "<");
-    tl.to(wire, { opacity: 0, duration: 0.5 }, "<0.1");
-    tl.call(() => drop(wire, halo, dot, ring, ...(tag ? [tag] : [])));
+    tl.call(() => drop(wire, halo, dot, ring, ...trail, ...(tag ? [tag] : [])));
     draw();
     return tl;
   }
