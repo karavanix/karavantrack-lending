@@ -22,6 +22,7 @@
   --pz: 1;
   --rz: 1;
   --strip-h: 76px;
+  --rtile-h: 68px;
 }
 
 .probe {
@@ -466,6 +467,9 @@
 }
 .card[data-side="R"] {
   left: calc(66.667vw - 32px - var(--cw));
+}
+.deck {
+  display: contents;
 }
 .meta {
   display: flex;
@@ -1741,6 +1745,39 @@
 .line .snap {
   border-radius: 4px;
 }
+/* The tile has room for one badge and the connection line: the badge only
+   takes its own width, and "In transit" is left to the connection line,
+   which says the same and more ("Stopped since 12:10"). */
+.tile .badge {
+  justify-self: start;
+}
+.tile .badge[data-on="0"],
+.tile .conn[data-on="0"],
+.tile .badge[data-tone="transit"] {
+  display: none;
+}
+/* Where the connection line is too long for the tile ("12:10 dan beri
+   turibdi"), it wraps to a second line instead of losing the time. */
+.tile .line:has(.conn) {
+  white-space: normal;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+.tile .line:has(.conn) > .stack {
+  flex: none;
+}
+.tile .line:has(.conn) > .stack:last-child {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.tile .conn {
+  white-space: normal;
+  line-height: 1.2;
+  font-size: 12px;
+}
+.tile .conn > * {
+  flex: none;
+}
 .td[data-active="phone"] [data-tile="phone"],
 .td[data-active="panel"] [data-tile="panel"] {
   flex-grow: 2.6;
@@ -1850,6 +1887,12 @@
   .rail {
     display: none;
   }
+  /* on tablets the strip and the cards share one column */
+  .strip {
+    width: calc(100% - 20px);
+    max-width: 620px;
+    margin: 0 auto;
+  }
   .stripRail {
     display: block;
     position: absolute;
@@ -1862,7 +1905,7 @@
     --cw: auto;
     left: 16px;
     right: 16px;
-    max-width: 560px;
+    max-width: 620px;
     margin-inline: auto;
     width: auto;
     top: calc(var(--a) * 100svh + 64px);
@@ -1870,12 +1913,55 @@
     padding: 16px 18px 18px;
     gap: 8px;
   }
-  .card[data-hold="1"] {
-    top: calc(var(--a) * 100svh + 64px);
+  /* Chapter cards dock just above the strip and swap with the chapter: a
+     card scrolling with the map would cross the truck, which the camera
+     holds at a fixed height. */
+  .deck {
+    display: block;
+    position: sticky;
+    top: calc(100svh - var(--strip-h) - 12px - 10px);
+    height: 0;
+  }
+  .deck .card,
+  .deck .card[data-side="R"],
+  .deck .card[data-hold="1"] {
+    top: auto;
+    bottom: 0;
+    left: 10px;
+    right: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(14px);
+    transition:
+      opacity 0.35s ease,
+      visibility 0.35s,
+      transform 0.35s ease;
+  }
+  .td[data-ch="0"] .card[data-i="0"],
+  .td[data-ch="1"] .card[data-i="1"],
+  .td[data-ch="2"] .card[data-i="2"],
+  .td[data-ch="3"] .card[data-i="3"],
+  .td[data-ch="4"] .card[data-i="4"],
+  .td[data-ch="5"] .card[data-i="5"],
+  .td[data-ch="6"] .card[data-i="6"],
+  .td[data-ch="7"] .card[data-i="7"],
+  .td[data-ch="8"] .card[data-i="8"],
+  .td[data-ch="9"] .card[data-i="9"] {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+  /* chapter 8: the receiver's tile takes the row above the strip */
+  .td[data-ch="8"]:not([data-receiver="0"]) .card[data-i="8"] {
+    transform: translateY(calc(-1 * var(--rtile-h) - 8px));
+  }
+  /* the hero has no strip under it: it sits at the very bottom */
+  .td[data-ch="0"] .card[data-i="0"] {
+    transform: translateY(calc(var(--strip-h) + 12px));
   }
   .hero {
-    top: calc(var(--a) * 100svh + 60px) !important;
-    padding: 20px 20px 18px;
+    padding: 18px 20px 16px;
+    gap: 12px;
   }
   .title {
     font-size: 1.4rem;
@@ -1901,8 +1987,15 @@
     display: none;
   }
   .rLoading svg,
-  .park[data-on="1"] i {
+  .park[data-on="1"] i,
+  .pin[data-on="1"] i,
+  .hint svg,
+  .td [data-tower] i {
     animation: none;
+  }
+  /* the phone's cards swap without sliding */
+  .deck .card {
+    transition-property: opacity, visibility;
   }
   .td[data-conn="moving"] .wake {
     animation: none;

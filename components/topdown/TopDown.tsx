@@ -490,40 +490,45 @@ export function TopDown() {
       </div>
 
       <div className={s.cards}>
-        <article className={`${s.card} ${s.hero}`} data-side="L" style={{ "--a": anchorOf(0) } as React.CSSProperties}>
-          <h1 className={s.heroTitle}>{t("hero.title")}</h1>
-          <p className={s.heroSub}>{t("hero.subtitle")}</p>
-          <div className={s.ctas}>
-            <a className={s.ctaPrimary} href={SITE.register}>
-              {t("hero.cta")} <ArrowRight size={18} />
-            </a>
-            <a className={s.ctaGhost} href="#drivers">
-              {t("hero.driver")}
-            </a>
-          </div>
-          <span className={s.hint}>
-            <ArrowDown size={16} /> {t("scroll")}
-          </span>
-        </article>
-        {chapters.map((c, j) => {
-          const i = j + 1;
-          return (
-            <article
-              key={i}
-              className={s.card}
-              data-side={CHAPTERS[i].side}
-              data-hold={CHAPTERS[i].hold ? "1" : "0"}
-              style={{ "--a": anchorOf(i) } as React.CSSProperties}
-            >
-              <div className={s.meta}>
-                <span className={s.time}>{fmtClock(CHAPTERS[i].minute)}</span>
-                <span>{t("chapterOf", { n: i, total: K - 1 })}</span>
-              </div>
-              <h2 className={s.title}>{c.title}</h2>
-              <p className={s.text}>{c.text}</p>
-            </article>
-          );
-        })}
+        {/* phone: the cards dock at the bottom, one per chapter, so they
+            never scroll across the truck */}
+        <div className={s.deck}>
+          <article className={`${s.card} ${s.hero}`} data-i={0} data-side="L" style={{ "--a": anchorOf(0) } as React.CSSProperties}>
+            <h1 className={s.heroTitle}>{t("hero.title")}</h1>
+            <p className={s.heroSub}>{t("hero.subtitle")}</p>
+            <div className={s.ctas}>
+              <a className={s.ctaPrimary} href={SITE.register}>
+                {t("hero.cta")} <ArrowRight size={18} />
+              </a>
+              <a className={s.ctaGhost} href="#drivers">
+                {t("hero.driver")}
+              </a>
+            </div>
+            <span className={s.hint}>
+              <ArrowDown size={16} /> {t("scroll")}
+            </span>
+          </article>
+          {chapters.map((c, j) => {
+            const i = j + 1;
+            return (
+              <article
+                key={i}
+                className={s.card}
+                data-i={i}
+                data-side={CHAPTERS[i].side}
+                data-hold={CHAPTERS[i].hold ? "1" : "0"}
+                style={{ "--a": anchorOf(i) } as React.CSSProperties}
+              >
+                <div className={s.meta}>
+                  <span className={s.time}>{fmtClock(CHAPTERS[i].minute)}</span>
+                  <span>{t("chapterOf", { n: i, total: K - 1 })}</span>
+                </div>
+                <h2 className={s.title}>{c.title}</h2>
+                <p className={s.text}>{c.text}</p>
+              </article>
+            );
+          })}
+        </div>
       </div>
 
       <div className={s.rail}>

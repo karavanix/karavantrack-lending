@@ -9,7 +9,7 @@
 // bottom.
 
 import { memo, useMemo } from "react";
-import { anchorOf, CHAPTERS, DEPOT_END, K, OFFLINE_FROM, OFFLINE_TO, STOP } from "./chapters";
+import { anchorOf, CAMERA, CHAPTERS, DEPOT_END, K, OFFLINE_FROM, OFFLINE_TO, STOP } from "./chapters";
 import { DASH_SHIFT, dashRanges, minuteAt, type Layout, type Road } from "./road";
 import s from "./topdown.module.css";
 
@@ -337,8 +337,10 @@ function build(L: Layout, road: Road) {
       const uy = tx * Math.sin(a) + ty * Math.cos(a);
       return { x: p.x + ux * R * dir, y: p.y + uy * R * dir, R };
     };
-    // narrow screens: chapter cards sit right under the truck, keep out of them
-    const underCard = (y: number) => !L.wide && L.anchors.some((ay) => y > ay + 30 && y < ay + 360);
+    // narrow screens: the chapter card and the strip take the bottom ~330 px
+    // of the screen while the truck stands at its bend; keep out of them
+    const underCard = (y: number) =>
+      !L.wide && L.anchors.some((ay) => y > ay + (1 - CAMERA) * L.vh - 330 && y < ay + (1 - CAMERA) * L.vh);
     const fits = (c: { x: number; y: number; R: number }) =>
       c.x > 28 && c.x < L.roadW - 28 && !underCard(c.y) &&
       roadPts.every((q) => Math.hypot(q.x - c.x, q.y - c.y) > 40 * k) &&

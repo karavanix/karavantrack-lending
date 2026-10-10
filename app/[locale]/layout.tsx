@@ -11,21 +11,21 @@ function hasLocale(value: string): value is (typeof locales)[number] {
 import "../globals.css";
 
 const onest = Onest({
-  subsets: ["latin", "latin-ext", "cyrillic"],
+  subsets: ["latin", "cyrillic"],
   weight: ["600", "700", "800"],
   variable: "--font-onest",
   display: "swap",
 });
 
 const golos = Golos_Text({
-  subsets: ["latin", "latin-ext", "cyrillic"],
+  subsets: ["latin", "cyrillic"],
   weight: ["400", "500", "600"],
   variable: "--font-golos",
   display: "swap",
 });
 
 const mono = JetBrains_Mono({
-  subsets: ["latin", "latin-ext", "cyrillic"],
+  subsets: ["latin", "cyrillic"],
   weight: ["500", "700"],
   variable: "--font-jetbrains",
   display: "swap",
