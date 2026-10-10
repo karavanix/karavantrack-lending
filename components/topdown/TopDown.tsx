@@ -15,14 +15,31 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowDown, ArrowRight } from "lucide-react";
 import s from "./topdown.module.css";
-import { CAMERA, CHAPTERS, K, LEAD, OFFLINE_FROM, OFFLINE_TO, QUEUED, SECTION_SCREENS, anchorOf, fmtClock } from "./chapters";
+import {
+  ARRIVE_MIN,
+  CAMERA,
+  CHAPTERS,
+  DEPOT_END,
+  DROPOFF_AT,
+  K,
+  LEAD,
+  OFFLINE_FROM,
+  OFFLINE_TO,
+  PICKUP_AT,
+  QUEUED,
+  RINGS,
+  ROUTE_KM,
+  SECTION_SCREENS,
+  anchorOf,
+  fmtClock,
+} from "./chapters";
 import { Road, cameraOf, dashRanges, makeLayout, minuteAt, truckY, type Layout } from "./road";
 import { MapArt } from "./MapArt";
 import { Truck } from "./Truck";
 import { Panel, Phone, Strip } from "./Participants";
-import { createWorld, STATE_AFTER, when } from "./world";
+import { createWorld, INITIAL, STATE_AFTER, when } from "./world";
 import { createPulses } from "./pulse";
-import { COLORS, SCENES } from "./scenes";
+import { COLORS, SCENES, heroIntro } from "./scenes";
 import { SITE } from "@/lib/site";
 
 export function TopDown() {
@@ -36,6 +53,11 @@ export function TopDown() {
   const labels = useRef({ telegram: td("pulse.telegram"), batch: td("cab.batch", { count: QUEUED }) });
   const queuedText = useRef((n: number) => td("app.queued", { count: n }));
   queuedText.current = (n: number) => td("app.queued", { count: n });
+  const fmt = useRef<{ eta: (min: number) => string; km: (v: number) => string }>(null!);
+  fmt.current = {
+    eta: (min) => td("cab.etaValue", { h: Math.floor(min / 60), m: min % 60 }),
+    km: (v) => td("cab.km", { v }),
+  };
 
   // Measure one screen (100svh, steady while mobile browser bars come and go).
   useEffect(() => {
@@ -80,6 +102,9 @@ export function TopDown() {
     const queuedPills = qa("[data-queued]");
     const queuedTexts = qa("[data-bind='queued']");
     const clocks = qa("[data-bind='clock']");
+    const planClip = q<SVGRectElement>("[data-plan-clip]");
+    const binds = { speed: qa("[data-bind='speed']"), eta: qa("[data-bind='eta']"), km: qa("[data-bind='km']"), battery: qa("[data-bind='battery']") };
+    const flashes = qa("[data-flash]");
 
     // The phone in the desktop column shrinks to fit what is left under the panel.
     if (L.wide) {
@@ -93,12 +118,24 @@ export function TopDown() {
     const lStart = road.lenAt(L.anchors[2]); // tracking starts once the load is accepted
     const lOff = road.lenAt(anchorOf(OFFLINE_FROM) * L.vh);
     const lOn = road.lenAt(anchorOf(OFFLINE_TO) * L.vh);
+    const yPin = anchorOf(PICKUP_AT) * L.vh;
+    const lPin = road.lenAt(yPin);
+    const lDrop = road.lenAt(anchorOf(DROPOFF_AT) * L.vh);
+    const lGate = road.lenAt(anchorOf(DEPOT_END) * L.vh); // kilometres count from the depot gate
     let lastDash = "";
+    let lastPlan = "";
     let lastClock = "";
     let lastQueued = -1;
     let lastCam = L.anchors[0];
-    // Share of the queued points already delivered (0 → 1 in chapter 7's wave).
-    const track = { wave: 0 };
+    const lastBind: Record<string, string> = {};
+    const bind = (name: keyof typeof binds, text: string) => {
+      if (lastBind[name] === text) return;
+      lastBind[name] = text;
+      for (const el of binds[name]) el.textContent = text;
+    };
+    // Share of the queued points already delivered (0 → 1 in chapter 7's
+    // wave) and of the planned route drawn so far (0 → 1 in chapter 1).
+    const track = { wave: 0, plan: 0 };
 
     const draw = (cam: number) => {
       lastCam = cam;
@@ -123,6 +160,26 @@ export function TopDown() {
           if (l > lOn) ranges.push([lOn, l]); // fresh points after the tower go straight
         }
       }
+      // The plan runs from the pickup point down to where it has drawn so
+      // far; once the truck is tracked, only the part still ahead of it.
+      const plan = track.plan
+        ? `${(l > lStart ? y : yPin).toFixed(1)} ${road.yAtLen(lPin + (lDrop - lPin) * track.plan).toFixed(1)}`
+        : "0 0";
+      if (plan !== lastPlan) {
+        lastPlan = plan;
+        const [top, bottom] = plan.split(" ").map(Number);
+        planClip.setAttribute("y", String(top));
+        planClip.setAttribute("height", String(Math.max(0, bottom - top)));
+      }
+
+      // The carrier card's telemetry. Only shown while moving, so it may
+      // as well be worked out from where the truck is.
+      const km = Math.round(ROUTE_KM * Math.min(1, Math.max(0, (l - lGate) / (lDrop - lGate))));
+      const speed = Math.round(71 + 8 * Math.sin(l / 160) + 4 * Math.sin(l / 41));
+      bind("speed", String(speed));
+      bind("km", fmt.current.km(km));
+      bind("eta", fmt.current.eta(Math.round(((ROUTE_KM - km) / speed) * 60)));
+
       const dash = dashRanges(ranges, road.total);
       if (dash !== lastDash) {
         lastDash = dash;
@@ -166,10 +223,13 @@ export function TopDown() {
         pend.dataset.on = "1";
       } else pend.dataset.on = "0";
 
-      const clock = fmtClock(minuteAt(cam, L));
+      const minute = minuteAt(cam, L);
+      const clock = fmtClock(minute);
       if (clock !== lastClock) {
         lastClock = clock;
         for (const el of clocks) el.textContent = clock;
+        // the phone runs down a little over the day: 92% → about 66% by dusk
+        bind("battery", String(Math.round(Math.min(92, 92 - ((minute - 8 * 60) * 26) / (ARRIVE_MIN - 8 * 60)))));
       }
     };
 
@@ -188,7 +248,18 @@ export function TopDown() {
     const resetPresses = () => {
       gsap.set(qa("[data-press]"), { scale: 1, attr: { "data-hot": "0" } });
       gsap.set(qa("[data-ripple]"), { opacity: 0 });
+      gsap.set(flashes, { opacity: 0 });
     };
+
+    // Chapter 1: the planned route draws itself from the pickup point down.
+    const plan = (duration: number) =>
+      gsap.timeline().fromTo(track, { plan: 0 }, { plan: 1, duration, ease: "power1.inOut", onUpdate: () => draw(lastCam) });
+    // Chapter 3: the driver photographs the waybill.
+    const flash = () =>
+      gsap
+        .timeline()
+        .fromTo(flashes, { opacity: 0 }, { opacity: 0.95, duration: 0.06 })
+        .to(flashes, { opacity: 0, duration: 0.5, ease: "power2.out" });
 
     // Chapter 7: the queued points arrive and turn blue from where the
     // network dropped up to the truck.
@@ -196,7 +267,7 @@ export function TopDown() {
       // fast where the drop point is off screen above, slow near the truck
       gsap.timeline().to(track, { wave: 1, duration, ease: "power2.out", onUpdate: () => draw(lastCam) });
 
-    const ctx = { world, pulses, press, restore, labels: labels.current, wide: L.wide };
+    const ctx = { world, pulses, press, plan, flash, restore, labels: labels.current, wide: L.wide };
     let scene: gsap.core.Timeline | null = null;
     const stop = () => {
       scene?.kill();
@@ -213,6 +284,7 @@ export function TopDown() {
       const from = playing ? { ...STATE_AFTER[i - 1], ch: i } : STATE_AFTER[i];
       world.set(from);
       track.wave = from.sync === "1" ? 1 : 0;
+      track.plan = from.plan === "1" ? 1 : 0;
       draw(lastCam);
       if (playing) scene = sceneOf!(ctx);
     };
@@ -232,7 +304,16 @@ export function TopDown() {
       }
     };
     const stream = window.setInterval(tick, 1300);
-    world.set(STATE_AFTER[0]);
+
+    // Opened at the top: the hero's intro plays once (the dispatcher asks,
+    // the question is struck out). Anywhere else the triggers below decide.
+    const top = root.getBoundingClientRect().top;
+    const firstAt = L.anchors[1] - (LEAD + CAMERA) * L.vh;
+    if (!reduce && -top < firstAt) {
+      world.set(INITIAL);
+      scene = heroIntro(ctx);
+    } else world.set(STATE_AFTER[0]);
+    track.plan = 0;
 
     const sc = gsap.context(() => {
       const cam = { s: L.anchors[0] };
@@ -273,7 +354,11 @@ export function TopDown() {
   }, [L, road]);
 
   const chapters = t.raw("chapters") as { title: string; text: string }[];
-  const first = L && road ? road.at(road.lenAt(L.anchors[2])) : null;
+  const at = (pos: number) => (L && road ? road.at(road.lenAt(anchorOf(pos) * L.vh)) : null);
+  const first = at(2);
+  const pin = at(PICKUP_AT);
+  const drop = at(DROPOFF_AT);
+  const rings = RINGS.map(at);
 
   return (
     <section
@@ -282,6 +367,7 @@ export function TopDown() {
       className={s.td}
       data-ch="0"
       data-active="none"
+      data-intro="0"
       style={{ height: `${SECTION_SCREENS * 100}svh` }}
     >
       <div ref={probeRef} className={s.probe} aria-hidden />
@@ -299,6 +385,39 @@ export function TopDown() {
         <span className={s.pend} data-pend data-on="0">
           {td("map.onPhone")}
         </span>
+
+        {/* the load's points as the cabinet marks them: a dot with a tag */}
+        {pin && drop && L && (
+          <>
+            <span className={s.spot} data-anchor="pin" style={{ left: pin.x, top: pin.y }} />
+            <span className={s.pin} data-tone="pickup" {...when("plan=1")} style={{ left: pin.x, top: pin.y }}>
+              <b>{td("cab.pickup")}</b>
+              <i />
+            </span>
+            <span className={s.pin} data-tone="dropoff" {...when("plan=1")} style={{ left: drop.x, top: drop.y }}>
+              <b>{td("cab.dropoff")}</b>
+              <i />
+            </span>
+            <span
+              className={s.estimate}
+              data-side={pin.x < L.roadW / 2 ? "r" : "l"}
+              {...when("plan=1; ch=1|2")}
+              style={{ left: pin.x, top: pin.y }}
+            >
+              {td("cab.formEstimate")}
+            </span>
+          </>
+        )}
+        {/* driver's step rings: where the phone was when the button was pressed */}
+        {rings.map(
+          (p, i) =>
+            p && (
+              <span key={i}>
+                <span className={s.spot} data-anchor={`ring-${i}`} style={{ left: p.x, top: p.y }} />
+                <span className={s.ring} data-tone={i ? "transit" : "pickup"} {...when(i ? "rings=2" : "rings=1|2")} style={{ left: p.x, top: p.y }} />
+              </span>
+            ),
+        )}
       </div>
 
       <div className={s.cards}>

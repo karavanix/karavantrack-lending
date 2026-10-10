@@ -1,5 +1,9 @@
 // The truck seen from above, nose pointing down (+y). The drawing is centred
-// on (0, 0) so it can be rotated in place along the road.
+// on (0, 0) so it can be rotated in place along the road. While it is on the
+// move, air streams past the trailer (CSS), so it still reads as driving when
+// the scroll stops.
+
+import s from "./topdown.module.css";
 
 export const TRUCK_W = 34;
 export const TRUCK_H = 92;
@@ -7,6 +11,12 @@ export const TRUCK_H = 92;
 export function Truck() {
   return (
     <svg viewBox="-17 -46 34 92" width={TRUCK_W} height={TRUCK_H} aria-hidden>
+      <g className={s.wake}>
+        <path d="M-17 -30V-62" />
+        <path d="M17 -18V-58" />
+        <path d="M-17 4V-20" />
+        <path d="M17 12V-8" />
+      </g>
       {/* shadow, thrown down-right */}
       <rect x="-11" y="-40" width="26" height="85" rx="4" fill="#1f2a37" opacity="0.18" transform="translate(4 4)" />
       {/* trailer */}

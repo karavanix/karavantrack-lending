@@ -9,7 +9,7 @@
 
 import { memo, useMemo } from "react";
 import { anchorOf, DEPOT_END, OFFLINE_FROM, OFFLINE_TO } from "./chapters";
-import type { Layout, Road } from "./road";
+import { DASH_SHIFT, dashRanges, type Layout, type Road } from "./road";
 import s from "./topdown.module.css";
 
 const C = {
@@ -27,6 +27,7 @@ const C = {
   hills: ["#e9e2d0", "#e2d8c1", "#d9cdb2", "#cfc1a3", "#c4b594", "#f4f1ea"],
   contour: "rgba(120, 100, 70, 0.32)",
   track: "#2563eb",
+  plan: "#64748b",
   pending: "#94a3b8",
   coverage: "#3b82f6",
 };
@@ -323,6 +324,11 @@ export const MapArt = memo(function MapArt({ L, road }: { L: Layout; road: Road 
           <pattern id="td-rows-v" width="8" height="8" patternUnits="userSpaceOnUse">
             <path d="M4 0v8" stroke="#8a9a5b" strokeOpacity="0.16" strokeWidth="2" />
           </pattern>
+          {/* the planned route shows between these heights (TopDown moves them):
+              the road only goes down, so a stretch of it is a band of y */}
+          <clipPath id="td-plan" clipPathUnits="userSpaceOnUse">
+            <rect data-plan-clip x="0" y="0" width={L.vw} height="0" />
+          </clipPath>
           <pattern id="td-cotton" width="9" height="9" patternUnits="userSpaceOnUse">
             <circle cx="2.5" cy="2.5" r="1.6" fill="#fff" />
             <circle cx="7" cy="6.5" r="1.3" fill="#fff" fillOpacity="0.85" />
@@ -443,9 +449,20 @@ export const MapArt = memo(function MapArt({ L, road }: { L: Layout; road: Road 
         <path d={road.d} fill="none" stroke={C.road} strokeWidth={17 * k} strokeLinecap="round" strokeLinejoin="round" />
         <path d={road.d} fill="none" stroke={C.dash} strokeWidth={1.6 * k} strokeDasharray="10 12" />
 
+        {/* the planned route, pickup → dropoff, as the cabinet draws it: grey dots */}
+        <path
+          d={road.d}
+          fill="none"
+          stroke={C.plan}
+          strokeWidth={4.2 * k}
+          strokeLinecap="round"
+          strokeDasharray={`0 ${(11 * k).toFixed(1)}`}
+          clipPath="url(#td-plan)"
+        />
+
         {/* the track, drawn by TopDown along the same path */}
-        <path data-track="casing" d={road.d} fill="none" stroke="#fff" strokeWidth={10 * k} strokeLinecap="round" strokeDasharray={`0 ${road.total + 1}`} />
-        <path data-track="line" d={road.d} fill="none" stroke={C.track} strokeWidth={5.5 * k} strokeLinecap="round" strokeDasharray={`0 ${road.total + 1}`} />
+        <path data-track="casing" d={road.d} fill="none" stroke="#fff" strokeWidth={10 * k} strokeLinecap="round" strokeDasharray={dashRanges([], road.total)} strokeDashoffset={DASH_SHIFT} />
+        <path data-track="line" d={road.d} fill="none" stroke={C.track} strokeWidth={5.5 * k} strokeLinecap="round" strokeDasharray={dashRanges([], road.total)} strokeDashoffset={DASH_SHIFT} />
         <g data-track="dots">
           {a.dots.map((l, i) => {
             const p = road.at(l);

@@ -7,19 +7,26 @@
 // into a chapter starts from STATE_AFTER[i - 1] and its scene walks to
 // STATE_AFTER[i]; scrolling back jumps to the earlier state.
 
-type Status = "none" | "created" | "accepted" | "loaded" | "transit" | "delivered";
+type Status = "none" | "created" | "accepted" | "picking" | "loaded" | "transit" | "delivered";
 
 export type World = {
   ch: number; // current chapter
+  intro: "0" | "1" | "2"; // hero: nothing yet, the dispatcher asks, the question is struck out
   active: "none" | "panel" | "phone"; // who acts right now
   status: Status; // as the cabinet shows it
   pstatus: Status; // as the driver's app shows it (it knows first)
   carrier: "0" | "1"; // a driver is on the load
   conn: "none" | "last" | "moving" | "stopped" | "nodata";
-  slot: "hero" | "invite" | "link" | "copied" | "none" | "share"; // dispatcher's action area
+  slot: "hero" | "form" | "invite" | "link" | "copied" | "none" | "share"; // dispatcher's action area
+  form: "empty" | "link" | "addr"; // "Create new load": pickup field before / after the pasted link
+  plan: "0" | "1"; // pickup, dropoff and the planned route are on the map
+  note: "none" | "loaded"; // notification in the cabinet
   screen: "idle" | "invite" | "active"; // driver's phone
   act: "beginPickup" | "confirmPickup" | "startTransit" | "beginDropoff" | "confirmDropoff" | "none"; // next button on the phone
   toast: "none" | "accepted";
+  hand: "0" | "1"; // the driver is pressing buttons (the phone strip shows them)
+  photo: "0" | "1"; // a photo is attached to the next step
+  rings: "0" | "1" | "2"; // driver's step rings on the map
   gps: "0" | "1";
   net: "1" | "0"; // phone has mobile network
   sync: "0" | "1"; // the points queued on the pass have reached the server
@@ -29,15 +36,22 @@ export type World = {
 
 const base: World = {
   ch: 0,
+  intro: "2",
   active: "none",
   status: "none",
   pstatus: "none",
   carrier: "0",
   conn: "none",
   slot: "hero",
+  form: "empty",
+  plan: "0",
+  note: "none",
   screen: "idle",
   act: "none",
   toast: "none",
+  hand: "0",
+  photo: "0",
+  rings: "0",
   gps: "0",
   net: "1",
   sync: "0",
@@ -45,14 +59,14 @@ const base: World = {
   first: "0",
 };
 
-// Chapters past 2 are rough placeholders for now: their own sessions will
+// Chapters 5, 8 and 9 are rough placeholders for now: their own session will
 // give them scenes and refine what changes.
 const steps: Partial<World>[] = [
   {},
-  { status: "created", slot: "invite" },
+  { status: "created", slot: "invite", form: "addr", plan: "1" },
   { status: "accepted", carrier: "1", slot: "none", screen: "active", act: "beginPickup", gps: "1", conn: "last", first: "1" },
-  { status: "loaded", act: "startTransit" },
-  { status: "transit", act: "beginDropoff", conn: "moving" },
+  { status: "loaded", act: "startTransit", rings: "1" },
+  { status: "transit", act: "beginDropoff", conn: "moving", rings: "2" },
   { conn: "stopped" },
   { conn: "nodata", net: "0" },
   { conn: "moving", net: "1", sync: "1" },
@@ -63,7 +77,7 @@ const steps: Partial<World>[] = [
 export const STATE_AFTER: World[] = steps.reduce<World[]>((acc, step, i) => {
   const prev = acc[i - 1] ?? base;
   const status = step.status ?? prev.status;
-  acc.push({ ...prev, ...step, status, pstatus: status, ch: i, active: "none", toast: "none", batch: "0" });
+  acc.push({ ...prev, ...step, status, pstatus: status, ch: i, active: "none", toast: "none", batch: "0", note: "none", hand: "0", photo: "0" });
   return acc;
 }, []);
 
@@ -77,11 +91,15 @@ const parse = (when: string): Cond =>
 
 const holds = (cond: Cond, state: World) => cond.every(([k, vs]) => vs.includes(String(state[k])));
 
-// Props for a conditional element, already right for the first chapter so the
-// server-rendered page shows the opening state.
+// The page opens before the hero's little intro: the dispatcher hasn't asked
+// yet. Without motion it goes straight to STATE_AFTER[0].
+export const INITIAL: World = { ...STATE_AFTER[0], intro: "0" };
+
+// Props for a conditional element, already right for the opening state so
+// the server-rendered page shows it.
 export const when = (cond: string) => ({
   "data-when": cond,
-  "data-on": holds(parse(cond), STATE_AFTER[0]) ? "1" : "0",
+  "data-on": holds(parse(cond), INITIAL) ? "1" : "0",
 });
 
 export function createWorld(root: HTMLElement) {

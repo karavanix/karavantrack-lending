@@ -53,6 +53,20 @@ export const QUEUED = 268;
 // Depot compound in Tashkent ends a bit after the loading dock bend.
 export const DEPOT_END = 3.45;
 
+// The load's planned points on the road: pickup at the depot just behind
+// where the truck waits in chapter 1 (in view on every screen), dropoff at
+// the Fergana depot. The cabinet's route plan runs between them.
+export const PICKUP_AT = 0.82;
+export const DROPOFF_AT = 9.16;
+export const ROUTE_KM = 318;
+
+// Driver's step rings: "Cargo loaded" where the truck stands at the dock,
+// "Start transit" where the truck is when chapter 4 begins.
+export const RINGS = [3, 4 - LEAD];
+
+// Dropoff time: the cabinet's ETA counts down to it.
+export const ARRIVE_MIN = CHAPTERS[K - 1].minute;
+
 export function fmtClock(minute: number): string {
   const m = Math.round(minute);
   return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;

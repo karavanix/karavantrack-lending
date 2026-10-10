@@ -167,15 +167,19 @@ export function minuteAt(s: number, L: Layout): number {
 export const cameraOf = (scrollInSection: number, L: Layout) => scrollInSection + CAMERA * L.vh;
 
 // stroke-dasharray that draws only the given [from, to] stretches of a path.
+// The pattern has to open with a gap, i.e. an empty dash, and a round cap
+// would draw that as a dot; so the pattern runs 1 px ahead of the path
+// (stroke-dashoffset="1" on the path) and the dot falls before its start.
+export const DASH_SHIFT = 1;
 export function dashRanges(ranges: [number, number][], total: number): string {
   const out = [0];
-  let pos = 0;
+  let pos = -DASH_SHIFT;
   for (const [a0, b0] of ranges) {
     const a = Math.max(pos, a0);
     const b = Math.max(a, b0);
     out.push(a - pos, b - a);
     pos = b;
   }
-  out.push(total - pos + 1);
+  out.push(total - pos + 10); // and past its end, so it never comes round again
   return out.map((v) => v.toFixed(1)).join(" ");
 }

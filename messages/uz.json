@@ -53,7 +53,7 @@
       },
       {
         "title": "U qanday ketayotganini ko‘rasiz",
-        "text": "Kabinetdagi nuqta mashina bilan birga harakatlanadi: tezlik, bosib o‘tilgan kilometrlar, yetib kelish vaqti va hatto haydovchi telefonining quvvati."
+        "text": "Haydovchi hech narsa qilishi shart emas: telefon nuqtalarni o‘zi yuboradi. Kabinetda tezlik, bosib o‘tilgan kilometrlar, yetib kelish vaqti va hatto telefon quvvati ko‘rinadi."
       },
       {
         "title": "Turibdi, sababi ham aniq",
@@ -152,6 +152,7 @@
     "status": {
       "created": "Yaratilgan",
       "accepted": "Qabul qilingan",
+      "picking": "Yuklanmoqda",
       "loaded": "Yuklandi",
       "transit": "Yo'lda",
       "delivered": "Yetkazildi"
@@ -174,7 +175,22 @@
       "hero": "Aka, qayerdasiz?",
       "batch": "+{count} ta nuqta",
       "noDataHint": "Haydovchining telefoni ancha vaqtdan beri nuqta yubormadi. Ko'pincha mobil tarmoq yo'q bo'ladi: to'plangan nuqtalar tarmoq paydo bo'lganda keladi.",
-      "stoppedHint": "Turganda telefon GPS uchun quvvat sarflamaydi va hech narsa yubormaydi. Mashina yurishi bilan trek davom etadi."
+      "stoppedHint": "Turganda telefon GPS uchun quvvat sarflamaydi va hech narsa yubormaydi. Mashina yurishi bilan trek davom etadi.",
+      "askNote": "Javob endi xaritada",
+      "formTitle": "Yangi yuk yaratish",
+      "formSearch": "Yuklash manzilini qidiring yoki havolani joylang...",
+      "formLink": "https://2gis.uz/tashkent/geo/70030076122…",
+      "formDetected": "📍 2GIS havolasidan joylashuv aniqlandi",
+      "formEstimate": "≈ 318 km · ~5 soat 10 daq",
+      "formSubmit": "Yuk yaratish",
+      "noteTitle": "Yuk yuklandi",
+      "noteBody": "Haydovchi yuklashni tasdiqladi: {title}",
+      "speed": "Tezlik",
+      "eta": "ETA",
+      "driven": "Yo'l bo'yicha masofa",
+      "kmh": "km/soat",
+      "km": "{v} km",
+      "etaValue": "~{h} soat {m} daq"
     },
     "app": {
       "loads": "Yuklar",
@@ -200,7 +216,8 @@
         "beginDropoff": "Tushirishni boshlash",
         "confirmDropoff": "Yetkazishni tasdiqlash"
       },
-      "queued": "{count} ta nuqta yuborilishini kutmoqda"
+      "queued": "{count} ta nuqta yuborilishini kutmoqda",
+      "addPhoto": "Foto qo'shish"
     },
     "pulse": {
       "telegram": "Telegram orqali"

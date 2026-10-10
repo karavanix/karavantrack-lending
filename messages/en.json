@@ -53,7 +53,7 @@
       },
       {
         "title": "You see it moving",
-        "text": "The dot in the cabinet moves with the truck: speed, distance driven, time to arrival, even the battery of the driver’s phone."
+        "text": "The driver doesn’t have to do a thing: the phone sends points on its own. The cabinet shows speed, distance driven, time to arrival, even the phone’s battery."
       },
       {
         "title": "Stopped, and you know why",
@@ -152,6 +152,7 @@
     "status": {
       "created": "Created",
       "accepted": "Accepted",
+      "picking": "Picking Up",
       "loaded": "Picked Up",
       "transit": "In Transit",
       "delivered": "Dropped Off"
@@ -174,7 +175,22 @@
       "hero": "Where are you now?",
       "batch": "{count, plural, =1 {+1 point} other {+# points}}",
       "noDataHint": "The driver's phone hasn't sent points for a while. Usually there's no mobile network: the saved points arrive once it's back.",
-      "stoppedHint": "While the truck stands, the phone saves battery and sends nothing. The track resumes as soon as it moves."
+      "stoppedHint": "While the truck stands, the phone saves battery and sends nothing. The track resumes as soon as it moves.",
+      "askNote": "The answer is on the map now",
+      "formTitle": "Create New Load",
+      "formSearch": "Search pickup address or paste link...",
+      "formLink": "https://2gis.uz/tashkent/geo/70030076122…",
+      "formDetected": "📍 Location detected from 2GIS link",
+      "formEstimate": "≈ 318 km · ~5 h 10 min",
+      "formSubmit": "Create Load",
+      "noteTitle": "Cargo loaded",
+      "noteBody": "The driver confirmed pickup: {title}",
+      "speed": "Speed",
+      "eta": "ETA",
+      "driven": "Distance driven",
+      "kmh": "km/h",
+      "km": "{v} km",
+      "etaValue": "~{h} h {m} min"
     },
     "app": {
       "loads": "Loads",
@@ -200,7 +216,8 @@
         "beginDropoff": "Begin Dropoff",
         "confirmDropoff": "Confirm Delivery"
       },
-      "queued": "{count, plural, =1 {1 point waiting to be sent} other {# points waiting to be sent}}"
+      "queued": "{count, plural, =1 {1 point waiting to be sent} other {# points waiting to be sent}}",
+      "addPhoto": "Add photo"
     },
     "pulse": {
       "telegram": "via Telegram"

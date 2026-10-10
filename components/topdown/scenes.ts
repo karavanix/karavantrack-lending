@@ -11,6 +11,8 @@ export type SceneCtx = {
   world: WorldApi;
   pulses: PulseApi;
   press: (name: string) => gsap.core.Timeline;
+  plan: (duration: number) => gsap.core.Timeline; // the planned route draws itself down the road
+  flash: () => gsap.core.Timeline; // the phone's camera goes off
   restore: (duration: number) => gsap.core.Timeline; // queued points turn blue up to the truck
   labels: { telegram: string; batch: string };
   wide: boolean; // desktop column (panel above the phone) or the phone strip
@@ -22,6 +24,51 @@ export const COLORS = {
   telegram: "#229ed9",
   accept: "#16a34a",
   point: "#2563eb",
+  // the cabinet's colours for the pickup point and the driver's step rings
+  pickup: "#16a34a",
+  transit: "#f59e0b",
+};
+
+type Patch = Parameters<WorldApi["set"]>[0];
+
+// 0 · 07:40 · the hero, once, when the page opens at the top.
+// The dispatcher's usual question pops up in the panel and is struck out:
+// the answer will be on the map. Then the driver's label shows up too, so
+// both participants are introduced before anything happens.
+export const heroIntro = ({ world }: SceneCtx) => {
+  const set = (patch: Patch) => () => world.set(patch);
+  return gsap
+    .timeline()
+    .call(set({ intro: "1" }), [], 0.35)
+    .call(set({ intro: "2" }), [], 1.7);
+};
+
+// 1 · 08:00 · the load is created.
+// Dispatcher: "Create new load" → a 2GIS link pasted into the pickup field
+// turns into the address, the route estimate appears → "Create load" → the
+// panel shows the load, "Created" → impulse to the map: the green pickup
+// point lands at the depot and the grey plan draws itself down the road.
+const created: Scene = ({ world, pulses, press, plan, wide }) => {
+  const end = STATE_AFTER[1];
+  const set = (patch: Patch) => () => world.set(patch);
+  const tl = gsap.timeline();
+  tl.call(set({ active: "panel", slot: "form", form: "empty" }), [], 0.15)
+    .call(set({ form: "link" }), [], 0.95)
+    .call(set({ form: "addr" }), [], 1.75)
+    .add(press("create"), 2.55)
+    .call(set({ status: end.status, slot: end.slot }), [], 2.9)
+    .add(
+      pulses.pulse("panel", "pin", {
+        color: COLORS.pickup,
+        duration: 1.1,
+        ...(wide ? { out: "left", bend: -0.22 } : { out: "top", bend: 0.3 }),
+      }),
+      3.05,
+    )
+    .call(set({ active: "none", plan: end.plan }), [], 4.15)
+    .add(plan(1.6), 4.2)
+    .call(set({ ...end }), [], 6);
+  return tl;
 };
 
 // 2 · 08:06 · the driver comes by link.
@@ -58,6 +105,66 @@ const invite: Scene = ({ world, pulses, press, labels, wide }) => {
     .add(pulses.pulse("phone", "truck", { color: COLORS.point, bend: 0.18, duration: 1.1, size: 4.5 }), 6.45)
     .call(set({ first: end.first, conn: end.conn }), [], 7.55)
     .call(set({ ...end }), [], 8.6);
+  return tl;
+};
+
+// 3 · 09:14 · loaded at the dock.
+// Driver: "Begin pickup" → "Add photo" (the camera flashes, a thumbnail of
+// the waybill) → "Cargo loaded". Two impulses: to the map, where a green
+// ring stays where the truck stands; and to the cabinet: the notification
+// "Cargo loaded" with the photo, status "Picked up".
+const loaded: Scene = ({ world, pulses, press, flash, wide }) => {
+  const end = STATE_AFTER[3];
+  const set = (patch: Patch) => () => world.set(patch);
+  const tl = gsap.timeline();
+  tl.call(set({ active: "phone", hand: "1" }), [], 0.15)
+    .add(press("beginPickup"), 0.4)
+    .call(set({ act: "confirmPickup", pstatus: "picking" }), [], 0.75)
+    .add(press("photo"), 1.35)
+    .add(flash(), 1.7)
+    .call(set({ photo: "1" }), [], 1.95)
+    .add(press("confirmPickup"), 2.75)
+    .call(set({ act: end.act, pstatus: end.pstatus, photo: "0" }), [], 3.1)
+    .add(pulses.pulse("phone", "ring-0", { color: COLORS.pickup, bend: 0.2, duration: 1.05, size: 4.5 }), 3.3)
+    .add(
+      pulses.pulse("phone", "panel-status", {
+        color: COLORS.pickup,
+        duration: 1,
+        ...(wide ? { out: "right", bend: 0.3 } : { out: "top", in: "top", bend: -0.55 }),
+      }),
+      3.45,
+    )
+    .call(set({ rings: end.rings }), [], 4.35)
+    .call(set({ active: "panel", hand: "0", note: "loaded", status: end.status }), [], 4.45)
+    .call(set({ note: "none" }), [], 7.2)
+    .call(set({ ...end }), [], 7.6);
+  return tl;
+};
+
+// 4 · 10:30 · out on the highway (a cruise chapter: the truck doesn't stop).
+// Driver, once: "Start transit" → an amber ring on the map, "In transit" in
+// the cabinet with live speed, ETA and distance. From here on the phone
+// sends points by itself: the stream of small impulses (TopDown) starts as
+// soon as the connection reads "Moving".
+const transit: Scene = ({ world, pulses, press, wide }) => {
+  const end = STATE_AFTER[4];
+  const set = (patch: Patch) => () => world.set(patch);
+  const tl = gsap.timeline();
+  tl.call(set({ active: "phone", hand: "1" }), [], 0.1)
+    .add(press("startTransit"), 0.3)
+    .call(set({ act: end.act, pstatus: end.pstatus }), [], 0.65)
+    .add(pulses.pulse("phone", "ring-1", { color: COLORS.transit, bend: 0.2, duration: 0.95, size: 4.5 }), 0.8)
+    .add(
+      pulses.pulse("phone", "panel-status", {
+        color: COLORS.transit,
+        duration: 0.95,
+        ...(wide ? { out: "right", bend: 0.3 } : { out: "top", in: "top", bend: -0.55 }),
+      }),
+      0.9,
+    )
+    .call(set({ rings: end.rings }), [], 1.75)
+    .call(set({ active: "panel", hand: "0", status: end.status, conn: end.conn }), [], 1.85)
+    .call(set({ ...end }), [], 3.2);
   return tl;
 };
 
@@ -118,4 +225,4 @@ const networkBack: Scene = ({ world, pulses, restore, labels, wide }) => {
   return tl;
 };
 
-export const SCENES: Partial<Record<number, Scene>> = { 2: invite, 6: noNetwork, 7: networkBack };
+export const SCENES: Partial<Record<number, Scene>> = { 1: created, 2: invite, 3: loaded, 4: transit, 6: noNetwork, 7: networkBack };
