@@ -115,7 +115,7 @@
       "eta": "ETA",
       "driven": "Yo'l bo'yicha masofa",
       "kmh": "km/soat",
-      "km": "{v} km",
+      "km": "{v} km",
       "etaValue": "~{h} soat {m} daq",
       "generateTrack": "Kuzatuv havolasini yaratish",
       "trackLink": "app.yool.live/track/9fX2…",
@@ -167,7 +167,15 @@
     "map": {
       "onPhone": "haydovchi telefonida",
       "stop": "To'xtash {m} daq",
-      "stopDone": "To'xtash {m} daq · {from}–{to}"
+      "stopDone": "To'xtash {m} daq · {from}–{to}",
+      "places": {
+        "depot": "Toshkent · 3-ombor",
+        "road": "A373",
+        "chaikhana": "Choyxona",
+        "pass": "Qamchiq dovoni · 2268 m",
+        "valley": "Farg'ona vodiysi",
+        "fergana": "Farg'ona · ulgurji baza"
+      }
     },
     "rcv": {
       "url": "app.yool.live/track/9fX2…",

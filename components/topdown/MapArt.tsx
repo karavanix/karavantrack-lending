@@ -9,7 +9,8 @@
 // bottom.
 
 import { memo, useMemo } from "react";
-import { anchorOf, CAMERA, CHAPTERS, DEPOT_END, K, OFFLINE_FROM, OFFLINE_TO, STOP } from "./chapters";
+import { useTranslations } from "next-intl";
+import { anchorOf, CAMERA, CHAPTERS, DEPOT_END, DROPOFF_AT, K, OFFLINE_FROM, OFFLINE_TO, PICKUP_AT, STOP } from "./chapters";
 import { DASH_SHIFT, dashRanges, minuteAt, type Layout, type Road } from "./road";
 import s from "./topdown.module.css";
 
@@ -50,6 +51,12 @@ type Field = Box & { fill: string; rows: "h" | "v" | "c" };
 type Tree = { x: number; y: number; r: number; fill: string };
 type Hill = { levels: string[] };
 type Chaikhana = Box & { hall: Box; tapchans: Box[]; vines: Box; trees: Tree[] };
+
+// Place names, as a road map writes them: a point of interest with a small
+// square, an area in spaced capitals, a road number in a shield.
+export const PLACES = ["depot", "road", "chaikhana", "pass", "valley", "fergana"] as const;
+type PlaceKey = (typeof PLACES)[number];
+type Label = { key: PlaceKey; kind: "poi" | "area" | "shield"; text: string; x: number; y: number }; // x, y: centre
 
 // Light of the hour, laid over the map: [minute, r, g, b, alpha].
 const LIGHT: [number, number, number, number, number][] = [
@@ -92,7 +99,7 @@ function closedPath(pts: [number, number][]): string {
   return d + "Z";
 }
 
-function build(L: Layout, road: Road) {
+function build(L: Layout, road: Road, names: Record<PlaceKey, string>) {
   const r = rng(2031);
   const Y = (pos: number) => anchorOf(pos) * L.vh;
   const W = L.vw;
@@ -369,13 +376,86 @@ function build(L: Layout, road: Road) {
     });
   }
 
-  return { buildings, fields, trees, parked, hills, grounds, dots, half, depots, towers, fog, chai, lamps, light };
+  // ── place names ───────────────────────────────────────────────────────
+  // Each label goes to the free spot nearest to what it names: off the
+  // road, clear of the chapter cards (desktop), the masts, the chaikhana,
+  // the "P" and the load's tags, and of each other. Sizes are estimated
+  // from the text (the labels are HTML, centred on the spot).
+  const labels: Label[] = [];
+  const taken: Box[] = [];
+  const fs = { poi: L.wide ? 13.5 : 12, area: L.wide ? 14 : 11.5, shield: L.wide ? 10.5 : 10 };
+  const sizeOf = (kind: Label["kind"], text: string) => {
+    const lines = text.split("\n");
+    const n = Math.max(...lines.map((l) => l.length));
+    if (kind === "poi") return { w: 20 + n * 0.58 * fs.poi, h: fs.poi * 1.6 * lines.length };
+    if (kind === "area") return { w: n * 0.86 * fs.area, h: fs.area * 1.4 * lines.length + fs.area * 0.2 };
+    return { w: 14 + n * 0.62 * fs.shield, h: 19 };
+  };
+  if (L.wide) {
+    // chapter cards: left or right in the map's two thirds, centred on their bend
+    CHAPTERS.forEach((c, i) => {
+      const cw = i ? Math.min(400, L.roadW - 120) : Math.min(540, L.roadW - 140);
+      const h = i ? 300 : 360;
+      const cy = L.anchors[i] + (i && c.hold ? 0.07 * L.vh : 0);
+      taken.push({ x: c.side === "L" ? 32 : L.roadW - 32 - cw, y: cy - h / 2, w: cw, h });
+    });
+  }
+  for (const t of towers) taken.push({ x: t.x - 16, y: t.y - 16, w: 32, h: 32 });
+  taken.push(chai);
+  {
+    // the "P" with its minutes, on the side away from the chaikhana
+    const p = road.at(road.lenAt(Y(STOP)));
+    const right = p.x < L.roadW / 2;
+    taken.push({ x: right ? p.x + 8 : p.x - 8 - 200, y: p.y - 16, w: 200, h: 32 });
+    // pickup and dropoff tags above their dots, the route estimate beside pickup
+    for (const pos of [PICKUP_AT, DROPOFF_AT]) {
+      const q = road.at(road.lenAt(Y(pos)));
+      taken.push({ x: q.x - 44, y: q.y - 36, w: 88, h: 46 });
+      if (pos === PICKUP_AT) taken.push({ x: q.x < L.roadW / 2 ? q.x + 10 : q.x - 10 - 210, y: q.y - 14, w: 210, h: 28 });
+    }
+  }
+  // a label that finds no room on one line tries two, broken at " · "
+  const put = (key: PlaceKey, kind: Label["kind"], tx: number, ty: number, dy0: number, dy1: number, text = names[key]): boolean => {
+    const { w, h } = sizeOf(kind, text);
+    const m = kind === "shield" ? 5 * k : 12 * k;
+    let best: { x: number; y: number; cost: number } | null = null;
+    for (let dy = dy0; dy <= dy1; dy += 8) {
+      for (let x = 14 + w / 2; x <= L.roadW - 14 - w / 2; x += 6) {
+        const cost = Math.abs(x - tx) + 1.5 * Math.abs(dy);
+        if (best && cost >= best.cost) continue;
+        const b = { x: x - w / 2, y: ty + dy - h / 2, w, h };
+        if (!clear(b, m) || taken.some((o) => overlaps(o, b, 8))) continue;
+        best = { x, y: ty + dy, cost };
+      }
+    }
+    if (!best) return !text.includes(" · ") ? false : put(key, kind, tx, ty, dy0, dy1, text.replace(" · ", "\n"));
+    labels.push({ key, kind, text, x: best.x, y: best.y });
+    taken.push({ x: best.x - w / 2, y: best.y - h / 2, w, h });
+    return true;
+  };
+  const free = (y: number) => {
+    // the middle of the wider side of the road
+    const x = road.xAt(y);
+    return x < L.roadW / 2 ? (x + L.roadW) / 2 : x / 2;
+  };
+  const vh = L.vh;
+  put("depot", "poi", L.bends[0], Y(0) - 0.15 * vh, -0.1 * vh, 0.1 * vh);
+  put("road", "shield", road.xAt(Y(DEPOT_END + 0.3)), Y(DEPOT_END + 0.3), -0.08 * vh, 0.08 * vh);
+  put("chaikhana", "poi", chai.x + chai.w / 2, chai.y + chai.h + 16, 0, 0.12 * vh);
+  put("pass", "area", free(Y(6.45)), Y(6.45), -0.3 * vh, 0.3 * vh);
+  put("road", "shield", road.xAt(Y(7.62)), Y(7.62), -0.08 * vh, 0.08 * vh);
+  put("valley", "area", free(Y(7.98)), Y(7.98), -0.3 * vh, 0.3 * vh);
+  const dock = buildings.find((b) => b.kind === "dock" && b.y > Y(8));
+  if (dock) put("fergana", "poi", dock.x + dock.w / 2, dock.y - 18, -0.1 * vh, 0.04 * vh);
+
+  return { buildings, fields, trees, parked, hills, grounds, dots, half, depots, towers, fog, chai, lamps, light, labels };
 }
 
 export type Art = ReturnType<typeof build>;
 
 export const MapArt = memo(function MapArt({ L, road }: { L: Layout; road: Road }) {
-  const a = useMemo(() => build(L, road), [L, road]);
+  const t = useTranslations("td.map.places");
+  const a = useMemo(() => build(L, road, Object.fromEntries(PLACES.map((p) => [p, t(p)])) as Record<PlaceKey, string>), [L, road, t]);
   const k = L.k;
   const gate = a.depots[0].y1;
   const gx = road.xAt(gate);
@@ -586,6 +666,12 @@ export const MapArt = memo(function MapArt({ L, road }: { L: Layout; road: Road 
             <path d="M0 -7L6 5H-6Z M0 -7V5 M-3 -1H3 M-4.5 2H4.5" fill="none" stroke="#334155" strokeWidth="1.4" strokeLinejoin="round" />
             <circle cy="-7" r="1.8" fill="#dc2626" />
           </svg>
+        </span>
+      ))}
+      {a.labels.map((p, i) => (
+        <span key={i} className={s.place} data-kind={p.kind} style={{ left: p.x, top: p.y }}>
+          {p.kind === "poi" && <i />}
+          {p.text}
         </span>
       ))}
       <div className={s.light} style={{ height: L.height, background: a.light }} />

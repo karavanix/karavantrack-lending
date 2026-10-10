@@ -115,7 +115,7 @@
       "eta": "ETA",
       "driven": "Distance driven",
       "kmh": "km/h",
-      "km": "{v} km",
+      "km": "{v} km",
       "etaValue": "~{h} h {m} min",
       "generateTrack": "Generate tracking link",
       "trackLink": "app.yool.live/track/9fX2…",
@@ -167,7 +167,15 @@
     "map": {
       "onPhone": "on the driver's phone",
       "stop": "Stop {m} min",
-      "stopDone": "Stop {m} min · {from}–{to}"
+      "stopDone": "Stop {m} min · {from}–{to}",
+      "places": {
+        "depot": "Tashkent · warehouse 3",
+        "road": "A373",
+        "chaikhana": "Chaikhana",
+        "pass": "Kamchik Pass · 2,268 m",
+        "valley": "Fergana Valley",
+        "fergana": "Fergana · wholesale depot"
+      }
     },
     "rcv": {
       "url": "app.yool.live/track/9fX2…",

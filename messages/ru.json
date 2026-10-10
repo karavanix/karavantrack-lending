@@ -115,7 +115,7 @@
       "eta": "Прибытие",
       "driven": "Пробег по дорогам",
       "kmh": "км/ч",
-      "km": "{v} км",
+      "km": "{v} км",
       "etaValue": "~{h} ч {m} мин",
       "generateTrack": "Создать ссылку отслеживания",
       "trackLink": "app.yool.live/track/9fX2…",
@@ -167,7 +167,15 @@
     "map": {
       "onPhone": "в телефоне водителя",
       "stop": "Стоянка {m} мин",
-      "stopDone": "Стоянка {m} мин · {from}–{to}"
+      "stopDone": "Стоянка {m} мин · {from}–{to}",
+      "places": {
+        "depot": "Ташкент · склад 3",
+        "road": "A373",
+        "chaikhana": "Чайхана",
+        "pass": "Перевал Камчик · 2268 м",
+        "valley": "Ферганская долина",
+        "fergana": "Фергана · оптовая база"
+      }
     },
     "rcv": {
       "url": "app.yool.live/track/9fX2…",
