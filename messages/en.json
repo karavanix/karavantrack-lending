@@ -23,7 +23,12 @@
       "stopped": "Stopped since {time}",
       "offline": "No network · points will catch up"
     },
-    "units": { "kmh": "km/h", "km": "km", "h": "h", "min": "min" },
+    "units": {
+      "kmh": "km/h",
+      "km": "km",
+      "h": "h",
+      "min": "min"
+    },
     "hero": {
       "bubbleFrom": "Dispatcher",
       "bubble": "Where are you now?",
@@ -129,6 +134,74 @@
       }
     }
   },
+  "td": {
+    "who": {
+      "dispatcher": "Dispatcher",
+      "driver": "Driver",
+      "receiver": "Receiver"
+    },
+    "load": {
+      "ref": "KT-2031",
+      "title": "Load #KT-2031",
+      "route": "Tashkent → Fergana",
+      "company": "Tashkent Logistics",
+      "from": "Tashkent, Sergeli, warehouse 3",
+      "to": "Fergana, wholesale depot",
+      "driver": "Akmal T."
+    },
+    "status": {
+      "created": "Created",
+      "accepted": "Accepted",
+      "loaded": "Picked Up",
+      "transit": "In Transit",
+      "delivered": "Dropped Off"
+    },
+    "cab": {
+      "carrier": "Carrier",
+      "pickup": "Pickup",
+      "dropoff": "Dropoff",
+      "inviteTab": "Invite by link",
+      "generate": "Generate invite link",
+      "link": "app.yool.live/invite/7Kq2…",
+      "copy": "Copy",
+      "copied": "Link copied to clipboard",
+      "lastPoint": "Last point",
+      "justNow": "just now",
+      "moving": "Moving",
+      "stopped": "Stopped since 12:10",
+      "noData": "No data since 13:05",
+      "share": "Share tracking",
+      "hero": "Where are you now?"
+    },
+    "app": {
+      "loads": "Loads",
+      "invite": "Invite",
+      "noActive": "No active load",
+      "noActiveSub": "New loads will appear here",
+      "offer": "You have been offered a load",
+      "details": "Details",
+      "company": "Company",
+      "pickup": "Pickup",
+      "dropoff": "Dropoff",
+      "accept": "Accept Load",
+      "accepted": "Load accepted!",
+      "activeLoad": "Active Load",
+      "online": "Online",
+      "offline": "Offline",
+      "gpsActive": "GPS active",
+      "gpsWaiting": "GPS: Waiting...",
+      "act": {
+        "beginPickup": "Begin Pickup",
+        "confirmPickup": "Confirm Cargo Loaded",
+        "startTransit": "Start Transit",
+        "beginDropoff": "Begin Dropoff",
+        "confirmDropoff": "Confirm Delivery"
+      }
+    },
+    "pulse": {
+      "telegram": "via Telegram"
+    }
+  },
   "start": {
     "title": "Your first load in three minutes",
     "steps": [
@@ -174,7 +247,12 @@
       "company": "Company",
       "phone": "Phone",
       "fleet": "Trucks in fleet",
-      "fleetOptions": ["1–5", "6–20", "21–50", "50+"],
+      "fleetOptions": [
+        "1–5",
+        "6–20",
+        "21–50",
+        "50+"
+      ],
       "submit": "Send",
       "success": "Thank you! We’ll get back to you within a business day.",
       "error": "Couldn’t send. Try again or write to support@yool.live."

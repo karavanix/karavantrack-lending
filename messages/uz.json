@@ -23,7 +23,12 @@
       "stopped": "{time} dan beri turibdi",
       "offline": "Tarmoq yo‘q · nuqtalar keyin keladi"
     },
-    "units": { "kmh": "km/soat", "km": "km", "h": "soat", "min": "daq" },
+    "units": {
+      "kmh": "km/soat",
+      "km": "km",
+      "h": "soat",
+      "min": "daq"
+    },
     "hero": {
       "bubbleFrom": "Dispetcher",
       "bubble": "Aka, qayerdasiz?",
@@ -129,6 +134,74 @@
       }
     }
   },
+  "td": {
+    "who": {
+      "dispatcher": "Dispetcher",
+      "driver": "Haydovchi",
+      "receiver": "Qabul qiluvchi"
+    },
+    "load": {
+      "ref": "KT-2031",
+      "title": "Yuk #KT-2031",
+      "route": "Toshkent → Farg'ona",
+      "company": "Toshkent Logistik",
+      "from": "Toshkent, Sergeli, 3-ombor",
+      "to": "Farg'ona, ulgurji baza",
+      "driver": "Akmal T."
+    },
+    "status": {
+      "created": "Yaratilgan",
+      "accepted": "Qabul qilingan",
+      "loaded": "Yuklandi",
+      "transit": "Yo'lda",
+      "delivered": "Yetkazildi"
+    },
+    "cab": {
+      "carrier": "Tashuvchi",
+      "pickup": "Yuklash",
+      "dropoff": "Tushirish",
+      "inviteTab": "Havola orqali taklif qilish",
+      "generate": "Taklif havolasini yaratish",
+      "link": "app.yool.live/invite/7Kq2…",
+      "copy": "Nusxalash",
+      "copied": "Havola nusxalandi",
+      "lastPoint": "Oxirgi nuqta",
+      "justNow": "hozirgina",
+      "moving": "Yo'lda",
+      "stopped": "12:10 dan beri turibdi",
+      "noData": "13:05 dan beri ma'lumot yo'q",
+      "share": "Kuzatuvni ulashish",
+      "hero": "Aka, qayerdasiz?"
+    },
+    "app": {
+      "loads": "Yuklar",
+      "invite": "Taklif",
+      "noActive": "Faol yuk yo'q",
+      "noActiveSub": "Yangi yuklar shu yerda paydo bo'ladi",
+      "offer": "Sizga yuk taklif qilindi",
+      "details": "Tafsilotlar",
+      "company": "Kompaniya",
+      "pickup": "Yuklash",
+      "dropoff": "Tushirish",
+      "accept": "Yukni qabul qilish",
+      "accepted": "Yuk qabul qilindi!",
+      "activeLoad": "Faol yuk",
+      "online": "Onlayn",
+      "offline": "Oflayn",
+      "gpsActive": "GPS faol",
+      "gpsWaiting": "GPS: Kutilmoqda...",
+      "act": {
+        "beginPickup": "Yuklashni boshlash",
+        "confirmPickup": "Yuk yuklandi",
+        "startTransit": "Tashishni boshlash",
+        "beginDropoff": "Tushirishni boshlash",
+        "confirmDropoff": "Yetkazishni tasdiqlash"
+      }
+    },
+    "pulse": {
+      "telegram": "Telegram orqali"
+    }
+  },
   "start": {
     "title": "Birinchi yuk uch daqiqada",
     "steps": [
@@ -174,7 +247,12 @@
       "company": "Kompaniya",
       "phone": "Telefon",
       "fleet": "Parkdagi mashinalar",
-      "fleetOptions": ["1–5", "6–20", "21–50", "50+"],
+      "fleetOptions": [
+        "1–5",
+        "6–20",
+        "21–50",
+        "50+"
+      ],
       "submit": "Yuborish",
       "success": "Rahmat! Ish kuni davomida siz bilan bog‘lanamiz.",
       "error": "Yuborib bo‘lmadi. Qayta urinib ko‘ring yoki support@yool.live manziliga yozing."
