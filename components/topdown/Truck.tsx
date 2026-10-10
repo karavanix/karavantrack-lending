@@ -1,7 +1,7 @@
 // The truck seen from above, nose pointing down (+y). The drawing is centred
 // on (0, 0) so it can be rotated in place along the road. While it is on the
 // move, air streams past the trailer (CSS), so it still reads as driving when
-// the scroll stops.
+// the scroll stops. At dusk the headlights come on, until the trip is over.
 
 import s from "./topdown.module.css";
 
@@ -11,6 +11,16 @@ export const TRUCK_H = 92;
 export function Truck() {
   return (
     <svg viewBox="-17 -46 34 92" width={TRUCK_W} height={TRUCK_H} aria-hidden>
+      <defs>
+        <linearGradient id="td-beam" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#fff3c4" stopOpacity="0.95" />
+          <stop offset="1" stopColor="#fff3c4" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <g className={s.beams}>
+        <path d="M-9 42L-22 112H2Z" fill="url(#td-beam)" />
+        <path d="M9 42L22 112H-2Z" fill="url(#td-beam)" />
+      </g>
       <g className={s.wake}>
         <path d="M-17 -30V-62" />
         <path d="M17 -18V-58" />

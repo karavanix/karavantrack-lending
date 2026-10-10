@@ -154,14 +154,25 @@ export function truckY(s: number, L: Layout): number {
   return Math.min(L.anchors[K - 1], Math.max(L.anchors[0], s - lag));
 }
 
+// Camera position at which the truck standing at bend i drives off again.
+export const departOf = (i: number, L: Layout) => L.anchors[i] + (APPROACH / 2 + CHAPTERS[i].hold) * L.vh;
+
 // Trip clock for camera position s: it keeps running while the truck stands.
+// At a chapter with a `stand`, those minutes pass during the hold itself.
 export function minuteAt(s: number, L: Layout): number {
   const { anchors } = L;
   if (s <= anchors[0]) return CHAPTERS[0].minute;
   if (s >= anchors[K - 1]) return CHAPTERS[K - 1].minute;
   const i = Math.min(K - 2, Math.floor((s - anchors[0]) / (STEP * L.vh)));
-  const u = (s - anchors[i]) / (anchors[i + 1] - anchors[i]);
-  return CHAPTERS[i].minute + (CHAPTERS[i + 1].minute - CHAPTERS[i].minute) * u;
+  const m0 = CHAPTERS[i].minute;
+  const m1 = CHAPTERS[i + 1].minute;
+  const stand = CHAPTERS[i].stand;
+  if (stand) {
+    const d = departOf(i, L);
+    if (s < d) return m0 + (stand * (s - anchors[i])) / (d - anchors[i]);
+    return m0 + stand + ((m1 - m0 - stand) * (s - d)) / (anchors[i + 1] - d);
+  }
+  return m0 + ((m1 - m0) * (s - anchors[i])) / (anchors[i + 1] - anchors[i]);
 }
 
 export const cameraOf = (scrollInSection: number, L: Layout) => scrollInSection + CAMERA * L.vh;

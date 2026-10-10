@@ -7,27 +7,30 @@
 // into a chapter starts from STATE_AFTER[i - 1] and its scene walks to
 // STATE_AFTER[i]; scrolling back jumps to the earlier state.
 
-type Status = "none" | "created" | "accepted" | "picking" | "loaded" | "transit" | "delivered";
+type Status = "none" | "created" | "accepted" | "picking" | "loaded" | "transit" | "dropping" | "delivered" | "confirmed";
 
 export type World = {
   ch: number; // current chapter
   intro: "0" | "1" | "2"; // hero: nothing yet, the dispatcher asks, the question is struck out
-  active: "none" | "panel" | "phone"; // who acts right now
+  active: "none" | "panel" | "phone" | "receiver"; // who acts right now
   status: Status; // as the cabinet shows it
   pstatus: Status; // as the driver's app shows it (it knows first)
   carrier: "0" | "1"; // a driver is on the load
-  conn: "none" | "last" | "moving" | "stopped" | "nodata";
-  slot: "hero" | "form" | "invite" | "link" | "copied" | "none" | "share"; // dispatcher's action area
+  conn: "none" | "last" | "moving" | "stopped" | "nodata" | "done"; // done: confirmed, the track is closed
+  // dispatcher's action area
+  slot: "hero" | "form" | "invite" | "link" | "copied" | "none" | "share" | "trackGen" | "trackLink" | "trackCopied" | "confirm" | "history";
   form: "empty" | "link" | "addr"; // "Create new load": pickup field before / after the pasted link
   plan: "0" | "1"; // pickup, dropoff and the planned route are on the map
-  note: "none" | "loaded"; // notification in the cabinet
+  note: "none" | "loaded" | "delivered"; // notification in the cabinet
   screen: "idle" | "invite" | "active"; // driver's phone
   act: "beginPickup" | "confirmPickup" | "startTransit" | "beginDropoff" | "confirmDropoff" | "none"; // next button on the phone
-  toast: "none" | "accepted";
+  toast: "none" | "accepted" | "confirmed";
   hand: "0" | "1"; // the driver is pressing buttons (the phone strip shows them)
   photo: "0" | "1"; // a photo is attached to the next step
-  rings: "0" | "1" | "2"; // driver's step rings on the map
-  gps: "0" | "1";
+  rings: "0" | "1" | "2" | "3"; // driver's step rings on the map
+  gps: "0" | "1" | "rest"; // rest: standing still, the phone doesn't spend battery on GPS
+  park: "0" | "1"; // the lunch stop is marked on the map ("P")
+  receiver: "0" | "1" | "2"; // chapter 8's client: not there, opening the link, watching
   net: "1" | "0"; // phone has mobile network
   sync: "0" | "1"; // the points queued on the pass have reached the server
   batch: "0" | "1"; // the cabinet just got them in one go: "+268 points"
@@ -53,25 +56,25 @@ const base: World = {
   photo: "0",
   rings: "0",
   gps: "0",
+  park: "0",
+  receiver: "0",
   net: "1",
   sync: "0",
   batch: "0",
   first: "0",
 };
 
-// Chapters 5, 8 and 9 are rough placeholders for now: their own session will
-// give them scenes and refine what changes.
 const steps: Partial<World>[] = [
   {},
   { status: "created", slot: "invite", form: "addr", plan: "1" },
   { status: "accepted", carrier: "1", slot: "none", screen: "active", act: "beginPickup", gps: "1", conn: "last", first: "1" },
   { status: "loaded", act: "startTransit", rings: "1" },
   { status: "transit", act: "beginDropoff", conn: "moving", rings: "2" },
-  { conn: "stopped" },
+  { park: "1" }, // the truck has driven off the stop again: see PARKED below
   { conn: "nodata", net: "0" },
   { conn: "moving", net: "1", sync: "1" },
-  { slot: "share" },
-  { status: "delivered", act: "none", conn: "none", gps: "0" },
+  { receiver: "2" }, // shown in chapter 8 only (data-when … ch=8)
+  { status: "confirmed", act: "none", conn: "done", gps: "0", rings: "3", screen: "idle", slot: "history" },
 ];
 
 export const STATE_AFTER: World[] = steps.reduce<World[]>((acc, step, i) => {
@@ -80,6 +83,11 @@ export const STATE_AFTER: World[] = steps.reduce<World[]>((acc, step, i) => {
   acc.push({ ...prev, ...step, status, pstatus: status, ch: i, active: "none", toast: "none", batch: "0", note: "none", hand: "0", photo: "0" });
   return acc;
 }, []);
+
+// Chapter 5 is two halves on the scroll: the truck stands at the chaikhana
+// (PARKED, where the chapter's scene ends) and then drives off once its hold
+// is over (STATE_AFTER[5]). TopDown switches between them at departOf(STOP).
+export const PARKED: World = { ...STATE_AFTER[5], conn: "stopped", gps: "rest" };
 
 type Cond = [keyof World, string[]][];
 

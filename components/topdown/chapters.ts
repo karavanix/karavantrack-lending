@@ -11,6 +11,9 @@ export type Chapter = {
   // Share of a screen the truck stands at its bend while the chapter's scene
   // plays. 0 = it rolls straight through (a "cruise" chapter).
   hold: number;
+  // Trip minutes that pass while the truck stands there: the clock runs fast
+  // through the hold, so a short scroll is a long stop.
+  stand?: number;
 };
 
 export const CHAPTERS: Chapter[] = [
@@ -19,7 +22,7 @@ export const CHAPTERS: Chapter[] = [
   { minute: 8 * 60 + 6, side: "L", hold: 0.2 }, //    2 driver by link
   { minute: 9 * 60 + 14, side: "R", hold: 0.16 }, //  3 loaded, photo
   { minute: 10 * 60 + 30, side: "L", hold: 0 }, //    4 highway
-  { minute: 12 * 60 + 10, side: "R", hold: 0.16 }, // 5 chaikhana
+  { minute: 12 * 60 + 10, side: "R", hold: 0.22, stand: 40 }, // 5 chaikhana
   { minute: 13 * 60 + 5, side: "L", hold: 0 }, //     6 Kamchik pass, no network
   { minute: 13 * 60 + 50, side: "R", hold: 0 }, //    7 network back
   { minute: 15 * 60 + 10, side: "L", hold: 0 }, //    8 client watches
@@ -61,8 +64,17 @@ export const DROPOFF_AT = 9.16;
 export const ROUTE_KM = 318;
 
 // Driver's step rings: "Cargo loaded" where the truck stands at the dock,
-// "Start transit" where the truck is when chapter 4 begins.
-export const RINGS = [3, 4 - LEAD];
+// "Start transit" where the truck is when chapter 4 begins, "Confirm
+// delivery" where it stands at the Fergana depot.
+export const RINGS = [3, 4 - LEAD, 9];
+
+// The lunch stop: the truck stands at the chaikhana's bend, then drives off
+// once that chapter's hold is over (road.ts departOf).
+export const STOP = 5;
+
+// Dusk: the street lamps of the Fergana depot and the truck's headlights
+// come on from this minute.
+export const DUSK_MIN = 16 * 60 + 55;
 
 // Dropoff time: the cabinet's ETA counts down to it.
 export const ARRIVE_MIN = CHAPTERS[K - 1].minute;

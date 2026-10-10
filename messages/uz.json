@@ -155,7 +155,9 @@
       "picking": "Yuklanmoqda",
       "loaded": "Yuklandi",
       "transit": "Yo'lda",
-      "delivered": "Yetkazildi"
+      "delivered": "Yetkazildi",
+      "dropping": "Tushirilmoqda",
+      "confirmed": "Tasdiqlangan"
     },
     "cab": {
       "carrier": "Tashuvchi",
@@ -169,7 +171,7 @@
       "lastPoint": "Oxirgi nuqta",
       "justNow": "hozirgina",
       "moving": "Yo'lda",
-      "stopped": "12:10 dan beri turibdi",
+      "stopped": "{time} dan beri turibdi",
       "noData": "13:05 dan beri ma'lumot yo'q",
       "share": "Kuzatuvni ulashish",
       "hero": "Aka, qayerdasiz?",
@@ -190,7 +192,19 @@
       "driven": "Yo'l bo'yicha masofa",
       "kmh": "km/soat",
       "km": "{v} km",
-      "etaValue": "~{h} soat {m} daq"
+      "etaValue": "~{h} soat {m} daq",
+      "generateTrack": "Kuzatuv havolasini yaratish",
+      "trackLink": "app.yool.live/track/9fX2…",
+      "confirm": "Yetkazib berishni tasdiqlash",
+      "confirmHint": "Haydovchi kuzatuvi tasdiqlaguningizcha davom etadi",
+      "noteDropTitle": "Yuk yetkazildi",
+      "noteDropBody": "Haydovchi yetkazishni yakunladi: {title}",
+      "step": {
+        "pickedUp": "Yuk yuklandi",
+        "inTransit": "Yo'lga chiqdi",
+        "droppedOff": "Yetkazildi"
+      },
+      "etaMin": "~{m} daq"
     },
     "app": {
       "loads": "Yuklar",
@@ -217,13 +231,25 @@
         "confirmDropoff": "Yetkazishni tasdiqlash"
       },
       "queued": "{count} ta nuqta yuborilishini kutmoqda",
-      "addPhoto": "Foto qo'shish"
+      "addPhoto": "Foto qo'shish",
+      "gpsRest": "GPS dam olmoqda",
+      "gpsRestSub": "Mashina turibdi, telefon quvvatni tejaydi",
+      "awaiting": "Jo'natuvchi tasdig'ini kutmoqda",
+      "confirmed": "Yuk tasdiqlandi"
     },
     "pulse": {
       "telegram": "Telegram orqali"
     },
     "map": {
-      "onPhone": "haydovchi telefonida"
+      "onPhone": "haydovchi telefonida",
+      "stop": "To'xtash {m} daq",
+      "stopDone": "To'xtash {m} daq · {from}–{to}"
+    },
+    "rcv": {
+      "url": "app.yool.live/track/9fX2…",
+      "loading": "Kuzatuv ma'lumotlari yuklanmoqda...",
+      "updated": "Oxirgi yangilanish",
+      "noSignup": "Ro'yxatdan o'tmasdan"
     }
   },
   "start": {

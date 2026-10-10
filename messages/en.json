@@ -155,7 +155,9 @@
       "picking": "Picking Up",
       "loaded": "Picked Up",
       "transit": "In Transit",
-      "delivered": "Dropped Off"
+      "delivered": "Dropped Off",
+      "dropping": "Dropping Off",
+      "confirmed": "Confirmed"
     },
     "cab": {
       "carrier": "Carrier",
@@ -169,7 +171,7 @@
       "lastPoint": "Last point",
       "justNow": "just now",
       "moving": "Moving",
-      "stopped": "Stopped since 12:10",
+      "stopped": "Stopped since {time}",
       "noData": "No data since 13:05",
       "share": "Share tracking",
       "hero": "Where are you now?",
@@ -190,7 +192,19 @@
       "driven": "Distance driven",
       "kmh": "km/h",
       "km": "{v} km",
-      "etaValue": "~{h} h {m} min"
+      "etaValue": "~{h} h {m} min",
+      "generateTrack": "Generate tracking link",
+      "trackLink": "app.yool.live/track/9fX2…",
+      "confirm": "Confirm Delivery",
+      "confirmHint": "Driver tracking runs until you confirm",
+      "noteDropTitle": "Cargo delivered",
+      "noteDropBody": "The driver completed delivery: {title}",
+      "step": {
+        "pickedUp": "Loaded",
+        "inTransit": "Trip started",
+        "droppedOff": "Delivered"
+      },
+      "etaMin": "~{m} min"
     },
     "app": {
       "loads": "Loads",
@@ -217,13 +231,25 @@
         "confirmDropoff": "Confirm Delivery"
       },
       "queued": "{count, plural, =1 {1 point waiting to be sent} other {# points waiting to be sent}}",
-      "addPhoto": "Add photo"
+      "addPhoto": "Add photo",
+      "gpsRest": "GPS is resting",
+      "gpsRestSub": "The truck stands still, the phone saves battery",
+      "awaiting": "Awaiting shipper confirmation",
+      "confirmed": "Load confirmed"
     },
     "pulse": {
       "telegram": "via Telegram"
     },
     "map": {
-      "onPhone": "on the driver's phone"
+      "onPhone": "on the driver's phone",
+      "stop": "Stop {m} min",
+      "stopDone": "Stop {m} min · {from}–{to}"
+    },
+    "rcv": {
+      "url": "app.yool.live/track/9fX2…",
+      "loading": "Loading tracking...",
+      "updated": "Last update",
+      "noSignup": "No sign-up"
     }
   },
   "start": {

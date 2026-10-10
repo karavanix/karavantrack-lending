@@ -20,6 +20,7 @@
   --ink: #0f141b;
   --ink-2: #4b5667;
   --pz: 1;
+  --rz: 1;
   --strip-h: 76px;
 }
 
@@ -305,6 +306,9 @@
 .ring[data-tone="transit"] {
   border-color: #f59e0b;
 }
+.ring[data-tone="dropoff"] {
+  border-color: #dc2626;
+}
 .ring::after {
   content: "";
   position: absolute;
@@ -316,6 +320,116 @@
 }
 .ring[data-tone="transit"]::after {
   color: #f59e0b;
+}
+.ring[data-tone="dropoff"]::after {
+  color: #dc2626;
+}
+
+/* the lunch stop, as the cabinet marks it: a "P", its minutes beside it */
+.park {
+  position: absolute;
+  z-index: 3;
+  width: 0;
+  height: 0;
+}
+.park i {
+  position: absolute;
+  left: 22px;
+  top: -11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #334155;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  color: #fff;
+  font: 700 12px/18px var(--font-sans);
+  font-style: normal;
+  text-align: center;
+}
+.park span {
+  position: absolute;
+  left: 50px;
+  top: 0;
+  translate: 0 -50%;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  font: 600 12px var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px -6px rgba(15, 20, 27, 0.35);
+}
+.park[data-side="l"] i {
+  left: -44px;
+}
+.park[data-side="l"] span {
+  left: -50px;
+  translate: -100% -50%;
+}
+.park[data-on="1"] i {
+  animation: land 0.5s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+/* light of the hour over the map, and the Fergana lamps at dusk */
+.light {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+.lamp {
+  position: absolute;
+  z-index: 1;
+  width: 0;
+  height: 0;
+}
+.lamp::before {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: -3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4b5563;
+  box-shadow: 0 0 0 1.5px #fff;
+  transition: background 0.6s ease;
+  transition-delay: inherit;
+}
+.lamp i {
+  position: absolute;
+  left: -38px;
+  top: -38px;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 236, 170, 0.75), rgba(255, 220, 140, 0.28) 55%, rgba(255, 220, 140, 0));
+  opacity: 0;
+  transform: scale(0.6);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+  transition-delay: inherit;
+}
+.td[data-dusk="1"] .lamp::before {
+  background: #fff1b8;
+}
+.td[data-dusk="1"] .lamp i {
+  opacity: 1;
+  transform: none;
+}
+/* headlights: on at dusk, off once the trip is confirmed */
+.beams {
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+.td[data-dusk="1"]:not([data-status="confirmed"]) .beams {
+  opacity: 1;
 }
 .ring[data-on="1"]::after {
   animation: ping 1.4s ease-out 2;
@@ -486,7 +600,8 @@
     transform 0.45s;
 }
 .td[data-active="panel"] [data-who="dispatcher"],
-.td[data-active="phone"] [data-who="driver"] {
+.td[data-active="phone"] [data-who="driver"],
+.td[data-active="receiver"] [data-who="receiver"] {
   background: var(--ui-blue);
   color: #fff;
   box-shadow: 0 0 0 4px rgba(32, 129, 248, 0.25);
@@ -512,6 +627,9 @@
 .btnGhost {
   background: #232a35;
   color: var(--ui-fg);
+}
+.btnOk {
+  background: #16a34a;
 }
 .btn[data-hot="1"] {
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.85), 0 0 0 6px rgba(32, 129, 248, 0.45);
@@ -547,7 +665,8 @@
 }
 .badge[data-tone="accepted"],
 .chip[data-tone="accepted"],
-.chip[data-tone="picking"] {
+.chip[data-tone="picking"],
+.chip[data-tone="dropping"] {
   background: rgba(32, 129, 248, 0.18);
   color: #7cb8ff;
 }
@@ -562,6 +681,11 @@
 .chip[data-tone="delivered"] {
   background: rgba(34, 197, 94, 0.16);
   color: #5ee08f;
+}
+.badge[data-tone="confirmed"],
+.chip[data-tone="confirmed"] {
+  background: #16a34a;
+  color: #fff;
 }
 
 .conn {
@@ -630,6 +754,18 @@
 }
 .pill[data-queued][data-on="0"] {
   display: none;
+}
+.pill svg {
+  flex: none;
+}
+/* "Awaiting shipper confirmation" is long: let it wrap in the card */
+.awaiting {
+  height: auto;
+  min-height: 26px;
+  padding: 4px 9px;
+  line-height: 1.3;
+  white-space: normal;
+  border-radius: 9px;
 }
 .pill[data-queued][data-on="1"] + [data-offline] {
   display: none;
@@ -881,6 +1017,9 @@
 .pHead .badge {
   color: inherit;
 }
+.pHead .badge[data-tone="confirmed"] {
+  color: #fff;
+}
 .pRows {
   display: grid;
   gap: 8px;
@@ -908,6 +1047,11 @@
 .battery {
   font: 500 11.5px var(--font-mono);
   color: var(--ui-muted);
+}
+.total {
+  justify-self: end;
+  color: var(--ui-fg);
+  font-variant-numeric: tabular-nums;
 }
 .batch {
   justify-self: end;
@@ -993,6 +1137,56 @@
   color: var(--ui-muted);
 }
 
+/* the trip in history: the driver's step marks, coloured like the rings */
+.pHist {
+  align-self: start;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+.pHist > div {
+  display: grid;
+  gap: 3px;
+  align-content: start;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: var(--ui-card);
+}
+.pHist .tLabel {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  color: var(--ui-muted);
+  line-height: 1.25;
+}
+.pHist .tLabel i {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 2.5px solid #16a34a;
+  background: #fff;
+}
+.pHist .tLabel i[data-tone="transit"] {
+  border-color: #f59e0b;
+}
+.pHist .tLabel i[data-tone="dropoff"] {
+  border-color: #dc2626;
+}
+.pHist b {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.pHist .snap {
+  border-radius: 3px;
+  outline: 1px solid rgba(255, 255, 255, 0.15);
+}
+
 /* the notification the cabinet gets when the driver confirms a step */
 .panel {
   position: relative;
@@ -1020,6 +1214,9 @@
 .pNote > span {
   flex: 1;
   min-width: 0;
+}
+.pNote > .stack {
+  display: grid;
 }
 .pNote b {
   display: block;
@@ -1065,10 +1262,6 @@
 }
 
 /* the driver's phone */
-.phoneWrap {
-  flex: 1;
-  min-height: 0;
-}
 .phone {
   zoom: var(--pz);
   width: 248px;
@@ -1241,7 +1434,9 @@
 .td[data-pstatus="picking"] .stepper i:nth-child(-n + 1),
 .td[data-pstatus="loaded"] .stepper i:nth-child(-n + 2),
 .td[data-pstatus="transit"] .stepper i:nth-child(-n + 3),
-.td[data-pstatus="delivered"] .stepper i {
+.td[data-pstatus="dropping"] .stepper i:nth-child(-n + 3),
+.td[data-pstatus="delivered"] .stepper i,
+.td[data-pstatus="confirmed"] .stepper i {
   background: var(--ui-blue);
 }
 .pills {
@@ -1262,6 +1457,31 @@
 }
 .shot .snap {
   border-radius: 6px;
+}
+/* standing still: the screen dims, GPS rests */
+.rest {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px;
+  text-align: center;
+  background: rgba(6, 8, 12, 0.86);
+  backdrop-filter: blur(1.5px);
+  color: var(--ui-muted);
+  font-size: 11.5px;
+  line-height: 1.4;
+}
+.rest svg {
+  color: #c3ccd8;
+}
+.rest b {
+  color: var(--ui-fg);
+  font-size: 14px;
 }
 .flash {
   position: absolute;
@@ -1291,6 +1511,161 @@
 }
 .toast[data-on="0"] {
   transform: translateY(16px);
+}
+
+/* the receiver: a second, lighter phone beside the driver's (chapter 8) */
+.phones {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  flex: 1;
+  min-height: 0;
+}
+.phoneWrap {
+  flex: none;
+}
+.recvWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  flex: none;
+}
+.recvWrap[data-on="0"] {
+  transform: translateX(18px);
+}
+.recv {
+  zoom: var(--rz);
+  width: 196px;
+  height: 392px;
+  border-radius: 28px;
+  border: 6px solid #0b0d11;
+  background: #f6f7f9;
+  color: var(--ink);
+  box-shadow:
+    0 0 0 1px #2a313c,
+    0 28px 60px -30px rgba(15, 20, 27, 0.7);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.recv .statusBar {
+  padding: 8px 16px 3px;
+  color: var(--ink);
+}
+.urlBar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 3px 10px 6px;
+  padding: 5px 9px;
+  border-radius: 8px;
+  background: #e6e9ee;
+  color: #475569;
+  font: 500 10px var(--font-mono);
+  white-space: nowrap;
+  overflow: hidden;
+}
+.urlBar span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rBody {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  border-top: 1px solid #e2e6ec;
+  background: #fff;
+}
+.rLoading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  text-align: center;
+  color: #64748b;
+  font-size: 11px;
+}
+.rLoading svg {
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.rPage {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.rHead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 6px;
+  padding: 8px 10px;
+  border-bottom: 1px solid #e2e6ec;
+}
+.rBrand {
+  grid-column: 1 / -1;
+  font-size: 9.5px;
+  font-weight: 600;
+  color: #64748b;
+}
+.rHead b {
+  font-size: 12.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rBadge {
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #a16207;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.mini {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.rRows {
+  display: grid;
+  gap: 6px;
+  padding: 8px 10px;
+}
+.rRows div {
+  display: grid;
+  gap: 1px;
+}
+.rRows span {
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+.rRows b {
+  font-size: 11px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.noSignup {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #166534;
+  font: 600 12px var(--font-sans);
+  box-shadow: 0 2px 10px -4px rgba(15, 20, 27, 0.3);
 }
 
 /* ───────── phone strip ───────── */
@@ -1370,6 +1745,76 @@
 .td[data-active="panel"] [data-tile="panel"] {
   flex-grow: 2.6;
   border-color: rgba(32, 129, 248, 0.6);
+}
+/* chapter 8: the receiver's tile, above the two */
+.rTile {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(100% + 8px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  background: #fff;
+  color: var(--ink);
+  border: 1px solid #dbe1e8;
+  box-shadow: 0 16px 36px -18px rgba(15, 20, 27, 0.6);
+}
+.rTile[data-on="0"] {
+  transform: translateY(10px);
+}
+.td[data-active="receiver"] .rTile {
+  border-color: rgba(32, 129, 248, 0.6);
+}
+.rTile .who {
+  flex: none;
+  height: 22px;
+  font-size: 11.5px;
+  padding: 0 8px;
+  background: #eef2f6;
+}
+.miniSmall {
+  flex: none;
+  width: 92px;
+  border-radius: 8px;
+}
+.rTile > .stack {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+}
+.rLine {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.rLine:first-child {
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+  color: #475569;
+  font: 500 11px var(--font-mono);
+}
+.rLine b,
+.rLine span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rLine span {
+  color: #166534;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+.rLine span svg {
+  display: inline;
+  vertical-align: -2px;
 }
 
 /* ───────── impulses ───────── */
@@ -1454,6 +1899,10 @@
   .ring::after,
   .truck::after {
     display: none;
+  }
+  .rLoading svg,
+  .park[data-on="1"] i {
+    animation: none;
   }
   .td[data-conn="moving"] .wake {
     animation: none;

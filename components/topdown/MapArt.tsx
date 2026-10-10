@@ -2,14 +2,15 @@
 
 // The map itself: flat, top-down, a limited palette. Everything is generated
 // from the layout so it fits any width: the depot in Tashkent, fields with
-// poplar rows, the Kamchik pass drawn with contour lines, the cotton valley
-// and the depot in Fergana. The road and the track layers sit on top.
-//
-// Places only get rough shapes here; each chapter's session dresses its own.
+// poplar rows, the chaikhana, the Kamchik pass drawn with contour lines, the
+// cotton valley and the depot in Fergana with its street lamps. The road and
+// the track layers sit on top, and over everything the light of the hour:
+// the map is the trip's timeline, so morning is at the top and dusk at the
+// bottom.
 
 import { memo, useMemo } from "react";
-import { anchorOf, DEPOT_END, OFFLINE_FROM, OFFLINE_TO } from "./chapters";
-import { DASH_SHIFT, dashRanges, type Layout, type Road } from "./road";
+import { anchorOf, CHAPTERS, DEPOT_END, K, OFFLINE_FROM, OFFLINE_TO, STOP } from "./chapters";
+import { DASH_SHIFT, dashRanges, minuteAt, type Layout, type Road } from "./road";
 import s from "./topdown.module.css";
 
 const C = {
@@ -48,6 +49,29 @@ type Building = Box & { fill: string; kind?: "dock" | "office" };
 type Field = Box & { fill: string; rows: "h" | "v" | "c" };
 type Tree = { x: number; y: number; r: number; fill: string };
 type Hill = { levels: string[] };
+type Chaikhana = Box & { hall: Box; tapchans: Box[]; vines: Box; trees: Tree[] };
+
+// Light of the hour, laid over the map: [minute, r, g, b, alpha].
+const LIGHT: [number, number, number, number, number][] = [
+  [460, 120, 150, 215, 0.13], // 07:40, cool morning haze
+  [540, 150, 175, 220, 0.05],
+  [620, 255, 255, 255, 0], // clear day
+  [870, 255, 220, 150, 0.03],
+  [960, 255, 170, 90, 0.1], // 16:00, the light turns gold
+  [1030, 245, 135, 70, 0.15],
+  [1060, 205, 105, 90, 0.18], // 17:40, sunset
+  [1100, 70, 65, 115, 0.26], // and dusk below the last bend
+];
+
+function lightAt(minute: number): string {
+  let j = 1;
+  while (j < LIGHT.length - 1 && LIGHT[j][0] < minute) j++;
+  const a = LIGHT[j - 1];
+  const b = LIGHT[j];
+  const u = Math.min(1, Math.max(0, (minute - a[0]) / (b[0] - a[0])));
+  const c = a.map((v, i) => v + (b[i] - v) * u);
+  return `rgba(${Math.round(c[1])},${Math.round(c[2])},${Math.round(c[3])},${c[4].toFixed(3)})`;
+}
 
 const overlaps = (a: Box, b: Box, m = 8) =>
   a.x < b.x + b.w + m && b.x < a.x + a.w + m && a.y < b.y + b.h + m && b.y < a.y + a.h + m;
@@ -85,6 +109,31 @@ function build(L: Layout, road: Road) {
     return true;
   };
 
+  // ── the chaikhana at the lunch stop, on the outer side of its bend ──────
+  // (the "P" and its minutes take the other side)
+  const sx = L.bends[STOP];
+  const sy = Y(STOP);
+  const outLeft = sx < L.roadW / 2;
+  const roomOut = (outLeft ? sx : W - sx) - half - 22;
+  const cw = Math.min(190 * k, roomOut - 12);
+  const ch = 150 * k;
+  const cx0 = outLeft ? sx - half - 22 - cw : sx + half + 22;
+  const chai: Chaikhana = (() => {
+    const box = { x: cx0, y: sy - ch * 0.62, w: cw, h: ch };
+    const far = (f: number, w: number) => (outLeft ? box.x + box.w * f : box.x + box.w * (1 - f) - w); // f from the far edge
+    const hallW = cw * 0.42;
+    const hall = { x: far(0, hallW), y: box.y + ch * 0.06, w: hallW, h: ch * 0.6 };
+    const vines = { x: far(0.46, cw * 0.5), y: box.y + ch * 0.02, w: cw * 0.5, h: ch * 0.7 };
+    const tw = Math.max(14, cw * 0.17);
+    const tapchans = [0, 1, 2].map((j) => ({ x: far(0.5 + (j % 2) * 0.22, tw), y: box.y + ch * (0.1 + j * 0.27), w: tw, h: tw * 0.78 }));
+    const trees: Tree[] = [
+      { x: far(0.08, 0), y: box.y + ch * 0.86, r: 13 * k, fill: C.trees[1] },
+      { x: far(0.38, 0), y: box.y + ch * 0.92, r: 10 * k, fill: C.trees[3] },
+      { x: far(0.96, 0), y: box.y + ch * 0.08, r: 9 * k, fill: C.trees[0] },
+    ];
+    return { ...box, hall, tapchans, vines, trees };
+  })();
+
   const buildings: Building[] = [];
   const fields: Field[] = [];
   const trees: Tree[] = [];
@@ -94,7 +143,7 @@ function build(L: Layout, road: Road) {
 
   const place = (b: Building, m: number) => {
     if (b.x < 18 || b.x + b.w > W - 18) return false;
-    if (!clear(b, m)) return false;
+    if (!clear(b, m) || overlaps(b, chai, 10)) return false;
     if (buildings.some((o) => overlaps(o, b, 14))) return false;
     buildings.push(b);
     return true;
@@ -168,7 +217,7 @@ function build(L: Layout, road: Road) {
           fill: (kind === "cotton" ? C.cotton : C.fields)[Math.floor(r() * 5) % (kind === "cotton" ? 3 : 5)],
           rows: kind === "cotton" && r() < 0.6 ? "c" : r() < 0.5 ? "h" : "v",
         };
-        if (clear(f, 26 * k)) fields.push(f);
+        if (clear(f, 26 * k) && !overlaps(f, chai, 4)) fields.push(f);
         x += w;
       }
       y += h;
@@ -240,6 +289,26 @@ function build(L: Layout, road: Road) {
     const y = f.y + r() * f.h;
     trees.push({ x, y, r: (4 + r() * 3) * k, fill: C.trees[Math.floor(r() * 4)] });
   }
+  trees.push(...chai.trees);
+
+  // ── street lamps along the road through the Fergana depot ──────────────
+  const lamps: { x: number; y: number }[] = [];
+  const lampsFrom = road.lenAt(Y(8.55));
+  for (let l = lampsFrom, j = 0; l < road.total - 20; l += 120 * k, j++) {
+    const p = road.at(l);
+    const side = j % 2 ? 1 : -1;
+    lamps.push({ x: p.x + p.nx * (half + 9 * k) * side, y: p.y + p.ny * (half + 9 * k) * side });
+  }
+
+  // ── light of the hour, sampled down the map (beyond the last bend the
+  // clock is stopped, so dusk deepens with the distance) ─────────────────
+  const stops: string[] = [];
+  const last = L.anchors[K - 1];
+  for (let y = 0; y <= L.height + 1; y += L.vh / 3) {
+    const minute = y > last ? CHAPTERS[K - 1].minute + ((y - last) / L.vh) * 60 : minuteAt(y, L);
+    stops.push(`${lightAt(minute)} ${Math.round(y)}px`);
+  }
+  const light = `linear-gradient(to bottom, ${stops.join(", ")})`;
 
   // pending points on the pass (shown only while there is no network)
   const dots: number[] = [];
@@ -298,7 +367,7 @@ function build(L: Layout, road: Road) {
     });
   }
 
-  return { buildings, fields, trees, parked, hills, grounds, dots, half, depots, towers, fog };
+  return { buildings, fields, trees, parked, hills, grounds, dots, half, depots, towers, fog, chai, lamps, light };
 }
 
 export type Art = ReturnType<typeof build>;
@@ -329,6 +398,11 @@ export const MapArt = memo(function MapArt({ L, road }: { L: Layout; road: Road 
           <clipPath id="td-plan" clipPathUnits="userSpaceOnUse">
             <rect data-plan-clip x="0" y="0" width={L.vw} height="0" />
           </clipPath>
+          <pattern id="td-vines" width="10" height="10" patternUnits="userSpaceOnUse">
+            <path d="M0 5h10M5 0v10" stroke="#5f8a43" strokeOpacity="0.5" strokeWidth="1" />
+            <circle cx="2.5" cy="2.5" r="2.2" fill="#7da35a" fillOpacity="0.55" />
+            <circle cx="7.5" cy="7.5" r="2" fill="#7da35a" fillOpacity="0.45" />
+          </pattern>
           <pattern id="td-cotton" width="9" height="9" patternUnits="userSpaceOnUse">
             <circle cx="2.5" cy="2.5" r="1.6" fill="#fff" />
             <circle cx="7" cy="6.5" r="1.3" fill="#fff" fillOpacity="0.85" />
@@ -438,6 +512,30 @@ export const MapArt = memo(function MapArt({ L, road }: { L: Layout; road: Road 
           </g>
         ))}
 
+        {/* the chaikhana: a hall, tapchans with carpets under a vine trellis */}
+        <g>
+          <rect x={a.chai.x - 6} y={a.chai.y - 6} width={a.chai.w + 12} height={a.chai.h + 12} rx="8" fill="#e7dfcd" />
+          <rect x={a.chai.hall.x + 5} y={a.chai.hall.y + 7} width={a.chai.hall.w} height={a.chai.hall.h} rx="2" fill={C.shadow} />
+          <rect x={a.chai.hall.x} y={a.chai.hall.y} width={a.chai.hall.w} height={a.chai.hall.h} rx="2" fill="#f2ead8" stroke="#2f8f9d" strokeWidth={3 * k} />
+          <path
+            d={`M${a.chai.hall.x + 4} ${a.chai.hall.y + a.chai.hall.h / 2}h${a.chai.hall.w - 8}`}
+            stroke="#2f8f9d"
+            strokeOpacity="0.45"
+            strokeWidth="2"
+            strokeDasharray="3 3"
+          />
+          {a.chai.tapchans.map((t, i) => (
+            <g key={i}>
+              <rect x={t.x + 2} y={t.y + 3} width={t.w} height={t.h} rx="1.5" fill={C.shadow} />
+              <rect x={t.x} y={t.y} width={t.w} height={t.h} rx="1.5" fill="#9a6b43" />
+              <rect x={t.x + 2.5} y={t.y + 2.5} width={t.w - 5} height={t.h - 5} rx="1" fill="#b23a33" />
+              <circle cx={t.x + t.w / 2} cy={t.y + t.h / 2} r={Math.min(t.w, t.h) * 0.2} fill="#f6efe2" />
+            </g>
+          ))}
+          <rect x={a.chai.vines.x} y={a.chai.vines.y} width={a.chai.vines.w} height={a.chai.vines.h} rx="4" fill="#8fb36b" fillOpacity="0.38" />
+          <rect x={a.chai.vines.x} y={a.chai.vines.y} width={a.chai.vines.w} height={a.chai.vines.h} rx="4" fill="url(#td-vines)" />
+        </g>
+
         {a.trees.map((t, i) => (
           <g key={i}>
             <circle cx={t.x + 2} cy={t.y + 3} r={t.r} fill={C.shadow} />
@@ -486,6 +584,13 @@ export const MapArt = memo(function MapArt({ L, road }: { L: Layout; road: Road 
             <path d="M0 -7L6 5H-6Z M0 -7V5 M-3 -1H3 M-4.5 2H4.5" fill="none" stroke="#334155" strokeWidth="1.4" strokeLinejoin="round" />
             <circle cy="-7" r="1.8" fill="#dc2626" />
           </svg>
+        </span>
+      ))}
+      <div className={s.light} style={{ height: L.height, background: a.light }} />
+      {/* lamps come on at dusk (data-dusk on the section), one after another */}
+      {a.lamps.map((p, i) => (
+        <span key={i} className={s.lamp} style={{ left: p.x, top: p.y, transitionDelay: `${(i % 12) * 0.12}s` }}>
+          <i />
         </span>
       ))}
     </>

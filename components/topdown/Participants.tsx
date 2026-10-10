@@ -7,19 +7,45 @@
 // data-press; ends of impulses carry data-anchor.
 
 import { useTranslations } from "next-intl";
-import { ArrowLeft, Bell, Camera, Check, Copy, Link2, MonitorSmartphone, Route, Smartphone, Truck as TruckIcon, X } from "lucide-react";
+import {
+  ArrowLeft,
+  Bell,
+  Camera,
+  Check,
+  CheckCircle2,
+  Copy,
+  Hourglass,
+  Link2,
+  LoaderCircle,
+  Lock,
+  MonitorSmartphone,
+  Moon,
+  Route,
+  Share2,
+  Smartphone,
+  Truck as TruckIcon,
+  UserRound,
+  X,
+} from "lucide-react";
 import s from "./topdown.module.css";
 import { when } from "./world";
-import { QUEUED } from "./chapters";
+import { CHAPTERS, K, QUEUED, ROUTE_KM, STOP, fmtClock } from "./chapters";
 
-type Status = "created" | "accepted" | "picking" | "loaded" | "transit" | "delivered";
-const STATUSES: Status[] = ["created", "accepted", "picking", "loaded", "transit", "delivered"];
+type Status = "created" | "accepted" | "picking" | "loaded" | "transit" | "dropping" | "delivered" | "confirmed";
+const STATUSES: Status[] = ["created", "accepted", "picking", "loaded", "transit", "dropping", "delivered", "confirmed"];
 const STEPS: Status[] = ["created", "accepted", "loaded", "transit", "delivered"]; // the app's stepper
 const ACTS = ["beginPickup", "confirmPickup", "startTransit", "beginDropoff", "confirmDropoff"] as const;
 
-function Btn({ press, children, ghost }: { press?: string; children: React.ReactNode; ghost?: boolean }) {
+// The app shows "Awaiting shipper confirmation" while the load is delivered
+// but not confirmed yet; GPS pills the rest of the time.
+const TRACKED = "accepted|picking|loaded|transit|dropping|confirmed";
+
+// Where the truck stood, for "Stopped since …".
+const STOPPED_AT = { [STOP]: fmtClock(CHAPTERS[STOP].minute), [K - 1]: fmtClock(CHAPTERS[K - 1].minute) };
+
+function Btn({ press, children, ghost, ok }: { press?: string; children: React.ReactNode; ghost?: boolean; ok?: boolean }) {
   return (
-    <span className={`${s.btn} ${ghost ? s.btnGhost : ""}`} data-press={press}>
+    <span className={`${s.btn} ${ghost ? s.btnGhost : ""} ${ok ? s.btnOk : ""}`} data-press={press}>
       {children}
       <i className={s.ripple} data-ripple />
     </span>
@@ -52,11 +78,63 @@ function Bars() {
   );
 }
 
-export function Who({ who }: { who: "dispatcher" | "driver" }) {
+function GpsPill() {
+  const t = useTranslations("td.app");
+  return (
+    <span className={s.stack}>
+      <span className={s.pill} data-tone="go" {...when("gps=1")}>
+        <i />
+        {t("gpsActive")}
+      </span>
+      <span className={s.pill} data-tone="mute" {...when("gps=rest")}>
+        <Moon size={11} />
+        {t("gpsRest")}
+      </span>
+      <span className={s.pill} data-tone="mute" {...when("gps=0")}>
+        <i />
+        {t("gpsWaiting")}
+      </span>
+    </span>
+  );
+}
+
+// The driver's step marks in the cabinet's history, coloured like the rings.
+const HISTORY = [
+  { step: "pickedUp", ch: 3, tone: "pickup", snap: true },
+  { step: "inTransit", ch: 4, tone: "transit", snap: false },
+  { step: "droppedOff", ch: K - 1, tone: "dropoff", snap: true },
+] as const;
+
+// The route on the client's small map: Tashkent → over the pass → Fergana.
+const MINI_ROUTE = "M16 30C40 24 52 40 70 46S96 50 104 64S118 92 140 90S170 84 186 98";
+
+// The public tracking page's map. TopDown moves the truck and the track along
+// [data-mini] as the big truck drives, so both move together.
+export function MiniMap({ className }: { className?: string }) {
+  return (
+    <svg className={`${s.mini} ${className ?? ""}`} viewBox="0 0 200 120" aria-hidden data-mini>
+      <rect width="200" height="120" fill="#eef0e8" />
+      <path d="M58 70c10-22 40-30 62-18s22 40 2 48-56 6-64-30z" fill="#e4dccb" />
+      <path d="M72 70c8-14 30-18 42-10s12 26-2 30-36 2-40-20z" fill="#d9cdb3" />
+      <path d="M0 108C40 96 80 112 120 104S180 110 200 100" fill="none" stroke="#c7dcef" strokeWidth="5" />
+      <path d={MINI_ROUTE} fill="none" stroke="#fff" strokeWidth="7" strokeLinecap="round" />
+      <path d={MINI_ROUTE} fill="none" stroke="#64748b" strokeWidth="2.4" strokeLinecap="round" strokeDasharray="0 5" />
+      <path data-mini-track d={MINI_ROUTE} fill="none" stroke="#2563eb" strokeWidth="3.6" strokeLinecap="round" pathLength="1" strokeDasharray="0 1" />
+      <circle cx="16" cy="30" r="4.5" fill="#16a34a" stroke="#fff" strokeWidth="1.8" />
+      <circle cx="186" cy="98" r="4.5" fill="#dc2626" stroke="#fff" strokeWidth="1.8" />
+      <g data-mini-truck>
+        <circle r="9" fill="#2563eb" opacity="0.18" />
+        <circle r="5" fill="#2563eb" stroke="#fff" strokeWidth="2" />
+      </g>
+    </svg>
+  );
+}
+
+export function Who({ who }: { who: "dispatcher" | "driver" | "receiver" }) {
   const t = useTranslations("td.who");
   return (
     <span className={s.who} data-who={who}>
-      {who === "dispatcher" ? <MonitorSmartphone size={14} /> : <Smartphone size={14} />}
+      {who === "dispatcher" ? <MonitorSmartphone size={14} /> : who === "driver" ? <Smartphone size={14} /> : <UserRound size={14} />}
       {t(who)}
     </span>
   );
@@ -114,7 +192,7 @@ export function Panel() {
             </div>
           </div>
 
-          <div className={s.pBody} {...when("slot=invite|link|copied|none|share")}>
+          <div className={s.pBody} {...when("slot=invite|link|copied|none|share|trackGen|trackLink|trackCopied|confirm|history")}>
             <div className={s.pHead}>
               <div>
                 <b>{t("load.title")}</b>
@@ -145,15 +223,21 @@ export function Panel() {
                   <span className={s.conn} data-tone="go" {...when("conn=moving")}>
                     <i /> {t("cab.moving")}
                   </span>
-                  <span className={s.conn} data-tone="wait" {...when("conn=stopped")}>
-                    <i /> {t("cab.stopped")}
-                  </span>
+                  {Object.entries(STOPPED_AT).map(([ch, time]) => (
+                    <span key={ch} className={s.conn} data-tone="wait" {...when(`conn=stopped; ch=${ch}`)}>
+                      <i /> {t("cab.stopped", { time })}
+                    </span>
+                  ))}
                   <span className={s.conn} data-tone="off" {...when("conn=nodata")}>
                     <i /> {t("cab.noData")}
                   </span>
+                  <span {...when("conn=done")}>{t("cab.driven")}</span>
                 </span>
                 <span className={s.stack}>
                   <span {...when("conn=none")}>—</span>
+                  <b className={s.total} {...when("conn=done")}>
+                    {t("cab.km", { v: ROUTE_KM })}
+                  </b>
                   <span className={s.conn} data-tone="go" {...when("conn=last")}>
                     <i /> {t("cab.justNow")}
                   </span>
@@ -192,7 +276,7 @@ export function Panel() {
                 <div className={s.pRow}>
                   <span>{t("cab.pickup")}</span>
                   <b>
-                    <span className={s.rowSnap} {...when("status=loaded|transit|delivered")}>
+                    <span className={s.rowSnap} {...when("status=loaded|transit|dropping|delivered|confirmed")}>
                       <Snap size={18} />
                     </span>
                     {t("load.from")}
@@ -227,18 +311,68 @@ export function Panel() {
                   <span {...when("conn=nodata")}>{t("cab.noDataHint")}</span>
                 </span>
               </div>
+              {/* sharing the load with the client: the cabinet's "Share tracking" dialog */}
               <div className={s.pAction} {...when("slot=share")}>
-                <Btn ghost>{t("cab.share")}</Btn>
+                <Btn press="share" ghost>
+                  <Share2 size={13} /> {t("cab.share")}
+                </Btn>
+              </div>
+              <div className={s.pAction} {...when("slot=trackGen")}>
+                <span className={s.tab}>
+                  <Share2 size={13} /> {t("cab.share")}
+                </span>
+                <Btn press="generateTrack">{t("cab.generateTrack")}</Btn>
+              </div>
+              <div className={s.pAction} {...when("slot=trackLink|trackCopied")}>
+                <span className={s.tab}>
+                  <Share2 size={13} /> {t("cab.share")}
+                </span>
+                <div className={s.linkRow}>
+                  <span className={s.linkChip}>{t("cab.trackLink")}</span>
+                  <Btn press="copyTrack" ghost>
+                    <Copy size={13} /> {t("cab.copy")}
+                  </Btn>
+                </div>
+                <span className={s.copied} {...when("slot=trackCopied")}>
+                  <Check size={13} /> {t("cab.copied")}
+                </span>
+              </div>
+              {/* delivered: the shipper's turn */}
+              <div className={s.pAction} {...when("slot=confirm")}>
+                <Btn press="confirmDelivery" ok>
+                  <CheckCircle2 size={14} /> {t("cab.confirm")}
+                </Btn>
+                <span className={s.tab}>{t("cab.confirmHint")}</span>
+              </div>
+              {/* the trip in history: the driver's steps, as on the map */}
+              <div className={s.pHist} {...when("slot=history")}>
+                {HISTORY.map((h) => (
+                  <div key={h.step}>
+                    <span className={s.tLabel}>
+                      <i data-tone={h.tone} /> {t(`cab.step.${h.step}`)}
+                    </span>
+                    <b>
+                      {fmtClock(CHAPTERS[h.ch].minute)}
+                      {h.snap && <Snap size={16} />}
+                    </b>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
 
-        <div className={s.pNote} {...when("note=loaded")}>
+        <div className={s.pNote} {...when("note=loaded|delivered")}>
           <Bell size={15} />
-          <span>
-            <b>{t("cab.noteTitle")}</b>
-            {t("cab.noteBody", { title: t("load.title") })}
+          <span className={s.stack}>
+            <span {...when("note=loaded")}>
+              <b>{t("cab.noteTitle")}</b>
+              {t("cab.noteBody", { title: t("load.title") })}
+            </span>
+            <span {...when("note=delivered")}>
+              <b>{t("cab.noteDropTitle")}</b>
+              {t("cab.noteDropBody", { title: t("load.title") })}
+            </span>
           </span>
           <Snap size={34} />
         </div>
@@ -344,16 +478,7 @@ export function Phone() {
                     {t("app.offline")}
                   </span>
                 </span>
-                <span className={s.stack}>
-                  <span className={s.pill} data-tone="go" {...when("gps=1")}>
-                    <i />
-                    {t("app.gpsActive")}
-                  </span>
-                  <span className={s.pill} data-tone="mute" {...when("gps=0")}>
-                    <i />
-                    {t("app.gpsWaiting")}
-                  </span>
-                </span>
+                <GpsPill />
                 {/* points waiting on the phone: counted by TopDown as the truck drives */}
                 <span className={s.pill} data-tone="warn" data-queued data-on="0">
                   <i />
@@ -378,16 +503,85 @@ export function Phone() {
                     <Btn press={a}>{t(`app.act.${a}`)}</Btn>
                   </span>
                 ))}
+                <span className={`${s.pill} ${s.awaiting}`} data-tone="warn" {...when("pstatus=delivered")}>
+                  <Hourglass size={12} />
+                  {t("app.awaiting")}
+                </span>
               </span>
             </div>
+          </div>
+          {/* standing still: the library lets GPS rest (an illustration, the app has no such screen) */}
+          <div className={s.rest} {...when(`gps=rest; hand=0; ch=${STOP}`)}>
+            <Moon size={22} />
+            <b>{t("app.gpsRest")}</b>
+            <span>{t("app.gpsRestSub")}</span>
           </div>
           <i className={s.flash} data-flash />
 
           <div className={s.toast} {...when("toast=accepted")}>
             <Check size={14} /> {t("app.accepted")}
           </div>
+          <div className={s.toast} {...when("toast=confirmed")}>
+            <CheckCircle2 size={14} /> {t("app.confirmed")}
+          </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+// Chapter 8's client: the public tracking page on their phone, light like the
+// web cabinet. They only appear in that chapter.
+export const RECEIVER_W = 196; // px before zoom, as in the CSS
+
+export function Receiver() {
+  const t = useTranslations("td");
+  return (
+    <div className={s.recvWrap} data-part="receiver" {...when("receiver=1|2; ch=8")}>
+      <Who who="receiver" />
+      <div className={s.recv} data-anchor="receiver">
+        <div className={s.statusBar}>
+          <span data-bind="clock">15:10</span>
+          <span className={s.sbRight}>
+            <Bars />
+          </span>
+        </div>
+        <div className={s.urlBar}>
+          <Lock size={10} />
+          <span>{t("rcv.url")}</span>
+        </div>
+        <div className={`${s.stack} ${s.rBody}`}>
+          <div className={s.rLoading} {...when("receiver=1")}>
+            <LoaderCircle size={20} />
+            <span>{t("rcv.loading")}</span>
+          </div>
+          <div className={s.rPage} {...when("receiver=2")}>
+            <div className={s.rHead}>
+              <span className={s.rBrand}>Yool</span>
+              <b>{t("load.title")}</b>
+              <span className={s.rBadge}>{t("status.transit")}</span>
+            </div>
+            <MiniMap />
+            <div className={s.rRows}>
+              <div>
+                <span>{t("cab.pickup")}</span>
+                <b>{t("load.from")}</b>
+              </div>
+              <div>
+                <span>{t("cab.dropoff")}</span>
+                <b>{t("load.to")}</b>
+              </div>
+              <div>
+                <span>{t("rcv.updated")}</span>
+                <b data-bind="clock">15:10</b>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <span className={s.noSignup}>
+        <Check size={13} /> {t("rcv.noSignup")}
+      </span>
     </div>
   );
 }
@@ -408,6 +602,9 @@ export function Strip() {
           </span>
           <span className={s.line} {...when("screen=active;toast=accepted")}>
             <Check size={13} /> {t("app.accepted")}
+          </span>
+          <span className={s.line} {...when("toast=confirmed")}>
+            <CheckCircle2 size={13} /> {t("app.confirmed")}
           </span>
           {/* the driver at the buttons: the next one, with the photo once taken */}
           <span className={s.line} {...when("screen=active; toast=none; hand=1")}>
@@ -440,16 +637,13 @@ export function Strip() {
               {t("app.offline")}
             </span>
           </span>
-          <span className={s.line} {...when("screen=active; toast=none; hand=0; net=1")}>
-            <span className={s.stack}>
-              <span className={s.pill} data-tone="go" {...when("gps=1")}>
-                <i />
-                {t("app.gpsActive")}
-              </span>
-              <span className={s.pill} data-tone="mute" {...when("gps=0")}>
-                <i />
-                {t("app.gpsWaiting")}
-              </span>
+          <span className={s.line} {...when(`screen=active; toast=none; hand=0; net=1; pstatus=${TRACKED}`)}>
+            <GpsPill />
+          </span>
+          <span className={s.line} {...when("screen=active; toast=none; hand=0; pstatus=delivered")}>
+            <span className={s.pill} data-tone="warn">
+              <Hourglass size={11} />
+              {t("app.awaiting")}
             </span>
           </span>
         </span>
@@ -479,11 +673,36 @@ export function Strip() {
           <span className={s.line} {...when("slot=copied")}>
             <Check size={13} /> {t("cab.copied")}
           </span>
+          <span className={s.line} {...when("slot=share")}>
+            <Btn press="share" ghost>
+              <Share2 size={13} /> {t("cab.share")}
+            </Btn>
+          </span>
+          <span className={s.line} {...when("slot=trackGen")}>
+            <Btn press="generateTrack">{t("cab.generateTrack")}</Btn>
+          </span>
+          <span className={s.line} {...when("slot=trackLink")}>
+            <Btn press="copyTrack" ghost>
+              <Copy size={13} /> {t("cab.copy")}
+            </Btn>
+          </span>
+          <span className={s.line} {...when("slot=trackCopied")}>
+            <Check size={13} /> {t("cab.copied")}
+          </span>
+          <span className={s.line} {...when("slot=confirm; note=none")}>
+            <Btn press="confirmDelivery" ok>
+              <CheckCircle2 size={13} /> {t("cab.confirm")}
+            </Btn>
+          </span>
           <span className={s.line} {...when("note=loaded")}>
             <Bell size={13} /> {t("cab.noteTitle")}
             <Snap size={24} />
           </span>
-          <span className={s.line} {...when("slot=none|share; note=none")}>
+          <span className={s.line} {...when("note=delivered")}>
+            <Bell size={13} /> {t("cab.noteDropTitle")}
+            <Snap size={24} />
+          </span>
+          <span className={s.line} {...when("slot=none|history; note=none")}>
             <span className={s.stack}>
               {STATUSES.map((st) => (
                 <span key={st} className={s.badge} data-tone={st} {...when(`status=${st}`)}>
@@ -498,12 +717,34 @@ export function Strip() {
               <span className={s.conn} data-tone="go" {...when("conn=moving")}>
                 <i /> {t("cab.moving")}
               </span>
-              <span className={s.conn} data-tone="wait" {...when("conn=stopped")}>
-                <i /> {t("cab.stopped")}
-              </span>
+              {Object.entries(STOPPED_AT).map(([ch, time]) => (
+                <span key={ch} className={s.conn} data-tone="wait" {...when(`conn=stopped; ch=${ch}`)}>
+                  <i /> {t("cab.stopped", { time })}
+                </span>
+              ))}
               <span className={s.conn} data-tone="off" {...when("conn=nodata")}>
                 <i /> {t("cab.noData")}
               </span>
+              <span className={s.conn} {...when("conn=done")}>
+                <Route size={13} /> {t("cab.km", { v: ROUTE_KM })}
+              </span>
+            </span>
+          </span>
+        </span>
+      </div>
+
+      {/* chapter 8: the client, above the two tiles */}
+      <div className={s.rTile} data-anchor="receiver" {...when("receiver=1|2; ch=8")}>
+        <Who who="receiver" />
+        <MiniMap className={s.miniSmall} />
+        <span className={s.stack}>
+          <span className={s.rLine} {...when("receiver=1")}>
+            <LoaderCircle size={14} /> {t("rcv.url")}
+          </span>
+          <span className={s.rLine} {...when("receiver=2")}>
+            <b>{t("load.title")}</b>
+            <span>
+              <Check size={12} /> {t("rcv.noSignup")}
             </span>
           </span>
         </span>

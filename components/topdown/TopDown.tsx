@@ -21,6 +21,7 @@ import {
   CHAPTERS,
   DEPOT_END,
   DROPOFF_AT,
+  DUSK_MIN,
   K,
   LEAD,
   OFFLINE_FROM,
@@ -30,17 +31,20 @@ import {
   RINGS,
   ROUTE_KM,
   SECTION_SCREENS,
+  STOP,
   anchorOf,
   fmtClock,
 } from "./chapters";
-import { Road, cameraOf, dashRanges, makeLayout, minuteAt, truckY, type Layout } from "./road";
+import { Road, cameraOf, dashRanges, departOf, makeLayout, minuteAt, truckY, type Layout } from "./road";
 import { MapArt } from "./MapArt";
 import { Truck } from "./Truck";
-import { Panel, Phone, Strip } from "./Participants";
-import { createWorld, INITIAL, STATE_AFTER, when } from "./world";
+import { Panel, Phone, RECEIVER_W, Receiver, Strip } from "./Participants";
+import { createWorld, INITIAL, PARKED, STATE_AFTER, when } from "./world";
 import { createPulses } from "./pulse";
 import { COLORS, SCENES, heroIntro } from "./scenes";
 import { SITE } from "@/lib/site";
+
+const RING_TONES = ["pickup", "transit", "dropoff"];
 
 export function TopDown() {
   const t = useTranslations("trip");
@@ -53,10 +57,14 @@ export function TopDown() {
   const labels = useRef({ telegram: td("pulse.telegram"), batch: td("cab.batch", { count: QUEUED }) });
   const queuedText = useRef((n: number) => td("app.queued", { count: n }));
   queuedText.current = (n: number) => td("app.queued", { count: n });
-  const fmt = useRef<{ eta: (min: number) => string; km: (v: number) => string }>(null!);
+  const fmt = useRef<{ eta: (min: number) => string; km: (v: number) => string; stop: (m: number) => string; stopDone: () => string }>(null!);
+  const stopFrom = CHAPTERS[STOP].minute;
+  const stopTo = stopFrom + (CHAPTERS[STOP].stand ?? 0);
   fmt.current = {
-    eta: (min) => td("cab.etaValue", { h: Math.floor(min / 60), m: min % 60 }),
+    eta: (min) => (min < 60 ? td("cab.etaMin", { m: min }) : td("cab.etaValue", { h: Math.floor(min / 60), m: min % 60 })),
     km: (v) => td("cab.km", { v }),
+    stop: (m) => td("map.stop", { m }),
+    stopDone: () => td("map.stopDone", { m: stopTo - stopFrom, from: fmtClock(stopFrom), to: fmtClock(stopTo) }),
   };
 
   // Measure one screen (100svh, steady while mobile browser bars come and go).
@@ -103,16 +111,31 @@ export function TopDown() {
     const queuedTexts = qa("[data-bind='queued']");
     const clocks = qa("[data-bind='clock']");
     const planClip = q<SVGRectElement>("[data-plan-clip]");
-    const binds = { speed: qa("[data-bind='speed']"), eta: qa("[data-bind='eta']"), km: qa("[data-bind='km']"), battery: qa("[data-bind='battery']") };
+    const binds = {
+      speed: qa("[data-bind='speed']"),
+      eta: qa("[data-bind='eta']"),
+      km: qa("[data-bind='km']"),
+      battery: qa("[data-bind='battery']"),
+      stop: qa("[data-bind='stop']"),
+    };
     const flashes = qa("[data-flash]");
+    const minis = qa<SVGSVGElement>("[data-mini]").map((svg) => {
+      const track = svg.querySelector<SVGPathElement>("[data-mini-track]")!;
+      return { track, truck: svg.querySelector<SVGGElement>("[data-mini-truck]")!, len: track.getTotalLength() };
+    });
 
-    // The phone in the desktop column shrinks to fit what is left under the panel.
+    // The phone in the desktop column shrinks to fit what is left under the
+    // panel; chapter 8's receiver stands beside it in what is left of the row.
     if (L.wide) {
       root.style.setProperty("--pz", "1");
       const rail = q(`.${s.railIn}`).getBoundingClientRect();
       const phone = q("[data-part='phone-body']").getBoundingClientRect();
       const room = rail.bottom - 16 - phone.top;
-      root.style.setProperty("--pz", String(Math.min(1, Math.max(0.5, room / phone.height))));
+      const pz = Math.min(1, Math.max(0.5, room / phone.height));
+      root.style.setProperty("--pz", String(pz));
+      const row = q(`.${s.phones}`).getBoundingClientRect().width;
+      const side = row - phone.width * pz - 14;
+      root.style.setProperty("--rz", String(Math.min(pz, side / RECEIVER_W)));
     }
 
     const lStart = road.lenAt(L.anchors[2]); // tracking starts once the load is accepted
@@ -127,6 +150,12 @@ export function TopDown() {
     let lastClock = "";
     let lastQueued = -1;
     let lastCam = L.anchors[0];
+    let lastMini = -1;
+    let lastDusk = "";
+    // The truck leaves the chaikhana when chapter 5's hold is over: that
+    // scroll offset splits the chapter into PARKED and STATE_AFTER[5].
+    const departAt = Math.round(departOf(STOP, L) - CAMERA * L.vh);
+    const departed = () => -root.getBoundingClientRect().top >= departAt;
     const lastBind: Record<string, string> = {};
     const bind = (name: keyof typeof binds, text: string) => {
       if (lastBind[name] === text) return;
@@ -230,6 +259,21 @@ export function TopDown() {
         for (const el of clocks) el.textContent = clock;
         // the phone runs down a little over the day: 92% → about 66% by dusk
         bind("battery", String(Math.round(Math.min(92, 92 - ((minute - 8 * 60) * 26) / (ARRIVE_MIN - 8 * 60)))));
+        // the "P" counts the stop with the clock, then shows it whole
+        bind("stop", cam >= departAt + CAMERA * L.vh ? fmt.current.stopDone() : fmt.current.stop(Math.max(1, Math.round(Math.min(stopTo, minute) - stopFrom))));
+        const dusk = minute >= DUSK_MIN ? "1" : "0";
+        if (dusk !== lastDusk) root.dataset.dusk = lastDusk = dusk;
+      }
+
+      // The client's small map: the same truck, as far along the route.
+      const share = Math.min(1, Math.max(0, (l - lGate) / (lDrop - lGate)));
+      if (Math.abs(share - lastMini) > 0.0005) {
+        lastMini = share;
+        for (const m of minis) {
+          m.track.setAttribute("stroke-dasharray", `${share.toFixed(4)} 1`);
+          const p = m.track.getPointAtLength(share * m.len);
+          m.truck.setAttribute("transform", `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})`);
+        }
       }
     };
 
@@ -280,8 +324,10 @@ export function TopDown() {
     const enter = (i: number, play: boolean) => {
       stop();
       const sceneOf = SCENES[i];
-      const playing = play && !!sceneOf && !reduce;
-      const from = playing ? { ...STATE_AFTER[i - 1], ch: i } : STATE_AFTER[i];
+      // chapter 5 has no scene left to play once its truck has driven off
+      const gone = i === STOP && departed();
+      const playing = play && !!sceneOf && !reduce && !gone;
+      const from = playing ? { ...STATE_AFTER[i - 1], ch: i } : i === STOP && !gone ? PARKED : STATE_AFTER[i];
       world.set(from);
       track.wave = from.sync === "1" ? 1 : 0;
       track.plan = from.plan === "1" ? 1 : 0;
@@ -294,7 +340,7 @@ export function TopDown() {
     let inView = false;
     const tick = () => {
       const st = world.get();
-      if (inView && !reduce && st.conn === "moving" && st.net === "1" && !document.hidden) {
+      if (inView && !reduce && st.conn === "moving" && st.net === "1" && st.gps === "1" && !document.hidden) {
         pulses.pulse("phone", "panel-conn", {
           color: COLORS.point,
           size: 3,
@@ -342,6 +388,15 @@ export function TopDown() {
           onLeaveBack: () => enter(i - 1, false),
         });
       }
+      // The truck drives off the lunch stop (or, scrolling back, is parked again).
+      const depart = () => world.get().ch === STOP && enter(STOP, false);
+      ScrollTrigger.create({
+        trigger: root,
+        start: `top+=${departAt} top`,
+        end: "bottom top",
+        onEnter: depart,
+        onLeaveBack: depart,
+      });
     }, root);
     draw(L.anchors[0]);
     ScrollTrigger.refresh();
@@ -359,6 +414,7 @@ export function TopDown() {
   const pin = at(PICKUP_AT);
   const drop = at(DROPOFF_AT);
   const rings = RINGS.map(at);
+  const park = at(STOP);
 
   return (
     <section
@@ -368,6 +424,7 @@ export function TopDown() {
       data-ch="0"
       data-active="none"
       data-intro="0"
+      data-dusk="0"
       style={{ height: `${SECTION_SCREENS * 100}svh` }}
     >
       <div ref={probeRef} className={s.probe} aria-hidden />
@@ -414,9 +471,21 @@ export function TopDown() {
             p && (
               <span key={i}>
                 <span className={s.spot} data-anchor={`ring-${i}`} style={{ left: p.x, top: p.y }} />
-                <span className={s.ring} data-tone={i ? "transit" : "pickup"} {...when(i ? "rings=2" : "rings=1|2")} style={{ left: p.x, top: p.y }} />
+                <span
+                  className={s.ring}
+                  data-tone={RING_TONES[i]}
+                  {...when(`rings=${["1|2|3", "2|3", "3"][i]}`)}
+                  style={{ left: p.x, top: p.y }}
+                />
               </span>
             ),
+        )}
+        {/* the lunch stop, as the cabinet marks a stop: "P", minutes on its tooltip */}
+        {park && L && (
+          <span className={s.park} data-side={park.x < L.roadW / 2 ? "r" : "l"} {...when("park=1")} style={{ left: park.x, top: park.y }}>
+            <i>P</i>
+            <span data-bind="stop" />
+          </span>
         )}
       </div>
 
@@ -466,7 +535,10 @@ export function TopDown() {
             <span>{t("route")}</span>
           </div>
           <Panel />
-          <Phone />
+          <div className={s.phones}>
+            <Phone />
+            <Receiver />
+          </div>
         </div>
       </div>
 
