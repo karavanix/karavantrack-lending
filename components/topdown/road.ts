@@ -154,6 +154,10 @@ export function truckY(s: number, L: Layout): number {
   return Math.min(L.anchors[K - 1], Math.max(L.anchors[0], s - lag));
 }
 
+// Station position of a world y: 2.5 = halfway from bend 2 to bend 3 (the
+// inverse of anchorOf). The 3D world places its truck by it.
+export const posAtY = (y: number, L: Layout) => (y / L.vh - CAMERA) / STEP;
+
 // Camera position at which the truck standing at bend i drives off again.
 export const departOf = (i: number, L: Layout) => L.anchors[i] + (APPROACH / 2 + CHAPTERS[i].hold) * L.vh;
 

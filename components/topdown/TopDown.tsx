@@ -8,6 +8,10 @@
 //
 // Desktop: participants in a sticky column on the right, map and cards on
 // the left two thirds. Phone: a sticky strip of two tiles at the bottom.
+//
+// ?map=3d swaps the flat map for the 3D world (components/world3d, being
+// built in sessions, docs/3d/plan.md). The flat map stays in the page,
+// hidden: it is the fallback, and its drawing code keeps working.
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
@@ -35,7 +39,7 @@ import {
   anchorOf,
   fmtClock,
 } from "./chapters";
-import { Road, cameraOf, dashRanges, departOf, makeLayout, minuteAt, truckY, type Layout } from "./road";
+import { Road, cameraOf, dashRanges, departOf, makeLayout, minuteAt, posAtY, truckY, type Layout } from "./road";
 import { MapArt } from "./MapArt";
 import { Truck } from "./Truck";
 import { Panel, Phone, RECEIVER_W, Receiver, Strip } from "./Participants";
@@ -43,6 +47,8 @@ import { createWorld, INITIAL, PARKED, STATE_AFTER, when } from "./world";
 import { createPulses } from "./pulse";
 import { COLORS, SCENES, heroIntro } from "./scenes";
 import { SITE } from "@/lib/site";
+// World3D itself is three-free: three.js only comes later, with its engine
+import { World3D, type Link } from "../world3d/World3D";
 
 const RING_TONES = ["pickup", "transit", "dropoff"];
 
@@ -54,6 +60,8 @@ export function TopDown() {
   const pulseRef = useRef<HTMLDivElement>(null);
   const [L, setL] = useState<Layout | null>(null);
   const road = useMemo(() => (L ? new Road(L) : null), [L]);
+  const [map3d, setMap3d] = useState(false);
+  const link = useRef<Link>({ frame: null, engine: null }).current;
   const labels = useRef({ telegram: td("pulse.telegram"), batch: td("cab.batch", { count: QUEUED }) });
   const queuedText = useRef((n: number) => td("app.queued", { count: n }));
   queuedText.current = (n: number) => td("app.queued", { count: n });
@@ -66,6 +74,10 @@ export function TopDown() {
     stop: (m) => td("map.stop", { m }),
     stopDone: () => td("map.stopDone", { m: stopTo - stopFrom, from: fmtClock(stopFrom), to: fmtClock(stopTo) }),
   };
+
+  useEffect(() => {
+    setMap3d(new URLSearchParams(window.location.search).get("map") === "3d");
+  }, []);
 
   // Measure one screen (100svh, steady while mobile browser bars come and go).
   useEffect(() => {
@@ -208,6 +220,11 @@ export function TopDown() {
       bind("speed", String(speed));
       bind("km", fmt.current.km(km));
       bind("eta", fmt.current.eta(Math.round(((ROUTE_KM - km) / speed) * 60)));
+
+      // The 3D world gets the same truck and track, as station positions.
+      const posOf = (len: number) => posAtY(road.yAtLen(len), L);
+      link.frame = { pos: posAtY(y, L), track: ranges.map(([a, b]) => [posOf(a), posOf(b)]) };
+      link.engine?.set(link.frame);
 
       const dash = dashRanges(ranges, road.total);
       if (dash !== lastDash) {
@@ -406,7 +423,7 @@ export function TopDown() {
       stop();
       sc.revert();
     };
-  }, [L, road]);
+  }, [L, road, link]);
 
   const chapters = t.raw("chapters") as { title: string; text: string }[];
   const at = (pos: number) => (L && road ? road.at(road.lenAt(anchorOf(pos) * L.vh)) : null);
@@ -425,9 +442,12 @@ export function TopDown() {
       data-active="none"
       data-intro="0"
       data-dusk="0"
+      data-map={map3d ? "3d" : "flat"}
       style={{ height: `${SECTION_SCREENS * 100}svh` }}
     >
       <div ref={probeRef} className={s.probe} aria-hidden />
+
+      {map3d && L && <World3D L={L} link={link} onFail={() => setMap3d(false)} />}
 
       <div className={s.map} aria-hidden>
         {L && road && <MapArt L={L} road={road} />}

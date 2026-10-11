@@ -67,6 +67,16 @@
   left: 0;
   display: block;
 }
+/* the 3D world (?map=3d) takes the flat map's place */
+.td[data-map="3d"] .map {
+  display: none;
+}
+@media (min-width: 1024px) {
+  /* owner's decision for 3D: on desktop the cards are always on the left */
+  .td[data-map="3d"] .card[data-side="R"] {
+    left: 32px;
+  }
+}
 .truck {
   position: absolute;
   left: -17px;
