@@ -11,9 +11,6 @@
     "scroll": "Pastga suring, Farg‘onaga yo‘l olamiz",
     "chapterOf": "{n} / {total}",
     "hero": {
-      "bubbleFrom": "Dispetcher",
-      "bubble": "Aka, qayerdasiz?",
-      "answer": "Turibdi · Toshkent, 3-ombor",
       "title": "Endi so‘rash shart emas.",
       "subtitle": "YoolLive butun reysni ko‘rsatadi: mashina qayerda, qayerda turibdi va aloqa nega yo‘qoldi. Haydovchi ilovada faqat qadamlarni belgilaydi.",
       "cta": "Boshlash",

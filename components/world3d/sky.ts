@@ -2,8 +2,8 @@
 // trip, from a cool low morning sun over the Tashkent depot to a sunset at
 // Fergana and dusk over the whole route in the finale.
 //
-// The table is the probe's (the owner saw that light), rebalanced in
-// session 6: Lambert divides by π, and sky + sun·sin(elevation) ≈ 3.1
+// The table is the probe's (the owner saw that light), rebalanced since:
+// Lambert divides by π, and sky + sun·sin(elevation) ≈ 3.1
 // keeps the land the colour of the page by day (engine.ts). Of that sum
 // the sun now has more and the sky less, and the sky is a cool blue against
 // a warm sun (the sunset keeps a warm sky): shade reads as shade, lit faces as lit, instead of everything

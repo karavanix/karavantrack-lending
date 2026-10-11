@@ -151,7 +151,7 @@ export function own<T extends { dispose(): void }>(x: T): T {
   return x;
 }
 
-// Windows and street lamps: dark by day, they glow at dusk (session 5 turns
+// Windows and street lamps: dark by day, they glow at dusk (lights.ts turns
 // up emissiveIntensity by the minute of the trip). They live as long as the
 // module: a disposed material is simply uploaded again by the next engine.
 export const glow = {

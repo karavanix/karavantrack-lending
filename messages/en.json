@@ -11,9 +11,6 @@
     "scroll": "Scroll down, we’re driving to Fergana",
     "chapterOf": "{n} of {total}",
     "hero": {
-      "bubbleFrom": "Dispatcher",
-      "bubble": "Where are you now?",
-      "answer": "Stopped · Tashkent, depot 3",
       "title": "No need to ask anymore.",
       "subtitle": "YoolLive shows the whole trip: where the truck is, where it stopped and why the signal dropped. The driver just marks each step in the app.",
       "cta": "Get started",

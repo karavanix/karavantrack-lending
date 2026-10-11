@@ -10,9 +10,9 @@
 // the left two thirds. Phone: a sticky strip of two tiles at the bottom.
 //
 // The map is the 3D world (components/world3d, docs/3d/plan.md). The flat
-// map stays in the page, hidden: it is the fallback (no WebGL, a device too
-// slow for 3D; data-flat on the section says why), and its drawing code
-// keeps working. ?map=flat shows it instead.
+// map is the fallback (no WebGL, a device too slow for 3D; data-flat on the
+// section says why): its art (MapArt, three quarters of the page's nodes)
+// is only built once the page falls back to it. ?map=flat shows it instead.
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
@@ -123,15 +123,16 @@ export function TopDown() {
     const world = createWorld(root, () => draw(lastCam));
     const pulses = createPulses(root, pulseRef.current!);
     const truck = q("[data-truck]");
-    const casing = q<SVGPathElement>('[data-track="casing"]');
-    const line = q<SVGPathElement>('[data-track="line"]');
+    // the flat map's art, absent while the 3D map is up
+    const casing = root.querySelector<SVGPathElement>('[data-track="casing"]');
+    const line = root.querySelector<SVGPathElement>('[data-track="line"]');
     const dots = qa<SVGCircleElement>('[data-track="dots"] circle').map((el) => ({ el, l: Number(el.dataset.l), on: false }));
-    const front = q<SVGGElement>('[data-track="front"]');
+    const front = root.querySelector<SVGGElement>('[data-track="front"]');
     const pend = q("[data-pend]");
     const queuedPills = qa("[data-queued]");
     const queuedTexts = qa("[data-bind='queued']");
     const clocks = qa("[data-bind='clock']");
-    const planClip = q<SVGRectElement>("[data-plan-clip]");
+    const planClip = root.querySelector<SVGRectElement>("[data-plan-clip]");
     const binds = {
       speed: qa("[data-bind='speed']"),
       eta: qa("[data-bind='eta']"),
@@ -215,7 +216,7 @@ export function TopDown() {
       const plan = track.plan
         ? `${(l > lStart ? y : yPin).toFixed(1)} ${road.yAtLen(lPin + (lDrop - lPin) * track.plan).toFixed(1)}`
         : "0 0";
-      if (plan !== lastPlan) {
+      if (planClip && plan !== lastPlan) {
         lastPlan = plan;
         const [top, bottom] = plan.split(" ").map(Number);
         planClip.setAttribute("y", String(top));
@@ -253,11 +254,13 @@ export function TopDown() {
       };
       link.engine?.set(link.frame);
 
-      const dash = dashRanges(ranges, road.total);
-      if (dash !== lastDash) {
-        lastDash = dash;
-        casing.setAttribute("stroke-dasharray", dash);
-        line.setAttribute("stroke-dasharray", dash);
+      if (casing && line) {
+        const dash = dashRanges(ranges, road.total);
+        if (dash !== lastDash) {
+          lastDash = dash;
+          casing.setAttribute("stroke-dasharray", dash);
+          line.setAttribute("stroke-dasharray", dash);
+        }
       }
       for (const d of dots) {
         const on = d.l > synced && d.l <= held;
@@ -267,8 +270,8 @@ export function TopDown() {
         }
       }
       const waving = track.wave > 0 && track.wave < 1 && held > lOff;
-      front.style.display = waving ? "" : "none";
-      if (waving) {
+      if (front) front.style.display = waving ? "" : "none";
+      if (front && waving) {
         const p = road.at(synced);
         front.setAttribute("transform", `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})`);
       }
@@ -477,7 +480,7 @@ export function TopDown() {
       {map3d && <World3D L={L} link={link} onFail={toFlat} />}
 
       <div className={s.map} aria-hidden>
-        {L && road && <MapArt L={L} road={road} />}
+        {L && road && !map3d && <MapArt L={L} road={road} />}
         <div className={s.truck} data-truck data-anchor="truck" style={L ? undefined : { visibility: "hidden" }}>
           <Truck />
         </div>

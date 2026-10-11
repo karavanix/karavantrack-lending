@@ -85,7 +85,7 @@ export const cutKey = (c: ReturnType<typeof cutAt>) => (c.a === c.b ? c.a : `${c
 
 // ── the shots ─────────────────────────────────────────────────────────────
 
-// Road: the offset of session 1, metres up and towards Fergana (−z).
+// Road: the offset from the truck, metres up and towards Fergana (−z).
 const ROAD = { wide: { up: 74, back: 104 }, narrow: { up: 105, back: 130 } };
 
 // Close: in front of the truck and `side` degrees off its nose, `dist`
