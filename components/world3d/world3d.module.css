@@ -20,7 +20,28 @@
   height: 100%;
 }
 
-/* Where the truck, the pickup pin and the step rings are on screen: the
+/* A word of the map (Overlays.tsx), at the screen point of its place in
+   the world; the engine moves it after every frame. Over the canvas, under
+   the chapter cards and the participants. Unseen until the engine has
+   placed it (it sets the opacity by distance). */
+.at {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  will-change: transform;
+}
+
+.gap > [data-side="r"] {
+  margin-left: 16px;
+}
+.gap > [data-side="l"] {
+  margin-left: -16px;
+}
+
+/* Where the truck, the pickup flag and the step rings are on screen: the
    engine moves these after every frame, pulse.ts aims at them. */
 .anchor {
   position: absolute;

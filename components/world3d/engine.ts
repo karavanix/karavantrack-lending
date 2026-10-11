@@ -11,9 +11,10 @@
 // shaders are compiled in the background (compileAsync) before the first
 // frame, which would otherwise compile them all at once.
 //
-// After drawing it places the invisible anchors (truck, pickup pin, step
+// After drawing it places the invisible anchors (truck, pickup flag, step
 // rings) where those things are on screen, so the impulses of pulse.ts land
-// on them exactly as they did on the flat map.
+// on them exactly as they did on the flat map, and moves the map's words
+// (overlays.ts) to their places.
 
 import {
   Box3,
@@ -29,23 +30,34 @@ import {
   Vector3,
   WebGLRenderer,
 } from "three";
-import { PICKUP_AT, RINGS } from "../topdown/chapters";
+import { RINGS } from "../topdown/chapters";
 import { buildGround } from "./build/ground";
 import { disposeMaterials, P } from "./build/materials";
 import { buildWorld } from "./build/world";
 import { FOV, roadShot } from "./camera";
+import { buildMarks } from "./marks";
+import { createOverlays, overlayPoints } from "./overlays";
 import { roadAt, sAtPos } from "./route";
 import { buildTrack } from "./track";
 import { buildTruck } from "./truck";
 
+// Positions are station positions (see route.ts).
 export type Frame = {
-  pos: number; // where the truck is, as a station position (see route.ts)
-  track: [number, number][]; // stretches of blue track, in station positions
+  pos: number; // where the truck is
+  track: [number, number][]; // stretches of blue track
+  plan: [number, number] | null; // the planned route's grey dots drawn so far
+  pend: [number, number] | null; // grey points still on the driver's phone
+  front: number | null; // the wave delivering them has got this far
+  pins: boolean; // the load is created: pickup and dropoff flags are up
+  first: boolean; // the first track point is down
+  rings: number; // the driver's step rings on the ground so far
+  waves: boolean; // the network is back: the tower below the pass sends its waves
 };
 
-// Where the truck should stand on screen, px from the canvas' top left, and
-// the quality tier.
-export type View = { wide: boolean; aimX: number; aimY: number };
+// Where the truck should stand on screen, px from the canvas' top left, the
+// quality tier, and the strip of the screen where the map shows between the
+// cards and the participants' column (the map's words keep to it).
+export type View = { wide: boolean; aimX: number; aimY: number; free: [number, number] };
 
 export type Anchors = { truck: HTMLElement; pin: HTMLElement; rings: HTMLElement[] };
 
@@ -58,6 +70,9 @@ const DPR = { wide: 1.5, narrow: 1 };
 // colour of the page around it.
 const SUN = { az: 135, el: 36, color: 0xfff2e0, i: 1.55 };
 const HEMI = { sky: 0xf6f6f2, ground: 0xb9b09a, i: 2.2 };
+
+// The map's words fade out between these distances past the truck.
+const WORDS = { near: 130, far: 230 };
 
 const turn = () => new Promise((r) => setTimeout(r, 0));
 
@@ -104,6 +119,9 @@ export async function createEngine(host: HTMLElement, anchors: Anchors, initial:
     step = build.next();
   }
   scene.add(step.value.world);
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const marks = buildMarks(scene, reduce, step.value.towers[1]);
+  const placeWords = createOverlays(host, overlayPoints(marks.flagTops));
 
   // Corners of the truck in its own frame, for its anchor on screen.
   const box = new Box3().setFromObject(truck);
@@ -115,7 +133,7 @@ export async function createEngine(host: HTMLElement, anchors: Anchors, initial:
     return new Vector3(r.x, 0.2, r.z);
   };
   const points = [
-    { el: anchors.pin, at: spot(PICKUP_AT) },
+    { el: anchors.pin, at: marks.flagHeads[0] },
     ...anchors.rings.map((el, i) => ({ el, at: spot(RINGS[i]) })),
   ];
 
@@ -241,8 +259,11 @@ export async function createEngine(host: HTMLElement, anchors: Anchors, initial:
     fitShadow(fog.far);
 
     setTrack(frame.track);
+    const busy = marks.update(frame, performance.now());
     renderer.render(scene, camera);
     placeAnchors();
+    placeWords(camera, w, h, view.free, frame, { near: d + WORDS.near, far: d + WORDS.far });
+    if (busy) invalidate(); // a flag or a ring is still landing
   };
 
   function invalidate() {
@@ -289,5 +310,15 @@ export async function createEngine(host: HTMLElement, anchors: Anchors, initial:
 
 export type Engine = Awaited<ReturnType<typeof createEngine>>;
 
+const sameRange = (a: [number, number] | null, b: [number, number] | null) => a === b || (!!a && !!b && a[0] === b[0] && a[1] === b[1]);
 const same = (a: Frame, b: Frame) =>
-  a.pos === b.pos && a.track.length === b.track.length && a.track.every((r, k) => r[0] === b.track[k][0] && r[1] === b.track[k][1]);
+  a.pos === b.pos &&
+  a.front === b.front &&
+  a.pins === b.pins &&
+  a.first === b.first &&
+  a.rings === b.rings &&
+  a.waves === b.waves &&
+  sameRange(a.plan, b.plan) &&
+  sameRange(a.pend, b.pend) &&
+  a.track.length === b.track.length &&
+  a.track.every((r, k) => sameRange(r, b.track[k]));

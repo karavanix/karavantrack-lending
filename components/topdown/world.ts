@@ -110,7 +110,8 @@ export const when = (cond: string) => ({
   "data-on": holds(parse(cond), INITIAL) ? "1" : "0",
 });
 
-export function createWorld(root: HTMLElement) {
+// onSet: told after every change (the 3D map draws its marks from the state).
+export function createWorld(root: HTMLElement, onSet?: () => void) {
   const nodes = Array.from(root.querySelectorAll<HTMLElement>("[data-when]")).map((el) => ({
     el,
     cond: parse(el.dataset.when!),
@@ -127,6 +128,7 @@ export function createWorld(root: HTMLElement) {
       const on = holds(cond, state) ? "1" : "0";
       if (el.dataset.on !== on) el.dataset.on = on;
     }
+    onSet?.();
   };
 
   return { set, get: () => state };

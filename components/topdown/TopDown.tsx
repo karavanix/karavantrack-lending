@@ -111,7 +111,8 @@ export function TopDown() {
     const q = <T extends Element = HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
     const qa = <T extends Element = HTMLElement>(sel: string) => Array.from(root.querySelectorAll<T>(sel));
 
-    const world = createWorld(root);
+    // the 3D map draws flags and rings from the state, so it hears of every change
+    const world = createWorld(root, () => draw(lastCam));
     const pulses = createPulses(root, pulseRef.current!);
     const truck = q("[data-truck]");
     const casing = q<SVGPathElement>('[data-track="casing"]');
@@ -221,9 +222,21 @@ export function TopDown() {
       bind("km", fmt.current.km(km));
       bind("eta", fmt.current.eta(Math.round(((ROUTE_KM - km) / speed) * 60)));
 
-      // The 3D world gets the same truck and track, as station positions.
+      // The 3D world gets the same truck, track, plan and grey run, as
+      // station positions, and the flags and rings from the state.
       const posOf = (len: number) => posAtY(road.yAtLen(len), L);
-      link.frame = { pos: posAtY(y, L), track: ranges.map(([a, b]) => [posOf(a), posOf(b)]) };
+      const st = world.get();
+      link.frame = {
+        pos: posAtY(y, L),
+        track: ranges.map(([a, b]) => [posOf(a), posOf(b)]),
+        plan: track.plan ? [l > lStart ? posAtY(y, L) : PICKUP_AT, posOf(lPin + (lDrop - lPin) * track.plan)] : null,
+        pend: held > synced ? [posOf(synced), posOf(held)] : null,
+        front: track.wave > 0 && track.wave < 1 && held > lOff ? posOf(synced) : null,
+        pins: st.plan === "1",
+        first: st.first === "1",
+        rings: Number(st.rings),
+        waves: st.ch === 7 && st.net === "1",
+      };
       link.engine?.set(link.frame);
 
       const dash = dashRanges(ranges, road.total);
