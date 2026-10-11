@@ -84,14 +84,15 @@ function blob(r: number, ph: number[]) {
 }
 
 // One terrace: the outline at the bottom, drawn in towards the top by a
-// different amount all round (steep cliffs here, gentler slopes there),
-// and a top that is not level. `seed` varies it; nothing here draws from
+// different amount all round (steep cliffs here, gentler slopes there).
+// The top stays level: an uneven one, fanned to its middle, read as an
+// umbrella. `seed` varies it; nothing here draws from
 // the world's random sequence.
 function terrace(pts: [number, number][], h: number, seed: number): BufferGeometry {
   const n = pts.length;
   const top = pts.map(([x, z], i) => {
     const k = 0.86 + 0.12 * hash(i * 1.7 + seed, seed * 0.31);
-    return [x * k, h * (0.88 + 0.24 * hash(seed * 0.7, i * 2.3)), z * k] as const;
+    return [x * k, h, z * k] as const;
   });
   let cx = 0;
   let cy = 0;
@@ -111,7 +112,7 @@ function terrace(pts: [number, number][], h: number, seed: number): BufferGeomet
     // the side (outline runs anticlockwise seen from above: outward faces)
     pos.push(ax, 0, -az, bx, 0, -bz, B[0], B[1], -B[2], ax, 0, -az, B[0], B[1], -B[2], A[0], A[1], -A[2]);
     // the top, a fan to its middle
-    pos.push(A[0], A[1], -A[2], B[0], B[1], -B[2], cx, cy + h * 0.04, -cz);
+    pos.push(A[0], A[1], -A[2], B[0], B[1], -B[2], cx, cy, -cz);
   }
   const g = new BufferGeometry();
   g.setAttribute("position", new Float32BufferAttribute(pos, 3));
