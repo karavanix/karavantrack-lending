@@ -32,11 +32,31 @@ export const TANS = PTS.map((_, i) => curve.getTangentAt(i / N));
 
 export const idxOf = (s: number) => Math.min(N, Math.max(0, (s / LEN) * N));
 
-// Metres along the road where it first comes down to z (it only runs north).
-export function sAtZ(z: number): number {
-  let i = 0;
-  while (i < N && PTS[i].z > z) i++;
-  return (i / N) * LEN;
+// Sample where the road first comes down to z. The road runs north all the
+// way (z falls with every sample), so a binary search finds it.
+export function iAtZ(z: number): number {
+  let lo = 0;
+  let hi = N;
+  while (lo < hi) {
+    const m = (lo + hi) >> 1;
+    if (PTS[m].z > z) lo = m + 1;
+    else hi = m;
+  }
+  return lo;
+}
+export const sAtZ = (z: number) => (iAtZ(z) / N) * LEN;
+
+// Distance from (x, z) to the road over every 4th sample, as the probe
+// measured it: the world is laid out with these distances, and a more exact
+// one would move houses and fields off the layout the owner approved. Only
+// samples closer than the best so far in z can be closer at all, so the
+// search starts at z and stops early both ways.
+export function distToRoad(x: number, z: number): number {
+  const i0 = iAtZ(z) & ~3;
+  let best = Infinity;
+  for (let i = i0; i <= N && PTS[i].z > z - best; i += 4) best = Math.min(best, Math.hypot(PTS[i].x - x, PTS[i].z - z));
+  for (let i = i0 - 4; i >= 0 && PTS[i].z < z + best; i -= 4) best = Math.min(best, Math.hypot(PTS[i].x - x, PTS[i].z - z));
+  return best;
 }
 
 // Where the truck stands at each chapter's bend, metres along the road.

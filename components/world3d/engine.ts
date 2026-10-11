@@ -6,6 +6,11 @@
 // moves the trip on; the engine draws once on the next animation frame and
 // stops again. At rest, or with the section off screen, it costs nothing.
 //
+// Getting ready is spread out so the page never freezes: the world is built
+// a piece at a time with the main thread handed back in between, and the
+// shaders are compiled in the background (compileAsync) before the first
+// frame, which would otherwise compile them all at once.
+//
 // After drawing it places the invisible anchors (truck, pickup pin, step
 // rings) where those things are on screen, so the impulses of pulse.ts land
 // on them exactly as they did on the flat map.
@@ -16,6 +21,7 @@ import {
   Fog,
   Color,
   HemisphereLight,
+  InstancedMesh,
   Mesh,
   PCFSoftShadowMap,
   PerspectiveCamera,
@@ -26,6 +32,7 @@ import {
 import { PICKUP_AT, RINGS } from "../topdown/chapters";
 import { buildGround } from "./build/ground";
 import { disposeMaterials, P } from "./build/materials";
+import { buildWorld } from "./build/world";
 import { FOV, roadShot } from "./camera";
 import { roadAt, sAtPos } from "./route";
 import { buildTrack } from "./track";
@@ -52,7 +59,13 @@ const DPR = { wide: 1.5, narrow: 1 };
 const SUN = { az: 135, el: 36, color: 0xfff2e0, i: 1.55 };
 const HEMI = { sky: 0xf6f6f2, ground: 0xb9b09a, i: 2.2 };
 
-export function createEngine(host: HTMLElement, anchors: Anchors, initial: View) {
+const turn = () => new Promise((r) => setTimeout(r, 0));
+
+const UP = new Vector3(0, 1, 0);
+// Corners and edge midpoints of the screen, normalised device coordinates.
+const SCREEN = [[-1, -1], [0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0]];
+
+export async function createEngine(host: HTMLElement, anchors: Anchors, initial: View) {
   // Throws without WebGL; the caller falls back to the flat map.
   const renderer = new WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
   renderer.shadowMap.enabled = true;
@@ -73,10 +86,9 @@ export function createEngine(host: HTMLElement, anchors: Anchors, initial: View)
   sun.castShadow = true;
   sun.shadow.bias = -0.0006;
   sun.shadow.normalBias = 0.5;
-  // Only what is around the truck needs shadows in this camera.
+  // The shadow camera covers the ground in view (fitShadow), from 300 m
+  // up the sun's ray.
   const sc = sun.shadow.camera;
-  sc.left = sc.bottom = -60;
-  sc.right = sc.top = 60;
   sc.near = 1;
   sc.far = 700;
   scene.add(hemi, sun, sun.target);
@@ -85,6 +97,13 @@ export function createEngine(host: HTMLElement, anchors: Anchors, initial: View)
   const truck = buildTruck();
   scene.add(truck);
   const setTrack = buildTrack(scene);
+  const build = buildWorld();
+  let step = build.next();
+  while (!step.done) {
+    await turn();
+    step = build.next();
+  }
+  scene.add(step.value.world);
 
   // Corners of the truck in its own frame, for its anchor on screen.
   const box = new Box3().setFromObject(truck);
@@ -133,6 +152,54 @@ export function createEngine(host: HTMLElement, anchors: Anchors, initial: View)
     el.style.height = `${bh.toFixed(1)}px`;
     el.style.visibility = "visible";
   };
+  // Shadows over exactly the ground in view. In the light's own frame a
+  // caster and its shadow fall on the same spot, so covering the visible
+  // ground in that frame covers every shadow on it, wherever its caster
+  // stands. The screen's corner rays meet the ground, or are cut at `reach`
+  // (the fog's end: nothing shows beyond it). The box is rounded up to whole
+  // metres and its centre snapped to the shadow map's texels, so it holds
+  // still while the truck drives and the shadow edges don't crawl.
+  const lx = new Vector3();
+  const ly = new Vector3();
+  const ray = new Vector3();
+  const area = { x0: 0, x1: 0, y0: 0, y1: 0 };
+  const fitShadow = (reach: number) => {
+    // the shadow camera's own axes: it looks down the sun's ray, up is +y
+    lx.crossVectors(UP, sunDir).normalize();
+    ly.crossVectors(sunDir, lx);
+    camera.updateMatrixWorld();
+    area.x0 = area.y0 = Infinity;
+    area.x1 = area.y1 = -Infinity;
+    for (const [nx, ny] of SCREEN) {
+      ray.set(nx, ny, 0.5).unproject(camera).sub(camera.position).normalize();
+      const t = ray.y < 0 ? Math.min(-camera.position.y / ray.y, reach) : reach;
+      v.copy(camera.position).addScaledVector(ray, t).setY(0);
+      const a = v.dot(lx);
+      const b = v.dot(ly);
+      area.x0 = Math.min(area.x0, a);
+      area.x1 = Math.max(area.x1, a);
+      area.y0 = Math.min(area.y0, b);
+      area.y1 = Math.max(area.y1, b);
+    }
+    const hx = Math.ceil((area.x1 - area.x0) / 2) + 2;
+    const hy = Math.ceil((area.y1 - area.y0) / 2) + 2;
+    if (hx !== sc.right || hy !== sc.top) {
+      sc.left = -hx;
+      sc.right = hx;
+      sc.bottom = -hy;
+      sc.top = hy;
+      sc.updateProjectionMatrix();
+    }
+    const tx = (2 * hx) / sun.shadow.mapSize.x;
+    const ty = (2 * hy) / sun.shadow.mapSize.y;
+    const cx = Math.round((area.x0 + area.x1) / 2 / tx) * tx;
+    const cy = Math.round((area.y0 + area.y1) / 2 / ty) * ty;
+    // that centre on the ground (lx is level, so only ly lifts it)
+    sun.target.position.copy(lx).multiplyScalar(cx).addScaledVector(ly, cy);
+    sun.target.position.addScaledVector(sunDir, -sun.target.position.y / sunDir.y);
+    sun.position.copy(sun.target.position).addScaledVector(sunDir, 300);
+  };
+
   const placeAnchors = () => {
     let x0 = Infinity;
     let y0 = Infinity;
@@ -171,8 +238,7 @@ export function createEngine(host: HTMLElement, anchors: Anchors, initial: View)
     fog.near = d * 0.9 + 60;
     fog.far = d * 2 + 420;
 
-    sun.target.position.set(here.x, 0, here.z);
-    sun.position.copy(sun.target.position).addScaledVector(sunDir, 300);
+    fitShadow(fog.far);
 
     setTrack(frame.track);
     renderer.render(scene, camera);
@@ -186,6 +252,9 @@ export function createEngine(host: HTMLElement, anchors: Anchors, initial: View)
   const ro = new ResizeObserver(resize);
   ro.observe(host);
   resize();
+  // Compiled in the background where the browser can; the first frame then
+  // only draws.
+  await renderer.compileAsync(scene, camera);
 
   return {
     set(f: Frame) {
@@ -205,6 +274,7 @@ export function createEngine(host: HTMLElement, anchors: Anchors, initial: View)
       ro.disconnect();
       scene.traverse((o) => {
         if (!(o instanceof Mesh)) return;
+        if (o instanceof InstancedMesh) o.dispose();
         o.geometry.dispose();
         for (const m of [o.material].flat()) m.dispose();
       });
@@ -217,7 +287,7 @@ export function createEngine(host: HTMLElement, anchors: Anchors, initial: View)
   };
 }
 
-export type Engine = ReturnType<typeof createEngine>;
+export type Engine = Awaited<ReturnType<typeof createEngine>>;
 
 const same = (a: Frame, b: Frame) =>
   a.pos === b.pos && a.track.length === b.track.length && a.track.every((r, k) => r[0] === b.track[k][0] && r[1] === b.track[k][1]);

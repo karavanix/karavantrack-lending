@@ -1,21 +1,16 @@
 // The truck as in the probe: a box model, nose towards −z. Session 6 gives
-// it a real cab shape.
+// it a real cab shape. Its thirty boxes are merged per material (eight draw
+// calls instead of thirty) into one group that moves as a whole.
 
-import { BoxGeometry, CylinderGeometry, Group, Mesh, MeshBasicMaterial, type Material } from "three";
+import { BoxGeometry, CylinderGeometry, Group, Mesh, MeshBasicMaterial } from "three";
+import { createBatch } from "./build/batch";
+import { box } from "./build/kit";
 import { mat, P } from "./build/materials";
 
 export function buildTruck(): Group {
-  const g = new Group();
-  const add = (o: Mesh) => {
-    o.castShadow = o.receiveShadow = true;
-    g.add(o);
-  };
-  // a box standing on y, centred on (x, z)
-  const box = (w: number, h: number, d: number, color: number, x: number, y: number, z: number, m?: Material) => {
-    const o = new Mesh(new BoxGeometry(w, h, d), m ?? mat(color));
-    o.position.set(x, y + h / 2, z);
-    return o;
-  };
+  const parts = new Group();
+  const lights = new Group();
+  const add = (o: Mesh) => void parts.add(o);
   add(box(2.2, 0.5, 11.4, 0x2b3340, 0, 0.75, 0.3)); // chassis
   add(box(2.55, 3.3, 8.4, 0xf5f7f9, 0, 1.15, 1.9)); // trailer
   add(box(2.6, 0.55, 8.2, P.blue, 0, 2.3, 1.9));
@@ -34,7 +29,7 @@ export function buildTruck(): Group {
     l.position.set(sx * 0.85, 1.25, -5.58);
     const r = new Mesh(new BoxGeometry(0.3, 0.25, 0.06), tail);
     r.position.set(sx * 1.0, 1.4, 6.12);
-    g.add(l, r);
+    lights.add(l, r);
   }
   const wheel = new CylinderGeometry(0.55, 0.55, 0.45, 14);
   wheel.rotateZ(Math.PI / 2);
@@ -44,5 +39,10 @@ export function buildTruck(): Group {
       w.position.set(sx * 1.1, 0.55, z);
       add(w);
     }
+  const b = createBatch();
+  b.bake(parts);
+  b.bake(lights, false);
+  const g = new Group();
+  for (const _ of b.flush(g));
   return g;
 }

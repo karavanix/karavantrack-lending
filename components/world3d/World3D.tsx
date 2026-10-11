@@ -43,14 +43,21 @@ export function World3D({ L, link, onFail }: { L: Layout; link: Link; onFail: ()
     let engine: Engine | null = null;
     import("./engine")
       .then(({ createEngine }) => {
-        if (dead) return;
-        engine = createEngine(
+        if (dead) return null;
+        return createEngine(
           hostRef.current!,
           { truck: truckRef.current!, pin: pinRef.current!, rings: ringRefs.current },
           view.current,
         );
-        link.engine = engine;
-        if (link.frame) engine.set(link.frame);
+      })
+      .then((e) => {
+        if (!e) return;
+        // gone while the world was being built
+        if (dead) return e.dispose();
+        engine = e;
+        link.engine = e;
+        e.setView(view.current); // the layout may have changed meanwhile
+        if (link.frame) e.set(link.frame);
       })
       .catch(() => !dead && fail.current());
     return () => {
