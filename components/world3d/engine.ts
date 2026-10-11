@@ -35,9 +35,11 @@ import { buildGround } from "./build/ground";
 import { disposeMaterials, P } from "./build/materials";
 import { buildWorld } from "./build/world";
 import { FOV, apply, cutAt, cutKey, newShot, pxPerMetre, shotAt } from "./camera";
+import { buildLights } from "./lights";
 import { buildMarks } from "./marks";
 import { createOverlays, overlayPoints } from "./overlays";
 import { roadAt, sAtPos } from "./route";
+import { beamsAt, lampsAt, skyAt } from "./sky";
 import { buildTrack } from "./track";
 import { buildTruck } from "./truck";
 
@@ -53,6 +55,8 @@ export type Frame = {
   first: boolean; // the first track point is down
   rings: number; // the driver's step rings on the ground so far
   waves: boolean; // the network is back: the tower below the pass sends its waves
+  minute: number; // light of the hour (sky.ts); goes on into the dusk after the trip's clock stops
+  beams: boolean; // the headlights are switched on (until the delivery is confirmed)
 };
 
 // Where the truck should stand on screen, px from the canvas' top left, the
@@ -66,11 +70,11 @@ export type Anchors = { truck: HTMLElement; pin: HTMLElement; rings: HTMLElement
 // on the Honor, docs/3d/plan.md). 1× there is 58–60 fps and looks the same.
 const DPR = { wide: 1.5, narrow: 1 };
 
-// 10:00 light from the probe's time-of-day table (session 5 makes it move).
-// Lambert divides by π: sky + sun·sin(elevation) ≈ 3.1 keeps the land the
-// colour of the page around it.
-const SUN = { az: 135, el: 36, color: 0xfff2e0, i: 1.55 };
-const HEMI = { sky: 0xf6f6f2, ground: 0xb9b09a, i: 2.2 };
+// Headlights fade in and out over this long when switched, s.
+const BEAMS_FADE = 0.8;
+// The sun's direction in steps this fine, rad: from high above the shadow
+// map is kept until the sun has moved a step.
+const SUN_STEP = 0.01;
 
 // The map's words fade out between these distances past the point the
 // camera looks at. From high above the whole route is that close: MAP is
@@ -103,11 +107,12 @@ export async function createEngine(host: HTMLElement, anchors: Anchors, initial:
   const camera = new PerspectiveCamera(FOV, 1, 2, 2500);
   const shot = newShot();
 
-  const hemi = new HemisphereLight(HEMI.sky, HEMI.ground, HEMI.i);
-  const sun = new DirectionalLight(SUN.color, SUN.i);
-  const az = (SUN.az * Math.PI) / 180;
-  const el = (SUN.el * Math.PI) / 180;
-  const sunDir = new Vector3(Math.sin(az) * Math.cos(el), Math.sin(el), -Math.cos(az) * Math.cos(el));
+  // Colours and strength by the minute of the trip (sky.ts).
+  const hemi = new HemisphereLight();
+  const sun = new DirectionalLight();
+  const sunDir = new Vector3();
+  const background = scene.background as Color;
+  const fog = scene.fog as Fog;
   sun.castShadow = true;
   sun.shadow.bias = -0.0006;
   sun.shadow.normalBias = 0.5;
@@ -121,6 +126,9 @@ export async function createEngine(host: HTMLElement, anchors: Anchors, initial:
   buildGround(scene);
   const truck = buildTruck();
   scene.add(truck);
+  // the truck's own box, before the headlight beam joins it
+  const box = new Box3().setFromObject(truck);
+  const setLights = buildLights(scene, truck);
   const setTrack = buildTrack(scene);
   const build = buildWorld();
   let step = build.next();
@@ -134,7 +142,6 @@ export async function createEngine(host: HTMLElement, anchors: Anchors, initial:
   const placeWords = createOverlays(host, overlayPoints(marks.flagTops));
 
   // Corners of the truck in its own frame, for its anchor on screen.
-  const box = new Box3().setFromObject(truck);
   const corners = [0, 1, 2, 3, 4, 5, 6, 7].map(
     (k) => new Vector3(k & 1 ? box.max.x : box.min.x, k & 2 ? box.max.y : box.min.y, k & 4 ? box.max.z : box.min.z),
   );
@@ -157,6 +164,9 @@ export async function createEngine(host: HTMLElement, anchors: Anchors, initial:
   let w = 0;
   let h = 0;
   let raf = 0;
+  // headlights: 0 off … 1 on, eased when they are switched
+  let beams = -1;
+  let last = 0;
   const here = { x: 0, z: 0, tx: 0, tz: -1 };
   const v = new Vector3();
 
@@ -266,18 +276,26 @@ export async function createEngine(host: HTMLElement, anchors: Anchors, initial:
     shotAt(cut, here.x, here.z, view, w, h, shot);
     apply(camera, shot, w, h);
     const d = shot.dist;
-    const fog = scene.fog as Fog;
     fog.near = d * 0.9 + 60;
     fog.far = d * 2 + 420;
 
+    skyAt(frame.minute, sun, hemi, background, sunDir);
+    fog.color.copy(background);
+    const now = performance.now();
+    const on = frame.beams ? 1 : 0;
+    if (beams < 0 || reduce) beams = on;
+    else beams = on > beams ? Math.min(on, beams + (now - last) / 1000 / BEAMS_FADE) : Math.max(on, beams - (now - last) / 1000 / BEAMS_FADE);
+    last = now;
+    setLights(lampsAt(frame.minute), beamsAt(frame.minute) * beams * beams * (3 - 2 * beams));
+
     fitShadow(fog.far);
-    const key = cutKey(cut);
-    renderer.shadowMap.autoUpdate = !(key === "top" && shadowsFor === key);
+    const key = `${cutKey(cut)} ${Math.round(Math.atan2(sunDir.x, sunDir.z) / SUN_STEP)} ${Math.round(sunDir.y / SUN_STEP)}`;
+    renderer.shadowMap.autoUpdate = !(cutKey(cut) === "top" && shadowsFor === key);
     shadowsFor = key;
 
     const pxm = pxPerMetre(shot, h);
     setTrack(frame.track, Math.max(TRACK_W, TRACK_PX / pxm));
-    const busy = marks.update(frame, performance.now(), pxm);
+    const busy = marks.update(frame, now, pxm) || beams !== on;
     renderer.render(scene, camera);
     placeAnchors();
     const map = Math.min(1, Math.max(0, (d - MAP_FROM) / (MAP_TO - MAP_FROM)));
@@ -293,8 +311,11 @@ export async function createEngine(host: HTMLElement, anchors: Anchors, initial:
   ro.observe(host);
   resize();
   // Compiled in the background where the browser can; the first frame then
-  // only draws.
+  // only draws. The evening lights too (compiling skips hidden things), or
+  // their first dusk would stall on it.
+  setLights(1, 1);
   await renderer.compileAsync(scene, camera);
+  setLights(0, 0);
 
   return {
     set(f: Frame) {
@@ -340,6 +361,8 @@ const same = (a: Frame, b: Frame) =>
   a.first === b.first &&
   a.rings === b.rings &&
   a.waves === b.waves &&
+  a.minute === b.minute &&
+  a.beams === b.beams &&
   sameRange(a.plan, b.plan) &&
   sameRange(a.pend, b.pend) &&
   a.track.length === b.track.length &&

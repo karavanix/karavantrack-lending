@@ -26,6 +26,7 @@ import {
   DEPOT_END,
   DROPOFF_AT,
   DUSK_MIN,
+  DUSK_PER_SCREEN,
   FINALE,
   K,
   LEAD,
@@ -227,6 +228,9 @@ export function TopDown() {
       // station positions, and the flags and rings from the state.
       const posOf = (len: number) => posAtY(road.yAtLen(len), L);
       const st = world.get();
+      const minute = minuteAt(cam, L);
+      const last = L.anchors[K - 1];
+      const light = cam > last ? minute + ((cam - last) / L.vh) * DUSK_PER_SCREEN : minute;
       link.frame = {
         at: posAtY(cam, L),
         pos: posAtY(y, L),
@@ -238,6 +242,8 @@ export function TopDown() {
         first: st.first === "1",
         rings: Number(st.rings),
         waves: st.ch === 7 && st.net === "1",
+        minute: light,
+        beams: st.status !== "confirmed",
       };
       link.engine?.set(link.frame);
 
@@ -284,7 +290,6 @@ export function TopDown() {
         pend.dataset.on = "1";
       } else pend.dataset.on = "0";
 
-      const minute = minuteAt(cam, L);
       const clock = fmtClock(minute);
       if (clock !== lastClock) {
         lastClock = clock;

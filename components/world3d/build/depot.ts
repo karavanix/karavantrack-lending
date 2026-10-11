@@ -37,6 +37,15 @@ export const FERGANA: DepotPlan = {
 
 const FENCE = 0xb3ab9d;
 
+// The lamp posts along the road through a yard, [x, z] of their foot; the
+// head hangs 1.3 m towards the road at 6.85 m (its pool of light, lights.ts).
+export function lampsOf(d: DepotPlan): [number, number][] {
+  const out: [number, number][] = [];
+  const dir = Math.sign(d.lampsTo - d.lampsFrom);
+  for (let z = d.lampsFrom; dir * (d.lampsTo - z) > 0; z += dir * 22) out.push([PTS[iAtZ(z)].x - 8, z]);
+  return out;
+}
+
 export function buildDepot(k: Kit, d: DepotPlan) {
   const { z0, z1, gateZ, wx0, wx1, wz0, wz1, ox, oz } = d;
   const g = new Group();
@@ -90,11 +99,8 @@ export function buildDepot(k: Kit, d: DepotPlan) {
     }
 
   // lamps along the road inside the yard
-  const dir = Math.sign(d.lampsTo - d.lampsFrom);
-  for (let z = d.lampsFrom; dir * (d.lampsTo - z) > 0; z += dir * 22) {
-    const x = PTS[iAtZ(z)].x - 8;
+  for (const [x, z] of lampsOf(d))
     g.add(box(0.25, 7, 0.25, 0x4b5563, x, 0, z), box(1.6, 0.25, 0.4, 0x4b5563, x + 0.7, 7, z), box(0.8, 0.25, 0.7, 0, x + 1.3, 6.85, z, glow.lamp));
-  }
 
   k.bake(g);
   k.take(0, (z0 + z1) / 2, Math.abs(z1 - z0) / 2);

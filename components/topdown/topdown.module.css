@@ -861,6 +861,15 @@
   color: var(--ink);
   font-variant-numeric: tabular-nums;
 }
+/* the 3D map's light changes with the hour, down to dusk in the finale: the
+   clock keeps the halo the map's words have */
+.td[data-map="3d"] .railHead {
+  color: var(--ink);
+  text-shadow:
+    0 0 2px #fff,
+    0 0 4px #fff,
+    0 0 8px rgba(255, 255, 255, 0.85);
+}
 
 .panelWrap,
 .phoneWrap {

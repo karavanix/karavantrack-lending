@@ -80,6 +80,10 @@ export const STOP = 5;
 // come on from this minute.
 export const DUSK_MIN = 16 * 60 + 55;
 
+// The 3D map's finale: once the trip's clock has stopped at the dropoff, its
+// light goes on into the dusk, an hour per screen of scroll.
+export const DUSK_PER_SCREEN = 60;
+
 // Dropoff time: the cabinet's ETA counts down to it.
 export const ARRIVE_MIN = CHAPTERS[K - 1].minute;
 
