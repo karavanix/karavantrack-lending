@@ -5,7 +5,7 @@
 
 import { CylinderGeometry, Group, IcosahedronGeometry, InstancedMesh, Matrix4, Mesh, PlaneGeometry, Quaternion, Vector3, type Object3D } from "three";
 import { box, type Kit } from "./kit";
-import { glow, mat } from "./materials";
+import { glow, mat, sheen } from "./materials";
 
 export const CHAI = { x: 81, z: 82 };
 // Kept clear of houses, fields and trees before anything else is laid out.
@@ -21,7 +21,7 @@ export function buildChaikhana(k: Kit, into: Object3D) {
 
   const h = new Group();
   // the hall
-  h.add(box(13, 5, 18, 0xf2ead8, 10, 0, 0), box(13.6, 0.5, 18.6, 0x2f8f9d, 10, 5, 0), box(12.4, 0.15, 17.4, 0xe6dcc6, 10, 5.3, 0));
+  h.add(box(13, 5, 18, 0xf2ead8, 10, 0, 0), box(13.6, 0.5, 18.6, 0, 10, 5, 0, sheen(0x2f8f9d)), box(12.4, 0.15, 17.4, 0xe6dcc6, 10, 5.3, 0));
   for (let i = 0; i < 4; i++) h.add(box(0.12, 2.6, 1.6, 0, 3.45, 1, -6 + i * 4, glow.window));
   // the canopy: posts and a lattice of beams
   const tx = -6;

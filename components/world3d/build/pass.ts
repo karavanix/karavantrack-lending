@@ -4,11 +4,12 @@
 // drops (chapter 6) and enters the second where it comes back (chapter 7).
 
 import {
+  BufferGeometry,
   CylinderGeometry,
   DodecahedronGeometry,
   DoubleSide,
   Euler,
-  ExtrudeGeometry,
+  Float32BufferAttribute,
   Group,
   IcosahedronGeometry,
   InstancedMesh,
@@ -17,7 +18,6 @@ import {
   MeshBasicMaterial,
   Quaternion,
   RingGeometry,
-  Shape,
   SphereGeometry,
   Vector3,
   type Object3D,
@@ -25,7 +25,8 @@ import {
 import { OFFLINE_FROM, OFFLINE_TO } from "../../topdown/chapters";
 import { distToRoad, iAtZ, PTS, roadAt, sAtPos, TANS } from "../route";
 import { box, type Kit } from "./kit";
-import { mat, own, P } from "./materials";
+import { mat, own, P, sheen } from "./materials";
+import { hash } from "./trees";
 
 const STEEL = 0x6b7684;
 const COVER = 0x3b82f6;
@@ -52,10 +53,10 @@ export function buildTowers(k: Kit, into: Object3D): Tower[] {
 
     const g = new Group();
     g.add(box(3, 0.6, 3, 0x9aa3ad, x, 0, z));
-    const mast = new Mesh(new CylinderGeometry(0.25, 0.9, 30, 4, 1, true), mat(STEEL, { side: DoubleSide }));
+    const mast = new Mesh(new CylinderGeometry(0.25, 0.9, 30, 4, 1, true), sheen(STEEL, { side: DoubleSide, roughness: 0.4 }));
     mast.position.set(x, 15, z);
     g.add(mast);
-    for (const y of [12, 20, 27]) g.add(box(3, 0.25, 0.25, STEEL, x, y, z), box(0.25, 0.25, 3, STEEL, x, y, z));
+    for (const y of [12, 20, 27]) g.add(box(3, 0.25, 0.25, 0, x, y, z, sheen(STEEL, { roughness: 0.4 })), box(0.25, 0.25, 3, 0, x, y, z, sheen(STEEL, { roughness: 0.4 })));
     k.bake(g);
     const light = new Mesh(new SphereGeometry(0.6, 10, 8), red);
     light.position.set(x, 30.6, z);
@@ -73,18 +74,54 @@ export function buildTowers(k: Kit, into: Object3D): Tower[] {
 
 // An irregular round outline, radius r, wobbling by the phases ph.
 function blob(r: number, ph: number[]) {
-  const s = new Shape();
-  for (let a = 0; a <= 40; a++) {
+  const pts: [number, number][] = [];
+  for (let a = 0; a < 40; a++) {
     const t = (a / 40) * Math.PI * 2;
     const q = r * (1 + 0.16 * Math.sin(3 * t + ph[0]) + 0.09 * Math.sin(5 * t + ph[1]) + 0.05 * Math.sin(8 * t + ph[2]));
-    if (a) s.lineTo(Math.cos(t) * q, Math.sin(t) * q);
-    else s.moveTo(Math.cos(t) * q, Math.sin(t) * q);
+    pts.push([Math.cos(t) * q, Math.sin(t) * q]);
   }
-  return s;
+  return pts;
 }
 
-// Hills as stacks of shrinking terraces, darker going up; six levels or
-// more get a snowy top.
+// One terrace: the outline at the bottom, drawn in towards the top by a
+// different amount all round (steep cliffs here, gentler slopes there),
+// and a top that is not level. `seed` varies it; nothing here draws from
+// the world's random sequence.
+function terrace(pts: [number, number][], h: number, seed: number): BufferGeometry {
+  const n = pts.length;
+  const top = pts.map(([x, z], i) => {
+    const k = 0.86 + 0.12 * hash(i * 1.7 + seed, seed * 0.31);
+    return [x * k, h * (0.88 + 0.24 * hash(seed * 0.7, i * 2.3)), z * k] as const;
+  });
+  let cx = 0;
+  let cy = 0;
+  let cz = 0;
+  for (const [x, y, z] of top) {
+    cx += x / n;
+    cy += y / n;
+    cz += z / n;
+  }
+  const pos: number[] = [];
+  for (let i = 0; i < n; i++) {
+    const j = (i + 1) % n;
+    const [ax, az] = pts[i];
+    const [bx, bz] = pts[j];
+    const A = top[i];
+    const B = top[j];
+    // the side (outline runs anticlockwise seen from above: outward faces)
+    pos.push(ax, 0, -az, bx, 0, -bz, B[0], B[1], -B[2], ax, 0, -az, B[0], B[1], -B[2], A[0], A[1], -A[2]);
+    // the top, a fan to its middle
+    pos.push(A[0], A[1], -A[2], B[0], B[1], -B[2], cx, cy + h * 0.04, -cz);
+  }
+  const g = new BufferGeometry();
+  g.setAttribute("position", new Float32BufferAttribute(pos, 3));
+  g.computeVertexNormals();
+  return g;
+}
+
+// Hills as stacks of shrinking terraces, darker going up, each step a
+// different height; six levels or more get a snowy top. Scree lies around
+// the foot.
 export function buildHills(k: Kit) {
   for (let tries = 0, n = 0; tries < 600 && n < 46; tries++) {
     const r = 16 + k.rnd() * 34;
@@ -97,17 +134,33 @@ export function buildHills(k: Kit) {
     const levels = 4 + Math.floor(k.rnd() * 3) + (r > 38 ? 1 : 0);
     const step = 2.4 + r * 0.055;
     const g = new Group();
+    let y = 0;
     for (let j = 0; j < levels; j++) {
       const top = j === levels - 1 && levels >= 6;
+      const h = step * (0.65 + 0.7 * hash(x + j, z - j));
       const o = new Mesh(
-        new ExtrudeGeometry(blob(r * (1 - (j / levels) * 0.82), ph), { depth: step, bevelEnabled: false, curveSegments: 1 }),
+        terrace(blob(r * (1 - (j / levels) * 0.82), ph), h * (top ? 1.6 : 1.25), x * 0.13 + j * 7.1),
         mat(top ? 0xf6f3ec : P.hills[Math.min(4, j)], { flatShading: true }),
       );
-      o.rotation.x = -Math.PI / 2;
       const ox = (k.rnd() - 0.5) * r * 0.1 * j;
       const oz = (k.rnd() - 0.5) * r * 0.1 * j;
-      o.position.set(x + ox, j * step, z + oz);
+      o.position.set(x + ox, y, z + oz);
       g.add(o);
+      y += h;
+    }
+    // scree: fallen stones round the foot, more on the big hills
+    for (let i = 0, m = 4 + Math.round(r / 5); i < m; i++) {
+      const a = hash(x + i * 3.1, z) * Math.PI * 2;
+      const d = r * (0.95 + 0.25 * hash(z + i, x));
+      const sx = x + Math.cos(a) * d;
+      const sz = z + Math.sin(a) * d;
+      if (distToRoad(sx, sz) < 9) continue;
+      const s = 0.5 + 1.3 * hash(sx, sz);
+      const st = new Mesh(new DodecahedronGeometry(s, 0), mat(i % 3 ? 0xbcae8f : P.hills[2], { flatShading: true }));
+      st.position.set(sx, s * 0.3, sz);
+      st.rotation.set(a, a * 2.3, 0);
+      st.scale.set(1.3, 0.7, 1);
+      g.add(st);
     }
     k.bake(g);
   }

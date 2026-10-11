@@ -2,9 +2,16 @@
 // trip, from a cool low morning sun over the Tashkent depot to a sunset at
 // Fergana and dusk over the whole route in the finale.
 //
-// The table is the probe's (the owner saw that light) with the sky raised
-// by a third: Lambert divides by π, and sky + sun·sin(elevation) ≈ 3.1
-// keeps the land the colour of the page by day (engine.ts). The dusk at
+// The table is the probe's (the owner saw that light), rebalanced in
+// session 6: Lambert divides by π, and sky + sun·sin(elevation) ≈ 3.1
+// keeps the land the colour of the page by day (engine.ts). Of that sum
+// the sun now has more and the sky less, and the sky is a cool blue against
+// a warm sun (the sunset keeps a warm sky): shade reads as shade, lit faces as lit, instead of everything
+// equally soft. No tone mapping: ACES and AgX grey the cream palette, and
+// the land would no longer match the page around it. The morning sun
+// comes from the south-west, not the east: the Tashkent warehouse stands
+// east of the road, and an eastern sun left the whole first screen in its
+// shadow. By noon it has come round to the south. The dusk at
 // the end stays light enough for the blue track to stand out on the land:
 // the finale is "the whole route in blue at dusk", not a night map.
 
@@ -14,12 +21,12 @@ import { Color, Vector3, type DirectionalLight, type HemisphereLight } from "thr
 //  intensity, sky, ground, sky intensity, background and haze]
 type Key = [number, number, number, number, number, number, number, number, number];
 const SKY: Key[] = [
-  [460, 100, 13, 0xffd6a3, 1.35, 0xe6ecf5, 0xb9b09a, 2.4, 0xeae6dc], //  07:40 low morning sun
-  [600, 135, 36, 0xfff2e0, 1.55, 0xf6f6f2, 0xb9b09a, 2.2, 0xe9e7df], //  10:00 (sessions 1–4)
-  [740, 185, 52, 0xfff6ea, 1.6, 0xfbf9f4, 0xb9b09a, 1.85, 0xe9e7df], //  12:20 noon at the chaikhana
-  [900, 232, 33, 0xffe9cc, 1.5, 0xf7f2ea, 0xb9b09a, 2.3, 0xe8e3d8], //  15:00
-  [1015, 256, 13, 0xffc58e, 1.4, 0xf4e2d2, 0xb8aa94, 2.6, 0xeedfcd], // 16:55 the light turns gold
-  [1055, 263, 5, 0xffa874, 1.15, 0xefdbd0, 0xa89a8c, 2.5, 0xe9d1c4], // 17:35 sunset
+  [460, 230, 16, 0xffcf98, 2.3, 0xe0e6f0, 0xb9b09a, 2.4, 0xeae6dc], //  07:40 low morning sun
+  [600, 205, 36, 0xffeed6, 2.6, 0xecf0f4, 0xbcb19a, 1.85, 0xe9e7df], //  10:00
+  [740, 185, 52, 0xfff2e2, 2.25, 0xeff2f5, 0xbcb19a, 1.65, 0xe9e7df], //  12:20 noon at the chaikhana
+  [900, 232, 33, 0xffe4c2, 2.7, 0xebeef2, 0xbcb19a, 1.9, 0xe8e3d8], //  15:00
+  [1015, 256, 13, 0xffbe84, 2.1, 0xf4e2d2, 0xb8aa94, 2.45, 0xeedfcd], // 16:55 the light turns gold
+  [1055, 263, 5, 0xffa070, 1.7, 0xefdbd0, 0xa89a8c, 2.4, 0xe9d1c4], // 17:35 sunset
   [1110, 268, 2, 0xff9a66, 0.15, 0x9fb0e0, 0x6a7598, 2.45, 0x8590bd], //  18:30 dusk
 ];
 

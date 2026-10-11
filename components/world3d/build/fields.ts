@@ -5,7 +5,10 @@
 import { Mesh, MeshLambertMaterial, PlaneGeometry } from "three";
 import { distToRoad } from "../route";
 import type { Kit } from "./kit";
-import { canvasTex, own, P } from "./materials";
+import { canvasTex, grain, own, P } from "./materials";
+
+// Fields are big: a coarser grain with patches, as soil and crops go.
+const FIELD = { amount: 0.06, size: 7, broad: 40 };
 
 export function fieldMaterials() {
   const rows = canvasTex(64, 64, (g) => {
@@ -26,8 +29,8 @@ export function fieldMaterials() {
       }
   });
   return {
-    crops: P.fields.map((color) => own(new MeshLambertMaterial({ color, map: rows }))),
-    cotton: own(new MeshLambertMaterial({ color: 0xffffff, map: cotton })),
+    crops: P.fields.map((color) => grain(own(new MeshLambertMaterial({ color, map: rows })), FIELD)),
+    cotton: grain(own(new MeshLambertMaterial({ color: 0xffffff, map: cotton })), FIELD),
   };
 }
 

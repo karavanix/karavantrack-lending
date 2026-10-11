@@ -13,6 +13,7 @@ import { Group } from "three";
 import { buildChaikhana, CHAI, CHAI_R } from "./chaikhana";
 import { buildDepot, FERGANA, TASHKENT } from "./depot";
 import { buildFields, fieldMaterials } from "./fields";
+import { buildRoadside } from "./roadside";
 import { createKit } from "./kit";
 import { buildHills, buildTowers, scatterRocks } from "./pass";
 import { plantPoplars, plantTrees, scatterTrees } from "./trees";
@@ -42,6 +43,7 @@ export function* buildWorld() {
   buildHills(k);
   scatterRocks(k, world);
   plantTrees(k, world);
+  const wires = buildRoadside(k, world);
   yield;
   yield* k.flush(world);
 
@@ -49,5 +51,5 @@ export function* buildWorld() {
     o.matrixAutoUpdate = false;
     o.updateMatrix();
   });
-  return { world, towers };
+  return { world, towers, wires };
 }

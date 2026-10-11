@@ -7,8 +7,9 @@ import { LEN, N, PTS, TANS } from "../route";
 // Width w, height y above the ground, between samples a and b; v of the UVs
 // runs along the strip, one unit per `period` metres. With `w` = 0 both
 // edges stay on the centre line and `aSide` holds the step to each edge for
-// a unit width (grow.ts widens it in the shader).
-export function ribbon(w: number, y: number, m: Material, a = 0, b = N, period = 24): Mesh {
+// a unit width (grow.ts widens it in the shader). `off` moves the strip off
+// the centre line, to the right of the way to Fergana when positive.
+export function ribbon(w: number, y: number, m: Material, a = 0, b = N, period = 24, off = 0): Mesh {
   const pos: number[] = [];
   const uv: number[] = [];
   const side: number[] = [];
@@ -18,7 +19,9 @@ export function ribbon(w: number, y: number, m: Material, a = 0, b = N, period =
     const t = TANS[i];
     const nx = -t.z;
     const nz = t.x;
-    pos.push(p.x + (nx * w) / 2, y, p.z + (nz * w) / 2, p.x - (nx * w) / 2, y, p.z - (nz * w) / 2);
+    const cx = p.x - nx * off;
+    const cz = p.z - nz * off;
+    pos.push(cx + (nx * w) / 2, y, cz + (nz * w) / 2, cx - (nx * w) / 2, y, cz - (nz * w) / 2);
     if (!w) side.push(nx / 2, nz / 2, -nx / 2, -nz / 2);
     const v = ((i - a) * LEN) / N / period;
     uv.push(0, v, 1, v);

@@ -137,6 +137,7 @@ export async function createEngine(host: HTMLElement, anchors: Anchors, initial:
     step = build.next();
   }
   scene.add(step.value.world);
+  const wires = step.value.wires;
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const marks = buildMarks(scene, reduce, step.value.towers[1]);
   const placeWords = createOverlays(host, overlayPoints(marks.flagTops));
@@ -293,6 +294,9 @@ export async function createEngine(host: HTMLElement, anchors: Anchors, initial:
     renderer.shadowMap.autoUpdate = !(cutKey(cut) === "top" && shadowsFor === key);
     shadowsFor = key;
 
+    // wires are a pixel thick at any distance: from high above they would
+    // only scribble along the road
+    wires.visible = d < MAP_FROM;
     const pxm = pxPerMetre(shot, h);
     setTrack(frame.track, Math.max(TRACK_W, TRACK_PX / pxm));
     const busy = marks.update(frame, now, pxm) || beams !== on;

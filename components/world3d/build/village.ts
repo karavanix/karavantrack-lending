@@ -1,10 +1,16 @@
 // Villages along the road: one-storey houses with flat or gable roofs,
-// windows on the long sides, every other one with a walled yard and a tree.
+// windows on the long sides and a door, every other one with a walled yard,
+// a painted metal gate in its wall and a tree.
 
 import { ExtrudeGeometry, Group, Mesh, Shape } from "three";
 import { distToRoad } from "../route";
 import { box, type Kit } from "./kit";
-import { glow, mat, P } from "./materials";
+import { glow, P, sheen } from "./materials";
+import { hash } from "./trees";
+
+// Gates are painted: blue, green or rust (by a hash of the place, so the
+// world's random sequence stays as it was).
+const GATES = [0x4f7fa6, 0x5e8a6b, 0x9a5b45];
 
 function house(k: Kit, x: number, z: number, w: number, d: number, h: number, rotY: number) {
   const g = new Group();
@@ -18,7 +24,7 @@ function house(k: Kit, x: number, z: number, w: number, d: number, h: number, ro
     s.lineTo(w / 2 + 0.4, 0);
     s.lineTo(0, Math.min(w, 8) * 0.35);
     s.closePath();
-    const r = new Mesh(new ExtrudeGeometry(s, { depth: d + 0.8, bevelEnabled: false }), mat(k.pick(P.roofs), { flatShading: true }));
+    const r = new Mesh(new ExtrudeGeometry(s, { depth: d + 0.8, bevelEnabled: false }), sheen(k.pick(P.roofs), { flatShading: true, roughness: 0.42 }));
     r.position.set(0, h, -d / 2 - 0.4);
     g.add(r);
   }
@@ -26,10 +32,21 @@ function house(k: Kit, x: number, z: number, w: number, d: number, h: number, ro
     const n = Math.max(1, Math.floor(w / 4));
     for (let i = 0; i < n; i++) g.add(box(1.1, 1.2, 0.1, 0, -w / 2 + (w / n) * (i + 0.5), h * 0.45, sz * (d / 2 + 0.03), glow.window));
   }
+  // the door, on the yard side
+  const hz = hash(x, z);
+  const dx = (hz - 0.5) * (w - 3);
+  g.add(box(1.05, 2.15, 0.1, 0x6d5a45, dx, 0, d / 2 + 0.04), box(1.35, 0.12, 0.25, 0xd9cfbb, dx, 2.2, d / 2 + 0.1));
   if (k.rnd() < 0.5) {
     const yd = 6 + k.rnd() * 4;
     const c = 0xe0d6c2;
-    g.add(box(w, 1.6, 0.4, c, 0, 0, d / 2 + yd), box(0.4, 1.6, yd, c, -w / 2, 0, d / 2 + yd / 2), box(0.4, 1.6, yd, c, w / 2, 0, d / 2 + yd / 2));
+    // the street wall with a gate in it, then the side walls
+    const gw = 3.2;
+    const gx = Math.max(-w / 2 + gw / 2 + 0.6, Math.min(w / 2 - gw / 2 - 0.6, dx));
+    const l = gx - gw / 2 + w / 2;
+    const r = w / 2 - (gx + gw / 2);
+    g.add(box(l, 1.6, 0.4, c, -w / 2 + l / 2, 0, d / 2 + yd), box(r, 1.6, 0.4, c, w / 2 - r / 2, 0, d / 2 + yd));
+    g.add(box(gw, 1.9, 0.12, 0, gx, 0, d / 2 + yd, sheen(GATES[Math.floor(hash(z, x) * 3)], { roughness: 0.45 })));
+    g.add(box(0.4, 1.6, yd, c, -w / 2, 0, d / 2 + yd / 2), box(0.4, 1.6, yd, c, w / 2, 0, d / 2 + yd / 2));
     // a tree in the yard, turned with the house
     const lx = (k.rnd() - 0.5) * w * 0.6;
     const lz = d / 2 + yd / 2;
