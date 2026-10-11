@@ -67,7 +67,7 @@
   left: 0;
   display: block;
 }
-/* the 3D world (?map=3d) takes the flat map's place */
+/* the 3D world takes the flat map's place (the flat one is the fallback) */
 .td[data-map="3d"] .map {
   display: none;
 }

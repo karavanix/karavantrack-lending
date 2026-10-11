@@ -9,9 +9,10 @@
 // Desktop: participants in a sticky column on the right, map and cards on
 // the left two thirds. Phone: a sticky strip of two tiles at the bottom.
 //
-// ?map=3d swaps the flat map for the 3D world (components/world3d, being
-// built in sessions, docs/3d/plan.md). The flat map stays in the page,
-// hidden: it is the fallback, and its drawing code keeps working.
+// The map is the 3D world (components/world3d, docs/3d/plan.md). The flat
+// map stays in the page, hidden: it is the fallback (no WebGL, a device too
+// slow for 3D; data-flat on the section says why), and its drawing code
+// keeps working. ?map=flat shows it instead.
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
@@ -50,7 +51,7 @@ import { createPulses } from "./pulse";
 import { COLORS, SCENES, heroIntro } from "./scenes";
 import { SITE } from "@/lib/site";
 // World3D itself is three-free: three.js only comes later, with its engine
-import { World3D, type Link } from "../world3d/World3D";
+import { World3D, type Link, type Why } from "../world3d/World3D";
 
 const RING_TONES = ["pickup", "transit", "dropoff"];
 
@@ -62,7 +63,8 @@ export function TopDown() {
   const pulseRef = useRef<HTMLDivElement>(null);
   const [L, setL] = useState<Layout | null>(null);
   const road = useMemo(() => (L ? new Road(L) : null), [L]);
-  const [map3d, setMap3d] = useState(false);
+  const [map3d, setMap3d] = useState(true);
+  const [flatWhy, setFlatWhy] = useState<Why | "asked">();
   const link = useRef<Link>({ frame: null, engine: null }).current;
   const labels = useRef({ telegram: td("pulse.telegram"), batch: td("cab.batch", { count: QUEUED }) });
   const queuedText = useRef((n: number) => td("app.queued", { count: n }));
@@ -77,8 +79,12 @@ export function TopDown() {
     stopDone: () => td("map.stopDone", { m: stopTo - stopFrom, from: fmtClock(stopFrom), to: fmtClock(stopTo) }),
   };
 
+  const toFlat = (why: Why | "asked") => {
+    setMap3d(false);
+    setFlatWhy(why);
+  };
   useEffect(() => {
-    setMap3d(new URLSearchParams(window.location.search).get("map") === "3d");
+    if (new URLSearchParams(window.location.search).get("map") === "flat") toFlat("asked");
   }, []);
 
   // Measure one screen (100svh, steady while mobile browser bars come and go).
@@ -463,11 +469,12 @@ export function TopDown() {
       data-intro="0"
       data-dusk="0"
       data-map={map3d ? "3d" : "flat"}
+      data-flat={flatWhy}
       style={{ height: `${(SECTION_SCREENS + (map3d ? FINALE : 0)) * 100}svh` }}
     >
       <div ref={probeRef} className={s.probe} aria-hidden />
 
-      {map3d && L && <World3D L={L} link={link} onFail={() => setMap3d(false)} />}
+      {map3d && <World3D L={L} link={link} onFail={toFlat} />}
 
       <div className={s.map} aria-hidden>
         {L && road && <MapArt L={L} road={road} />}

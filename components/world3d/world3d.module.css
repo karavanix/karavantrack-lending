@@ -20,6 +20,53 @@
   height: 100%;
 }
 
+/* The poster: a picture of the first frame (07:40, the truck at the
+   Tashkent dock) until the engine draws it. The camera's vertical field of
+   view spans the canvas' height, so the picture is drawn at that height
+   (100lvh) and the scene has the same scale; then it is shifted so the
+   point the camera aims at lands where viewOf (World3D.tsx) puts it: phone
+   — the middle, 40 % of 100svh down; desktop — 216px + a third of the width
+   (half-way between the 400px card and the participants' column), 45 %
+   down. --fx is where that point is across the picture, in picture heights
+   (docs/3d/tools/poster.mjs renders the pictures and prints it). */
+.poster {
+  position: absolute;
+  inset: 0;
+  transition:
+    opacity 0.45s ease,
+    visibility 0s 0.45s;
+}
+.poster img {
+  --fx: 0.4;
+  --ay: 0.4;
+  position: absolute;
+  height: 100%;
+  width: auto;
+  max-width: none;
+  left: calc(50% - var(--fx) * 100lvh);
+  top: calc(var(--ay) * (100svh - 100lvh));
+}
+@media (min-width: 1024px) {
+  .poster img {
+    --fx: 1.0733;
+    --ay: 0.45;
+    left: calc(216px + 100% / 3 - var(--fx) * 100lvh);
+  }
+}
+[data-ready="1"] > .poster {
+  opacity: 0;
+  visibility: hidden;
+}
+/* opened further down the trip: the first frame would be the wrong place */
+[data-poster="0"] > .poster {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .poster {
+    transition: none;
+  }
+}
+
 /* A word of the map (Overlays.tsx), at the screen point of its place in
    the world; the engine moves it after every frame. Over the canvas, under
    the chapter cards and the participants. Unseen until the engine has

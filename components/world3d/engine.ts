@@ -4,7 +4,14 @@
 //
 // Nothing runs on its own. TopDown hands over a Frame whenever the scroll
 // moves the trip on; the engine draws once on the next animation frame and
-// stops again. At rest, or with the section off screen, it costs nothing.
+// stops again. At rest, or with the canvas off screen, it costs nothing:
+// off screen it does not draw at all, and catches up when it is back.
+//
+// Quality (quality.ts): for the first couple of seconds of scrolling it
+// draws every frame and the meter watches how long they take; a slow device
+// gets a lower tier (fewer pixels, then no shadows), and below the last
+// tier the caller swaps in the flat map. A lost WebGL context is handed to
+// the caller too.
 //
 // Getting ready is spread out so the page never freezes: the world is built
 // a piece at a time with the main thread handed back in between, and the
@@ -42,6 +49,7 @@ import { roadAt, sAtPos } from "./route";
 import { beamsAt, lampsAt, skyAt } from "./sky";
 import { buildTrack } from "./track";
 import { buildTruck } from "./truck";
+import { PHONE_SHADOW_MAP, TIERS, createMeter, dprOf } from "./quality";
 
 // Positions are station positions (see route.ts).
 export type Frame = {
@@ -66,9 +74,14 @@ export type View = { wide: boolean; aimX: number; aimY: number; free: [number, n
 
 export type Anchors = { truck: HTMLElement; pin: HTMLElement; rings: HTMLElement[] };
 
-// Rendering resolution: the bottleneck on phones is pixels to fill (measured
-// on the Honor, docs/3d/plan.md). 1× there is 58–60 fps and looks the same.
-const DPR = { wide: 1.5, narrow: 1 };
+// The quality tier to start at (TIERS in quality.ts), whether the meter may
+// change it, and what to do when the device is too slow for the last tier or
+// the WebGL context is lost.
+export type Options = { tier: number; auto: boolean; onSlow: () => void; onLost: () => void };
+
+// While the meter watches, frames go on being drawn this long after the
+// trip last moved, so it sees frames back to back, ms.
+const MEASURE_TAIL = 250;
 
 // Headlights fade in and out over this long when switched, s.
 const BEAMS_FADE = 0.8;
@@ -93,13 +106,19 @@ const UP = new Vector3(0, 1, 0);
 // Corners and edge midpoints of the screen, normalised device coordinates.
 const SCREEN = [[-1, -1], [0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0]];
 
-export async function createEngine(host: HTMLElement, anchors: Anchors, initial: View) {
+export async function createEngine(host: HTMLElement, anchors: Anchors, initial: View, opts: Options) {
   // Throws without WebGL; the caller falls back to the flat map.
   const renderer = new WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
-  renderer.shadowMap.enabled = true;
+  let tier = TIERS[opts.tier];
+  renderer.shadowMap.enabled = tier.shadows;
   renderer.shadowMap.type = PCFSoftShadowMap;
   renderer.domElement.setAttribute("aria-hidden", "true");
+  // The GPU dropped it (memory pressure, a driver reset): the caller decides
+  // whether to build again or fall back.
+  let disposed = false; // dispose() loses the context on purpose
+  renderer.domElement.addEventListener("webglcontextlost", () => !disposed && opts.onLost(), { once: true });
   host.prepend(renderer.domElement);
+  host.dataset.q = String(opts.tier);
 
   const scene = new Scene();
   scene.background = new Color(P.sky);
@@ -113,7 +132,7 @@ export async function createEngine(host: HTMLElement, anchors: Anchors, initial:
   const sunDir = new Vector3();
   const background = scene.background as Color;
   const fog = scene.fog as Fog;
-  sun.castShadow = true;
+  sun.castShadow = tier.shadows;
   sun.shadow.bias = -0.0006;
   sun.shadow.normalBias = 0.5;
   // The shadow camera covers the ground in view (fitShadow), from 300 m
@@ -165,6 +184,14 @@ export async function createEngine(host: HTMLElement, anchors: Anchors, initial:
   let w = 0;
   let h = 0;
   let raf = 0;
+  // the frame being drawn asked for the next one: they are back to back
+  let drawing = false;
+  let back = false;
+  // on screen (an IntersectionObserver says), and not paused for a tier change
+  let shown = true;
+  let paused = false;
+  const meter = opts.auto ? createMeter(opts.tier) : null;
+  let moved = 0; // when the trip last moved, for the meter
   // headlights: 0 off … 1 on, eased when they are switched
   let beams = -1;
   let last = 0;
@@ -175,9 +202,9 @@ export async function createEngine(host: HTMLElement, anchors: Anchors, initial:
     w = host.clientWidth;
     h = host.clientHeight;
     if (!w || !h) return;
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, view.wide ? DPR.wide : DPR.narrow));
+    renderer.setPixelRatio(dprOf(tier));
     renderer.setSize(w, h, false);
-    sun.shadow.mapSize.setScalar(view.wide ? 2048 : 1024);
+    sun.shadow.mapSize.setScalar(view.wide ? tier.shadowMap : Math.min(tier.shadowMap, PHONE_SHADOW_MAP));
     sun.shadow.map?.dispose();
     sun.shadow.map = null;
     shadowsFor = "";
@@ -267,9 +294,11 @@ export async function createEngine(host: HTMLElement, anchors: Anchors, initial:
     }
   };
 
-  const draw = () => {
+  const draw = (t: number) => {
     raf = 0;
-    if (!frame || !w || !h) return;
+    if (!frame || !w || !h || !shown || paused) return;
+    const chained = back;
+    drawing = true;
     roadAt(sAtPos(frame.pos), here);
     truck.position.set(here.x, 0, here.z);
     truck.rotation.y = Math.atan2(-here.tx, -here.tz);
@@ -289,10 +318,12 @@ export async function createEngine(host: HTMLElement, anchors: Anchors, initial:
     last = now;
     setLights(lampsAt(frame.minute), beamsAt(frame.minute) * beams * beams * (3 - 2 * beams));
 
-    fitShadow(fog.far);
-    const key = `${cutKey(cut)} ${Math.round(Math.atan2(sunDir.x, sunDir.z) / SUN_STEP)} ${Math.round(sunDir.y / SUN_STEP)}`;
-    renderer.shadowMap.autoUpdate = !(cutKey(cut) === "top" && shadowsFor === key);
-    shadowsFor = key;
+    if (tier.shadows) {
+      fitShadow(fog.far);
+      const key = `${cutKey(cut)} ${Math.round(Math.atan2(sunDir.x, sunDir.z) / SUN_STEP)} ${Math.round(sunDir.y / SUN_STEP)}`;
+      renderer.shadowMap.autoUpdate = !(cutKey(cut) === "top" && shadowsFor === key);
+      shadowsFor = key;
+    }
 
     // wires are a pixel thick at any distance: from high above they would
     // only scribble along the road
@@ -304,25 +335,69 @@ export async function createEngine(host: HTMLElement, anchors: Anchors, initial:
     placeAnchors();
     const map = Math.min(1, Math.max(0, (d - MAP_FROM) / (MAP_TO - MAP_FROM)));
     placeWords(camera, w, h, view.free, frame, { near: d + WORDS.near + map * WORDS.map, far: d + WORDS.far + map * WORDS.map, map });
+    if (!host.dataset.ready) host.dataset.ready = "1"; // the poster of the first frame fades out
     if (busy) invalidate(); // a flag or a ring is still landing
+    if (meter?.live) {
+      const verdict = meter.frame(t, chained);
+      host.dataset.qlog = meter.log.join(" ");
+      if (verdict && "flat" in verdict) opts.onSlow();
+      else if (verdict) setTier(verdict.tier);
+      else if (t - moved < MEASURE_TAIL) invalidate();
+    }
+    drawing = false;
   };
 
+  // Shaders, compiled in the background where the browser can (otherwise
+  // the next frame would compile them all at once). The evening lights too,
+  // though hidden by day (compiling skips hidden things), or their first
+  // dusk would stall on it.
+  const compile = async () => {
+    setLights(1, 1);
+    await renderer.compileAsync(scene, camera);
+    setLights(0, 0);
+  };
+
+  // Shadows on or off change every shader: drawing waits for them to be
+  // compiled anew. Then the meter starts over.
+  async function setTier(i: number) {
+    const next = TIERS[i];
+    const shadows = next.shadows !== tier.shadows;
+    tier = next;
+    host.dataset.q = String(i);
+    if (shadows) {
+      paused = true;
+      renderer.shadowMap.enabled = sun.castShadow = next.shadows;
+      sun.shadow.map?.dispose();
+      sun.shadow.map = null;
+      await compile();
+      paused = false;
+      if (disposed) return;
+    }
+    resize();
+    meter?.start(performance.now());
+  }
+
   function invalidate() {
-    if (!raf) raf = requestAnimationFrame(draw);
+    if (raf) return;
+    raf = requestAnimationFrame(draw);
+    back = drawing;
   }
 
   const ro = new ResizeObserver(resize);
   ro.observe(host);
+  const io = new IntersectionObserver(([e]) => {
+    shown = e.isIntersecting;
+    if (shown) invalidate();
+  });
+  io.observe(host);
   resize();
-  // Compiled in the background where the browser can; the first frame then
-  // only draws. The evening lights too (compiling skips hidden things), or
-  // their first dusk would stall on it.
-  setLights(1, 1);
-  await renderer.compileAsync(scene, camera);
-  setLights(0, 0);
+  await compile();
+  meter?.start(performance.now());
 
   return {
     set(f: Frame) {
+      moved = performance.now();
+      if (meter?.live) invalidate(); // the meter wants frames back to back
       // While the truck stands at a bend the scroll goes on: same picture,
       // unless the camera is on the move.
       const c = cutAt(f.at, reduce);
@@ -332,14 +407,16 @@ export async function createEngine(host: HTMLElement, anchors: Anchors, initial:
       invalidate();
     },
     setView(next: View) {
-      const tier = next.wide !== view.wide;
+      const sized = next.wide !== view.wide; // the shadow map's size goes with it
       view = next;
-      if (tier) resize();
+      if (sized) resize();
       else invalidate();
     },
     dispose() {
+      disposed = true;
       cancelAnimationFrame(raf);
       ro.disconnect();
+      io.disconnect();
       scene.traverse((o) => {
         if (!(o instanceof Mesh)) return;
         if (o instanceof InstancedMesh) o.dispose();
@@ -351,6 +428,8 @@ export async function createEngine(host: HTMLElement, anchors: Anchors, initial:
       renderer.dispose();
       renderer.forceContextLoss();
       renderer.domElement.remove();
+      delete host.dataset.q;
+      delete host.dataset.qlog;
     },
   };
 }
