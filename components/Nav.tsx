@@ -18,7 +18,7 @@ export function Nav() {
   return (
     <header
       data-hidden={hidden}
-      className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[rgba(9,25,60,0.92)] backdrop-blur-md transition-transform duration-300 ease-out max-lg:data-[hidden=true]:-translate-y-full focus-within:translate-y-0 motion-reduce:transition-none"
+      className="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-[var(--color-bg)] transition-transform duration-300 ease-out max-lg:data-[hidden=true]:-translate-y-full focus-within:translate-y-0 motion-reduce:transition-none"
     >
       <div className="container-page flex h-14 md:h-16 items-center justify-between text-white">
         <Link href={`/${locale}`} aria-label="YoolLive" className="text-white">
