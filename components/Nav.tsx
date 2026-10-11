@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import Link from "next/link";
 import { Logo } from "./Logo";
@@ -9,9 +10,16 @@ import { SITE } from "@/lib/site";
 export function Nav() {
   const t = useTranslations("nav");
   const locale = useLocale();
+  const hidden = useHideOnScrollDown();
 
+  // Phones and tablets: out of the way while scrolling down (more room for
+  // the trip), back on any scroll up. Desktop keeps it: the participants'
+  // column is pinned right under it.
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-[rgba(15,20,27,0.72)] backdrop-blur-md">
+    <header
+      data-hidden={hidden}
+      className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[rgba(9,25,60,0.92)] backdrop-blur-md transition-transform duration-300 ease-out max-lg:data-[hidden=true]:-translate-y-full focus-within:translate-y-0 motion-reduce:transition-none"
+    >
       <div className="container-page flex h-14 md:h-16 items-center justify-between text-white">
         <Link href={`/${locale}`} aria-label="YoolLive" className="text-white">
           <Logo />
@@ -41,4 +49,32 @@ export function Nav() {
       </div>
     </header>
   );
+}
+
+// Hidden once the page has gone a little way down and is still going down;
+// shown again near the top or after a short scroll up.
+function useHideOnScrollDown() {
+  const [hidden, setHidden] = useState(false);
+  useEffect(() => {
+    let last = window.scrollY;
+    let frame = 0;
+    const check = () => {
+      frame = 0;
+      const y = window.scrollY;
+      if (y < 80) setHidden(false);
+      else if (y > last + 8) setHidden(true);
+      else if (y < last - 8) setHidden(false);
+      else return; // too small a move to decide: keep comparing with `last`
+      last = y;
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(check);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(frame);
+    };
+  }, []);
+  return hidden;
 }
