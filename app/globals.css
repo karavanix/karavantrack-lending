@@ -2,9 +2,9 @@
 
 @theme {
   /* Aligned with karavantrack-app dark theme */
-  --color-bg: hsl(222 20% 7%);
+  --color-bg: #0f141b;
   --color-bg-soft: hsl(222 20% 9%);
-  --color-surface: hsl(210 20% 97%);
+  --color-surface: #f2f4f6;
   --color-ink: hsl(222 25% 12%);
   --color-ink-muted: hsl(215 15% 45%);
   --color-line: hsl(215 20% 17%);
@@ -15,8 +15,9 @@
   --color-accent-deep: hsl(213 94% 38%);
   --color-accent-glow: color-mix(in oklab, hsl(213 94% 55%) 35%, transparent);
 
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-manrope), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-golos), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-onest), var(--font-golos), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, "SFMono-Regular", Menlo, monospace;
 
   --radius-card: 16px;
   --radius-pill: 999px;
@@ -76,12 +77,6 @@
     text-wrap: balance;
   }
 
-  .grid-bg {
-    background-image:
-      linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
-    background-size: 56px 56px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

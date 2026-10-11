@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Manrope } from "next/font/google";
+import { Golos_Text, JetBrains_Mono, Onest } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale, getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -10,20 +10,29 @@ function hasLocale(value: string): value is (typeof locales)[number] {
 }
 import "../globals.css";
 
-const inter = Inter({
+const onest = Onest({
   subsets: ["latin", "cyrillic"],
-  variable: "--font-inter",
+  weight: ["600", "700", "800"],
+  variable: "--font-onest",
   display: "swap",
 });
 
-const manrope = Manrope({
+const golos = Golos_Text({
   subsets: ["latin", "cyrillic"],
-  variable: "--font-manrope",
+  weight: ["400", "500", "600"],
+  variable: "--font-golos",
+  display: "swap",
+});
+
+const mono = JetBrains_Mono({
+  subsets: ["latin", "cyrillic"],
+  weight: ["500", "700"],
+  variable: "--font-jetbrains",
   display: "swap",
 });
 
 export const viewport: Viewport = {
-  themeColor: "#0b0f14",
+  themeColor: "#0f141b",
   width: "device-width",
   initialScale: 1,
 };
@@ -78,7 +87,7 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={`${inter.variable} ${manrope.variable}`}>
+    <html lang={locale} className={`${onest.variable} ${golos.variable} ${mono.variable}`}>
       <body>
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}

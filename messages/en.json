@@ -1,218 +1,259 @@
 {
   "nav": {
-    "features": "Features",
     "how": "How it works",
-    "pricing": "Pricing",
-    "faq": "FAQ",
-    "login": "Sign in",
-    "demo": "Request demo"
+    "drivers": "For drivers",
+    "faq": "Questions",
+    "login": "Log in",
+    "start": "Get started"
   },
-  "hero": {
-    "eyebrow": "Cargo tracking platform",
-    "title": "Know where your cargo is. Live.",
-    "subtitle": "Yool turns every shipment into a live dot on the map — no more endless calls to the driver and Excel sheets.",
-    "ctaPrimary": "Request demo",
-    "ctaSecondary": "How it works",
-    "etaLabel": "Arriving in",
-    "etaValue": "2h 14m",
-    "routeFrom": "Tashkent",
-    "routeTo": "Samarkand",
-    "live": "On the road now"
-  },
-  "stats": {
-    "title": "Logistics that finally goes transparent",
-    "items": [
-      { "value": "$8.4B", "label": "Central Asia freight market by 2030*" },
-      { "value": "63%", "label": "Of shippers don't know the live location of their cargo*" },
-      { "value": "1 in 4", "label": "Delays caused by tracking blind spots*" },
-      { "value": "−40%", "label": "Driver calls after live tracking is rolled out*" }
-    ],
-    "footnote": "* Estimated indicators based on public industry sources and carrier surveys."
-  },
-  "pain": {
-    "eyebrow": "Sound familiar?",
-    "title": "You spend hours every day on what should just be automatic.",
-    "items": [
-      "Calling the driver to ask \"where are you?\"",
-      "Customer wants a precise ETA — and you guess",
-      "Excel sheets and Telegram chats instead of a system",
-      "No one remembers who confirmed what"
-    ],
-    "solutionEyebrow": "With Yool",
-    "solutionTitle": "One screen. Every cargo. In real time.",
-    "solutionItems": [
-      "Live map with every truck and status",
-      "Auto-ETA based on actual movement",
-      "Single feed: pickup, dropoff, confirmations",
-      "Per-trip history — nothing gets lost"
-    ]
-  },
-  "features": {
-    "eyebrow": "Features",
-    "title": "Everything you need to confidently run cargo operations",
-    "items": [
-      {
-        "title": "Live GPS tracking",
-        "desc": "Each trip is a dot on the map, updating in real time over a secure connection."
-      },
-      {
-        "title": "Driver assignment",
-        "desc": "By ID, email, phone or a one-time invite link. A driver joins your team in a minute."
-      },
-      {
-        "title": "Pickup & dropoff workflow",
-        "desc": "A transparent path: pickup confirmation, dropoff, photos and signed status changes."
-      },
-      {
-        "title": "Push notifications",
-        "desc": "Trip start, route deviations, arrivals — straight to the right person's phone."
-      },
-      {
-        "title": "Team & roles",
-        "desc": "Shipper, dispatcher, driver — each gets the right interface and scope."
-      },
-      {
-        "title": "History & analytics",
-        "desc": "Full history of trips, statuses and times — the foundation for reports and improvement."
-      }
-    ]
-  },
-  "how": {
-    "eyebrow": "How it works",
-    "title": "Three steps from request to control",
-    "steps": [
-      {
-        "title": "Create the cargo",
-        "desc": "From, to, what, when. Minimum fields, maximum meaning."
-      },
-      {
-        "title": "Assign a driver",
-        "desc": "Pick one from your team or send an invite link. The driver sees the trip in the app."
-      },
-      {
-        "title": "Watch on the map",
-        "desc": "Live dot, ETA, statuses and notifications — for you and your customer."
-      }
-    ]
-  },
-  "audiences": {
-    "eyebrow": "Who it's for",
-    "title": "One product, two sides of logistics",
-    "shipper": {
-      "tag": "Shippers",
-      "title": "Web dashboard",
-      "desc": "Create cargo, manage your team, track trips on a big screen.",
-      "cta": "Open dashboard"
+  "trip": {
+    "route": "Tashkent → Fergana",
+    "scroll": "Scroll down, we’re driving to Fergana",
+    "chapterOf": "{n} of {total}",
+    "hero": {
+      "title": "No need to ask anymore.",
+      "subtitle": "YoolLive shows the whole trip: where the truck is, where it stopped and why the signal dropped. The driver just marks each step in the app.",
+      "cta": "Get started",
+      "driver": "Driver app"
     },
-    "carrier": {
-      "tag": "Drivers & carriers",
-      "title": "Mobile app",
-      "desc": "Accept trips, confirm loads, run the track with a single swipe.",
-      "soon": "Coming soon to App Store and Google Play"
+    "chapters": [
+      {
+        "title": "A load in a minute",
+        "text": "Paste a link from 2GIS, Yandex or Google Maps and the address fills itself in. The cabinet works out the road route and drive time right away."
+      },
+      {
+        "title": "A driver from one link",
+        "text": "You don’t need the driver’s number. Send a link in Telegram: the driver opens it and accepts the load with one tap."
+      },
+      {
+        "title": "Loaded. With a photo, on the map",
+        "text": "The driver marks every step with a button and attaches a photo of the papers. You get a notification, and the map shows where it happened."
+      },
+      {
+        "title": "You see it moving",
+        "text": "The driver doesn’t have to do a thing: the phone sends points on its own. The cabinet shows speed, distance driven, time to arrival, even the phone’s battery."
+      },
+      {
+        "title": "Stopped, and you know why",
+        "text": "Lunch at a chaikhana. The phone turns GPS off by itself to save battery, and the cabinet says: stopped since 12:10. No call needed."
+      },
+      {
+        "title": "The pass. No signal",
+        "text": "On Kamchik the network drops. The app doesn’t lose points, it keeps them on the phone for up to two weeks. The cabinet says “no data” instead of drawing a green dot."
+      },
+      {
+        "title": "Signal back, track whole",
+        "text": "As soon as there’s coverage, every point goes out in one batch. The route fills in with no gaps, as if the signal never dropped."
+      },
+      {
+        "title": "The client watches on their own",
+        "text": "Send the receiver a link. They see the truck on the map without signing up, and stop calling you every half hour."
+      },
+      {
+        "title": "Delivered",
+        "text": "The driver photographs the waybill, you confirm delivery. The trip goes to history with every step, photo and the track."
+      }
+    ]
+  },
+  "td": {
+    "who": {
+      "dispatcher": "Dispatcher",
+      "driver": "Driver",
+      "receiver": "Receiver"
+    },
+    "load": {
+      "ref": "KT-2031",
+      "title": "Load #KT-2031",
+      "route": "Tashkent → Fergana",
+      "company": "Tashkent Logistics",
+      "from": "Tashkent, Sergeli, warehouse 3",
+      "to": "Fergana, wholesale depot",
+      "driver": "Akmal T."
+    },
+    "status": {
+      "created": "Created",
+      "accepted": "Accepted",
+      "picking": "Picking Up",
+      "loaded": "Picked Up",
+      "transit": "In Transit",
+      "delivered": "Dropped Off",
+      "dropping": "Dropping Off",
+      "confirmed": "Confirmed"
+    },
+    "cab": {
+      "carrier": "Carrier",
+      "pickup": "Pickup",
+      "dropoff": "Dropoff",
+      "inviteTab": "Invite by link",
+      "generate": "Generate invite link",
+      "link": "app.yool.live/invite/7Kq2…",
+      "copy": "Copy",
+      "copied": "Link copied to clipboard",
+      "lastPoint": "Last point",
+      "justNow": "just now",
+      "moving": "Moving",
+      "stopped": "Stopped since {time}",
+      "noData": "No data since 13:05",
+      "share": "Share tracking",
+      "hero": "Where are you now?",
+      "batch": "{count, plural, =1 {+1 point} other {+# points}}",
+      "noDataHint": "The driver's phone hasn't sent points for a while. Usually there's no mobile network: the saved points arrive once it's back.",
+      "stoppedHint": "While the truck stands, the phone saves battery and sends nothing. The track resumes as soon as it moves.",
+      "askNote": "The answer is on the map now",
+      "formTitle": "Create New Load",
+      "formSearch": "Search pickup address or paste link...",
+      "formLink": "https://2gis.uz/tashkent/geo/70030076122…",
+      "formDetected": "📍 Location detected from 2GIS link",
+      "formEstimate": "≈ 318 km · ~5 h 10 min",
+      "formSubmit": "Create Load",
+      "noteTitle": "Cargo loaded",
+      "noteBody": "The driver confirmed pickup: {title}",
+      "speed": "Speed",
+      "eta": "ETA",
+      "driven": "Distance driven",
+      "kmh": "km/h",
+      "km": "{v} km",
+      "etaValue": "~{h} h {m} min",
+      "generateTrack": "Generate tracking link",
+      "trackLink": "app.yool.live/track/9fX2…",
+      "confirm": "Confirm Delivery",
+      "confirmHint": "Driver tracking runs until you confirm",
+      "noteDropTitle": "Cargo delivered",
+      "noteDropBody": "The driver completed delivery: {title}",
+      "step": {
+        "pickedUp": "Loaded",
+        "inTransit": "Trip started",
+        "droppedOff": "Delivered"
+      },
+      "etaMin": "~{m} min"
+    },
+    "app": {
+      "loads": "Loads",
+      "invite": "Invite",
+      "noActive": "No active load",
+      "noActiveSub": "New loads will appear here",
+      "offer": "You have been offered a load",
+      "details": "Details",
+      "company": "Company",
+      "pickup": "Pickup",
+      "dropoff": "Dropoff",
+      "accept": "Accept Load",
+      "accepted": "Load accepted!",
+      "activeLoad": "Active Load",
+      "online": "Online",
+      "offline": "Offline",
+      "gpsActive": "GPS active",
+      "gpsWaiting": "GPS: Waiting...",
+      "act": {
+        "beginPickup": "Begin Pickup",
+        "confirmPickup": "Confirm Cargo Loaded",
+        "startTransit": "Start Transit",
+        "beginDropoff": "Begin Dropoff",
+        "confirmDropoff": "Confirm Delivery"
+      },
+      "queued": "{count, plural, =1 {1 point waiting to be sent} other {# points waiting to be sent}}",
+      "addPhoto": "Add photo",
+      "gpsRest": "GPS is resting",
+      "gpsRestSub": "The truck stands still, the phone saves battery",
+      "awaiting": "Awaiting shipper confirmation",
+      "confirmed": "Load confirmed"
+    },
+    "pulse": {
+      "telegram": "via Telegram"
+    },
+    "map": {
+      "onPhone": "on the driver's phone",
+      "stop": "Stop {m} min",
+      "stopDone": "Stop {m} min · {from}–{to}",
+      "places": {
+        "depot": "Tashkent · warehouse 3",
+        "road": "A373",
+        "chaikhana": "Chaikhana",
+        "pass": "Kamchik Pass · 2,268 m",
+        "valley": "Fergana Valley",
+        "fergana": "Fergana · wholesale depot"
+      }
+    },
+    "rcv": {
+      "url": "app.yool.live/track/9fX2…",
+      "loading": "Loading tracking...",
+      "updated": "Last update",
+      "noSignup": "No sign-up"
     }
   },
-  "pricing": {
-    "eyebrow": "Pricing",
-    "title": "Flexible plans for any fleet",
-    "betaBadge": "Beta pricing — locked-in rates for early customers",
-    "perMonth": "/ mo",
-    "plans": [
-      {
-        "name": "Start",
-        "price": "Free",
-        "desc": "For small teams just trying live tracking.",
-        "features": ["Up to 20 cargos / month", "Up to 3 drivers", "Live map and basic statuses", "Email support"],
-        "cta": "Start free"
-      },
-      {
-        "name": "Business",
-        "price": "On request",
-        "desc": "For growing logistics companies and active shippers.",
-        "features": ["Unlimited cargos", "Team and roles", "Push notifications", "Analytics and history", "Priority support"],
-        "cta": "Contact us",
-        "highlight": true
-      },
-      {
-        "name": "Enterprise",
-        "price": "Custom",
-        "desc": "For fleets of 50+ trucks, with integrations and SLA.",
-        "features": ["API and integrations", "SSO and audit log", "Dedicated manager", "24/7 SLA support"],
-        "cta": "Talk to sales"
-      }
-    ]
-  },
-  "trust": {
-    "eyebrow": "Security",
-    "title": "Your data, on your terms",
-    "items": [
-      { "title": "Encryption", "desc": "TLS everywhere, secure WebSocket connections." },
-      { "title": "Roles & access", "desc": "RBAC: each user sees only what they should." },
-      { "title": "Audit log", "desc": "User actions and status changes are recorded and reviewable." },
-      { "title": "Hosting region", "desc": "Infrastructure close to your customers and drivers." }
-    ]
+  "start": {
+    "title": "Your first load in three minutes",
+    "steps": [
+      "Sign in with Telegram or email",
+      "Create a load: paste a link to the address",
+      "Send the driver a link"
+    ],
+    "cta": "Get started",
+    "login": "I already have an account",
+    "driverTag": "For drivers",
+    "driverTitle": "Move loads. Get paid.",
+    "driverText": "One screen and one button for the next step. Works without network, saves battery when you stand, tracks location only during a trip. Sign in with Telegram.",
+    "googlePlay": "Google Play",
+    "appStore": "App Store",
+    "soon": "soon"
   },
   "faq": {
-    "eyebrow": "FAQ",
-    "title": "Frequently asked questions",
+    "title": "Questions",
     "items": [
       {
-        "q": "Where does Yool work?",
-        "a": "The platform targets Central Asia: Uzbekistan, Kazakhstan and neighbouring countries. Maps and geocoding are tuned for local addresses."
+        "q": "What if the driver loses internet?",
+        "a": "Nothing is lost. The phone keeps route points for up to 14 days and sends them once the network is back. Meanwhile the cabinet shows “no network”, not a stale dot."
       },
       {
-        "q": "What does the driver need?",
-        "a": "A smartphone with GPS and internet. The app runs in background, uses minimal data, and short connectivity drops don't lose track points."
+        "q": "Does the app drain the battery?",
+        "a": "When the truck stands, the app turns GPS off by itself. Location is recorded only while the driver has an active load, and the cabinet shows their phone’s battery."
       },
       {
-        "q": "What if the driver loses signal on the road?",
-        "a": "Track points are buffered on the device and uploaded automatically as soon as the network is back."
+        "q": "What does the client see from the link?",
+        "a": "The load’s name and status, the truck on the map and the route driven so far. No sign-up needed. You can revoke the link at any time."
       },
       {
-        "q": "Can we integrate via API?",
-        "a": "Yes, the Enterprise plan offers API integration — connect your ERP, TMS or in-house system."
-      },
-      {
-        "q": "Who can see our cargo?",
-        "a": "Only members of your company with the right role. External partners get a temporary, scoped link."
-      },
-      {
-        "q": "How does billing work?",
-        "a": "Custom during the beta. We lock in early-customer pricing for a year."
+        "q": "Does the driver need to sign up?",
+        "a": "Yes, in the YoolLive app. It takes a minute: sign in with Telegram, Apple or email. If you sent them a load link, the load is accepted right after sign-in."
       }
     ]
   },
   "finalCta": {
-    "title": "Ready to see your cargo live?",
-    "subtitle": "Leave your contact — we'll show the platform on your routes within one business day.",
+    "title": "A large fleet?",
+    "subtitle": "Leave your contacts. We’ll help connect your drivers and show the cabinet on your routes.",
     "form": {
       "name": "Your name",
       "company": "Company",
       "phone": "Phone",
-      "fleet": "Fleet size",
-      "fleetOptions": ["1–5", "6–20", "21–50", "50+"],
-      "submit": "Request demo",
-      "success": "Thanks! We'll get back to you within one business day.",
-      "error": "Something went wrong. Please try again or write to us."
+      "fleet": "Trucks in fleet",
+      "fleetOptions": [
+        "1–5",
+        "6–20",
+        "21–50",
+        "50+"
+      ],
+      "submit": "Send",
+      "success": "Thank you! We’ll get back to you within a business day.",
+      "error": "Couldn’t send. Try again or write to support@yool.live."
     }
   },
   "footer": {
-    "tagline": "Cargo tracking platform",
+    "tagline": "Freight tracking: a cabinet for shippers and an app for drivers.",
     "product": "Product",
     "company": "Company",
     "legal": "Legal",
     "links": {
-      "features": "Features",
-      "pricing": "Pricing",
-      "faq": "FAQ",
-      "about": "About",
-      "contacts": "Contact",
+      "how": "How it works",
+      "drivers": "For drivers",
+      "faq": "Questions",
+      "contacts": "Contacts",
       "privacy": "Privacy policy",
       "terms": "Terms of service"
     },
-    "rights": "© 2026 Yool by Karavantrack. All rights reserved."
+    "rights": "© 2026 YoolLive. All rights reserved."
   },
   "meta": {
-    "title": "Yool — real-time cargo tracking",
-    "description": "Yool is a B2B platform for shippers and carriers: live map, auto-ETA, driver assignment, trip history. Built for Uzbekistan and Central Asia."
+    "title": "YoolLive: see where your load is, no calls",
+    "description": "A cabinet for shippers and an app for drivers. The whole trip on a map: stops, stretches without signal, a photo at every step and a link for your client. Uzbekistan."
   }
 }

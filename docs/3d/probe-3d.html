@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Проба 3D</title>
+<style>
+  html, body { margin: 0; background: #e9e7df; font: 14px/1.35 system-ui, -apple-system, "Segoe UI", sans-serif; color: #0f141b; }
+  body { height: 700vh; }
+  canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; }
+  .hud { position: fixed; left: 12px; top: 12px; right: 12px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; z-index: 2; }
+  .hud b { font-weight: 700; margin-right: 6px; }
+  .hud button { border: 0; border-radius: 999px; padding: 7px 12px; background: #fff; color: #0f141b; font: inherit; box-shadow: 0 1px 4px rgba(15,20,27,.18); }
+  .hud button[aria-pressed="true"] { background: #2081f8; color: #fff; }
+  .fps { position: fixed; right: 12px; bottom: 12px; z-index: 2; font: 600 12px ui-monospace, monospace; background: rgba(255,255,255,.85); padding: 4px 8px; border-radius: 6px; }
+  .hint { position: fixed; left: 50%; bottom: 14px; translate: -50% 0; z-index: 2; background: rgba(15,20,27,.78); color: #fff; padding: 6px 12px; border-radius: 999px; font-size: 13px; transition: opacity .4s; }
+  .label { position: fixed; left: 0; top: 0; z-index: 1; display: inline-flex; gap: 6px; align-items: center; font-weight: 600; font-size: 13px; color: #1f2937; text-shadow: 0 0 3px #fff, 0 0 3px #fff, 0 0 6px #fff; white-space: nowrap; pointer-events: none; }
+  .label i { width: 9px; height: 9px; border-radius: 2px; background: #475569; box-shadow: 0 0 0 2px #fff; }
+</style>
+</head>
+<body>
+<div class="hud">
+  <b>Проба 3D</b>
+  <button data-cam="down" aria-pressed="true">Вниз</button>
+  <button data-cam="tilt">Вдаль</button>
+  <button data-cam="chase">Навигатор</button>
+  <button data-cam="top">Сверху</button>
+</div>
+<div class="label" id="chai"><i></i>Чайхана</div>
+<div class="fps" id="fps">– fps</div>
+<div class="hint" id="hint">Скролльте — грузовик поедет</div>
+
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js" } }
+</script>
+<script type="module">
+import * as THREE from "three";
+
+// ── palette (from the landing map) ────────────────────────────────────────
+const P = {
+  land: 0xefece3, haze: 0xe9e7df, casing: 0xcbc4b5, road: 0xfdfcf9, dash: 0xdcd5c6,
+  fields: [0xdfe6c6, 0xe8e1c2, 0xd3dfb8, 0xebe4cc, 0xd9e3c2],
+  trees: [0x8fae6e, 0x7fa262, 0x9cb87e, 0x78995c],
+  walls: [0xeee6d6, 0xe8dfcc, 0xf1ebdf, 0xe4dccb],
+  roofs: [0xc9cfd6, 0xd6cfc1, 0xbfc9d3, 0xcdc6b6],
+  hills: [0xe6dec9, 0xddd1b6, 0xd3c5a5, 0xc8b893, 0xbcab84],
+  blue: 0x2081f8, track: 0x2563eb,
+};
+
+// ── renderer, scene, light ────────────────────────────────────────────────
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.prepend(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(P.haze);
+scene.fog = new THREE.Fog(P.haze, 170, 480);
+
+const camera = new THREE.PerspectiveCamera(38, innerWidth / innerHeight, 1, 1200);
+
+scene.add(new THREE.HemisphereLight(0xfbf9f4, 0xb9b09a, 1.9));
+const sun = new THREE.DirectionalLight(0xfff4e4, 1.55);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -110, right: 110, top: 110, bottom: -110, near: 1, far: 400 });
+sun.shadow.bias = -0.0008;
+sun.shadow.normalBias = 0.4;
+scene.add(sun, sun.target);
+const SUN_OFF = new THREE.Vector3(-70, 120, -50); // from the north-west: shadows fall south-east
+
+const mats = new Map();
+const mat = (color, opts = {}) => {
+  const key = color + JSON.stringify(opts);
+  if (!mats.has(key)) mats.set(key, new THREE.MeshLambertMaterial({ color, ...opts }));
+  return mats.get(key);
+};
+const mesh = (geo, m, { cast = true, receive = true } = {}) => {
+  const o = new THREE.Mesh(geo, m);
+  o.castShadow = cast;
+  o.receiveShadow = receive;
+  return o;
+};
+const box = (w, h, d, color, x, y, z) => {
+  const o = mesh(new THREE.BoxGeometry(w, h, d), mat(color));
+  o.position.set(x, y + h / 2, z);
+  return o;
+};
+
+let seed = 2031;
+const rnd = () => {
+  seed = (seed + 0x6d2b79f5) >>> 0;
+  let t = seed;
+  t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+};
+const pick = (a) => a[Math.floor(rnd() * a.length)];
+
+// ── ground ────────────────────────────────────────────────────────────────
+const ground = mesh(new THREE.PlaneGeometry(1600, 1600), mat(P.land), { cast: false });
+ground.rotation.x = -Math.PI / 2;
+scene.add(ground);
+
+// ── road: south (z > 0) to north, S-bends; the chaikhana bend at z ≈ 40 ──
+const road = new THREE.CatmullRomCurve3(
+  [[-10, 420], [20, 300], [-35, 190], [48, 40], [-30, -110], [10, -230], [-25, -360], [5, -520]].map(([x, z]) => new THREE.Vector3(x, 0, z)),
+  false, "centripetal",
+);
+const ROAD_LEN = road.getLength();
+const N = 900;
+const pts = road.getSpacedPoints(N);
+const distToRoad = (x, z) => {
+  let m = Infinity;
+  for (let i = 0; i <= N; i += 3) m = Math.min(m, Math.hypot(pts[i].x - x, pts[i].z - z));
+  return m;
+};
+
+// a flat strip along the road, width w at height y; indices run along it
+function ribbon(w, y, color, from = 0, to = N) {
+  const pos = [];
+  const idx = [];
+  for (let i = from; i <= to; i++) {
+    const p = pts[i];
+    const t = road.getTangentAt(i / N);
+    const nx = -t.z, nz = t.x;
+    pos.push(p.x + nx * w / 2, y, p.z + nz * w / 2, p.x - nx * w / 2, y, p.z - nz * w / 2);
+    if (i > from) {
+      const a = (i - from - 1) * 2;
+      idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3);
+    }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  const o = mesh(g, mat(color, { side: THREE.DoubleSide }), { cast: false });
+  return o;
+}
+scene.add(ribbon(11, 0.03, P.casing), ribbon(9, 0.06, P.road));
+{
+  // centre dashes
+  const dash = new THREE.InstancedMesh(new THREE.BoxGeometry(0.25, 0.02, 3), mat(P.dash), Math.ceil(ROAD_LEN / 7));
+  const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler();
+  let j = 0;
+  for (let s = 0; s < ROAD_LEN; s += 7, j++) {
+    const u = s / ROAD_LEN, p = road.getPointAt(u), t = road.getTangentAt(u);
+    q.setFromEuler(e.set(0, Math.atan2(t.x, t.z), 0));
+    dash.setMatrixAt(j, m.compose(new THREE.Vector3(p.x, 0.08, p.z), q, new THREE.Vector3(1, 1, 1)));
+  }
+  dash.count = j;
+  dash.receiveShadow = true;
+  scene.add(dash);
+}
+// the track: blue, drawn up to the truck (drawRange)
+const track = ribbon(1.4, 0.1, P.track);
+track.material = new THREE.MeshBasicMaterial({ color: P.track });
+scene.add(track);
+
+// ── fields with furrows ───────────────────────────────────────────────────
+const rowsTex = (() => {
+  const c = document.createElement("canvas");
+  c.width = c.height = 64;
+  const g = c.getContext("2d");
+  g.fillStyle = "#fff";
+  g.fillRect(0, 0, 64, 64);
+  g.fillStyle = "rgba(110,125,70,0.22)";
+  for (let y = 0; y < 64; y += 16) g.fillRect(0, y, 64, 6);
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = 4;
+  return t;
+})();
+const fieldMats = P.fields.map((c) => new THREE.MeshLambertMaterial({ color: c, map: rowsTex }));
+
+const CHAI = { x: 78, z: 38 }; // chaikhana yard centre, outside the bend
+const taken = [{ x: CHAI.x, z: CHAI.z, r: 24 }];
+const free = (x, z, r) => taken.every((t) => Math.hypot(t.x - x, t.z - z) > t.r + r);
+
+for (let z = -120; z < 420; ) {
+  const d = 22 + rnd() * 26;
+  for (let x = -260; x < 260; ) {
+    const w = 26 + rnd() * 40;
+    const cx = x + w / 2, cz = z + d / 2;
+    if (distToRoad(cx, cz) > Math.max(w, d) / 2 + 9 && free(cx, cz, Math.max(w, d) / 2) && rnd() < 0.86) {
+      const g = new THREE.PlaneGeometry(w - 3, d - 3);
+      const uv = g.attributes.uv;
+      const along = rnd() < 0.5;
+      for (let i = 0; i < uv.count; i++) {
+        const u = uv.getX(i), v = uv.getY(i);
+        uv.setXY(i, along ? u * (w / 6) : v * (d / 6), along ? v * (d / 6) : u * (w / 6));
+      }
+      const f = mesh(g, pick(fieldMats), { cast: false });
+      f.rotation.x = -Math.PI / 2;
+      f.position.set(cx, 0.02, cz);
+      scene.add(f);
+    }
+    x += w;
+  }
+  z += d;
+}
+
+// ── trees: instanced crowns and trunks ────────────────────────────────────
+const trees = []; // { x, z, h, r, poplar, color }
+function addTree(x, z, poplar) {
+  trees.push(poplar
+    ? { x, z, poplar, h: 10 + rnd() * 4, r: 1.3 + rnd() * 0.4, color: pick(P.trees) }
+    : { x, z, poplar, h: 4 + rnd() * 2, r: 2.4 + rnd() * 1.4, color: pick(P.trees) });
+}
+// poplar rows along the road, south of the pass
+for (let s = 30; s < ROAD_LEN; s += 7) {
+  const u = s / ROAD_LEN, p = road.getPointAt(u), t = road.getTangentAt(u);
+  if (p.z < -125) continue; // the pass
+  if (rnd() < 0.1) { s += 20; continue; }
+  for (const side of [-1, 1]) {
+    const x = p.x - t.z * 9.5 * side, z = p.z + t.x * 9.5 * side;
+    if (free(x, z, 1)) addTree(x, z, true);
+  }
+}
+
+// ── houses: walls, flat roofs with a parapet or metal gables; yard walls ──
+function house(x, z, w, d, h, rotY) {
+  const g = new THREE.Group();
+  const wall = pick(P.walls);
+  g.add(box(w, h, d, wall, 0, 0, 0));
+  if (rnd() < 0.6) {
+    // flat roof, parapet
+    g.add(box(w + 0.4, 0.5, d + 0.4, 0xd9cfbb, 0, h, 0));
+    g.add(box(w - 1, 0.1, d - 1, 0xcfc4ad, 0, h + 0.5, 0));
+  } else {
+    const roof = pick(P.roofs);
+    const s = new THREE.Shape();
+    s.moveTo(-w / 2 - 0.4, 0); s.lineTo(w / 2 + 0.4, 0); s.lineTo(0, Math.min(w, 8) * 0.35); s.closePath();
+    const geo = new THREE.ExtrudeGeometry(s, { depth: d + 0.8, bevelEnabled: false });
+    const r = mesh(geo, mat(roof, { flatShading: true }));
+    r.position.set(0, h, -d / 2 - 0.4);
+    g.add(r);
+  }
+  // door and windows on the long sides
+  for (const sz of [-1, 1]) {
+    const n = Math.max(1, Math.floor(w / 4));
+    for (let i = 0; i < n; i++) g.add(box(1.1, 1.2, 0.1, 0x5c6b7a, -w / 2 + (w / n) * (i + 0.5), h * 0.45, sz * (d / 2 + 0.03)));
+  }
+  // a walled yard on one side
+  if (rnd() < 0.5) {
+    const yd = 6 + rnd() * 4;
+    const c = 0xe0d6c2;
+    g.add(box(w, 1.6, 0.4, c, 0, 0, d / 2 + yd));
+    g.add(box(0.4, 1.6, yd, c, -w / 2, 0, d / 2 + yd / 2));
+    g.add(box(0.4, 1.6, yd, c, w / 2, 0, d / 2 + yd / 2));
+    addTree(x + (rnd() - 0.5) * w * 0.6, z + d / 2 + yd / 2, false);
+  }
+  g.position.set(x, 0, z);
+  g.rotation.y = rotY;
+  scene.add(g);
+}
+for (let tries = 0, n = 0; tries < 900 && n < 70; tries++) {
+  const x = (rnd() - 0.5) * 300;
+  const z = -100 + rnd() * 330;
+  const w = 7 + rnd() * 6, d = 6 + rnd() * 4;
+  const r = Math.hypot(w, d) / 2 + 6;
+  const dr = distToRoad(x, z);
+  if (dr < r + 8 || dr > 110 || !free(x, z, r)) continue;
+  taken.push({ x, z, r });
+  house(x, z, w, d, 3.2 + rnd() * 2.2, Math.round(rnd() * 3) * (Math.PI / 2) + (rnd() - 0.5) * 0.2);
+  n++;
+}
+// loose trees in the fields
+for (let i = 0; i < 160; i++) {
+  const x = (rnd() - 0.5) * 460, z = -110 + rnd() * 520;
+  if (distToRoad(x, z) > 14 && free(x, z, 3)) addTree(x, z, false);
+}
+
+// ── the chaikhana: hall with turquoise trim, tapchans under a vine trellis ─
+{
+  const g = new THREE.Group();
+  const yard = mesh(new THREE.PlaneGeometry(40, 32), mat(0xe7dfcd), { cast: false });
+  yard.rotation.x = -Math.PI / 2;
+  yard.position.y = 0.04;
+  g.add(yard);
+  // hall
+  g.add(box(13, 5, 18, 0xf2ead8, 10, 0, 0));
+  g.add(box(13.6, 0.5, 18.6, 0x2f8f9d, 10, 5, 0));
+  g.add(box(12.4, 0.15, 17.4, 0xe6dcc6, 10, 5.3, 0));
+  for (let i = 0; i < 4; i++) g.add(box(0.12, 2.6, 1.6, 0x2f8f9d, 3.45, 1, -6 + i * 4)); // arched windows facing the road
+  // trellis: posts, beams, leaves
+  const tx = -6, tz = 0, tw = 16, td = 24, th = 3.6;
+  for (let i = 0; i < 4; i++) for (let j = 0; j < 5; j++) {
+    const p = mesh(new THREE.CylinderGeometry(0.13, 0.13, th, 6), mat(0x7a5a3a));
+    p.position.set(tx - tw / 2 + (tw / 3) * i, th / 2, tz - td / 2 + (td / 4) * j);
+    g.add(p);
+  }
+  for (let j = 0; j <= 8; j++) g.add(box(tw, 0.12, 0.12, 0x7a5a3a, tx, th, tz - td / 2 + (td / 8) * j));
+  for (let i = 0; i <= 5; i++) g.add(box(0.12, 0.12, td, 0x7a5a3a, tx - tw / 2 + (tw / 5) * i, th, tz));
+  const leaves = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(0.55, 0), mat(0x86ad62, { flatShading: true }), 300);
+  leaves.castShadow = true;
+  const m4 = new THREE.Matrix4();
+  const lq = new THREE.Quaternion(), ls = new THREE.Vector3(1, 0.35, 1);
+  for (let i = 0; i < 300; i++) {
+    m4.compose(new THREE.Vector3(tx - tw / 2 + rnd() * tw, th + 0.12, tz - td / 2 + rnd() * td), lq, ls);
+    leaves.setMatrixAt(i, m4);
+  }
+  g.add(leaves);
+  // tapchans with red carpets and a low table
+  for (const [x, z] of [[-9, -7], [-3, 0], [-9, 7]]) {
+    g.add(box(4.2, 0.6, 3.4, 0x8a5a36, x, 0, z));
+    g.add(box(3.6, 0.12, 2.8, 0xb23a33, x, 0.6, z));
+    g.add(box(1.2, 0.35, 0.9, 0x6d4529, x, 0.72, z));
+    g.add(box(0.5, 0.15, 0.5, 0xf6efe2, x, 1.07, z));
+  }
+  g.position.set(CHAI.x, 0, CHAI.z);
+  scene.add(g);
+  addTree(CHAI.x + 17, CHAI.z + 13, false);
+  addTree(CHAI.x - 16, CHAI.z + 14, false);
+  addTree(CHAI.x + 16, CHAI.z - 13, false);
+}
+
+{
+  const n = trees.length;
+  const crownP = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 7, 6), mat(0xffffff, { flatShading: true }), n);
+  const crownR = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1, 1), mat(0xffffff, { flatShading: true }), n);
+  const trunk = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.22, 0.3, 1, 5), mat(0x7a6247), n);
+  let a = 0, b = 0;
+  const m = new THREE.Matrix4(), q = new THREE.Quaternion(), c = new THREE.Color();
+  trees.forEach((t, i) => {
+    const trunkH = t.poplar ? t.h * 0.3 : t.h * 0.45;
+    trunk.setMatrixAt(i, m.compose(new THREE.Vector3(t.x, trunkH / 2, t.z), q, new THREE.Vector3(1, trunkH, 1)));
+    if (t.poplar) {
+      crownP.setMatrixAt(a, m.compose(new THREE.Vector3(t.x, trunkH + (t.h - trunkH) / 2, t.z), q, new THREE.Vector3(t.r, (t.h - trunkH) / 2, t.r)));
+      crownP.setColorAt(a++, c.setHex(t.color));
+    } else {
+      crownR.setMatrixAt(b, m.compose(new THREE.Vector3(t.x, t.h * 0.45 + t.r * 0.8, t.z), q, new THREE.Vector3(t.r, t.r * 0.9, t.r)));
+      crownR.setColorAt(b++, c.setHex(t.color));
+    }
+  });
+  crownP.count = a;
+  crownR.count = b;
+  for (const o of [crownP, crownR, trunk]) { o.castShadow = true; o.receiveShadow = true; scene.add(o); }
+}
+
+// ── the pass: terraced hills (contours turned into steps), snow on top ────
+function blob(R, ph) {
+  const s = new THREE.Shape();
+  for (let a = 0; a <= 40; a++) {
+    const t = (a / 40) * Math.PI * 2;
+    const q = R * (1 + 0.16 * Math.sin(3 * t + ph[0]) + 0.09 * Math.sin(5 * t + ph[1]) + 0.05 * Math.sin(8 * t + ph[2]));
+    a ? s.lineTo(Math.cos(t) * q, Math.sin(t) * q) : s.moveTo(Math.cos(t) * q, Math.sin(t) * q);
+  }
+  return s;
+}
+for (let tries = 0, n = 0; tries < 400 && n < 34; tries++) {
+  const R = 18 + rnd() * 34;
+  const x = (rnd() - 0.5) * 520, z = -150 - rnd() * 360;
+  if (distToRoad(x, z) < R * 1.25 + 12 || !free(x, z, R)) continue;
+  taken.push({ x, z, r: R * 0.9 });
+  n++;
+  const ph = [rnd() * 6.28, rnd() * 6.28, rnd() * 6.28];
+  const levels = 4 + Math.floor(rnd() * 3) + (R > 38 ? 1 : 0);
+  const step = 2.6 + R * 0.06;
+  for (let j = 0; j < levels; j++) {
+    const top = j === levels - 1 && levels >= 6;
+    const geo = new THREE.ExtrudeGeometry(blob(R * (1 - (j / levels) * 0.82), ph), { depth: step, bevelEnabled: false, curveSegments: 1 });
+    const o = mesh(geo, mat(top ? 0xf6f3ec : P.hills[Math.min(4, j)], { flatShading: true }));
+    o.rotation.x = -Math.PI / 2;
+    o.position.set(x + (rnd() - 0.5) * R * 0.08 * j, j * step, z + (rnd() - 0.5) * R * 0.08 * j);
+    scene.add(o);
+  }
+}
+
+// rocks and shrubs on the pass
+{
+  const n = 220;
+  const rock = new THREE.InstancedMesh(new THREE.DodecahedronGeometry(1, 0), mat(0xb9ab8c, { flatShading: true }), n);
+  const bush = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1, 0), mat(0x9aa978, { flatShading: true }), n);
+  const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler();
+  let a = 0, b = 0;
+  for (let i = 0; i < n * 3 && (a < n || b < n); i++) {
+    const x = (rnd() - 0.5) * 380, z = -130 - rnd() * 380;
+    if (distToRoad(x, z) < 9 || !free(x, z, 1)) continue;
+    const s = 0.5 + rnd() * 1.4;
+    q.setFromEuler(e.set(rnd() * 3, rnd() * 3, rnd() * 3));
+    if (rnd() < 0.5 && a < n) rock.setMatrixAt(a++, m.compose(new THREE.Vector3(x, s * 0.3, z), q, new THREE.Vector3(s * 1.3, s * 0.7, s)));
+    else if (b < n) bush.setMatrixAt(b++, m.compose(new THREE.Vector3(x, s * 0.4, z), new THREE.Quaternion(), new THREE.Vector3(s, s * 0.7, s)));
+  }
+  rock.count = a;
+  bush.count = b;
+  for (const o of [rock, bush]) { o.castShadow = true; o.receiveShadow = true; scene.add(o); }
+}
+
+// ── the truck: cab, box body with the blue stripe, wheels, lights ─────────
+const truck = new THREE.Group();
+{
+  const g = truck;
+  g.add(box(2.2, 0.5, 11.4, 0x2b3340, 0, 0.75, 0.3)); // chassis
+  // box body
+  g.add(box(2.55, 3.3, 8.4, 0xf5f7f9, 0, 1.15, 1.9));
+  g.add(box(2.6, 0.55, 8.2, P.blue, 0, 2.3, 1.9)); // band along the sides
+  g.add(box(0.7, 0.06, 7.8, P.blue, 0, 4.45, 1.9)); // stripe on the roof
+  for (let i = 0; i < 6; i++) g.add(box(2.58, 0.05, 0.12, 0xdfe5ec, 0, 4.45, -1.6 + i * 1.4));
+  // cab
+  g.add(box(2.5, 2.4, 2.7, P.blue, 0, 1.0, -4.15));
+  g.add(box(2.3, 0.5, 2.1, 0x1563c9, 0, 3.4, -4.0)); // roof fairing
+  g.add(box(2.3, 1.05, 0.08, 0x1b2a3d, 0, 2.15, -5.52)); // windshield
+  for (const sx of [-1, 1]) g.add(box(0.08, 0.85, 1.2, 0x1b2a3d, sx * 1.26, 2.25, -4.6)); // side windows
+  for (const sx of [-1, 1]) g.add(box(0.12, 0.5, 0.2, 0x1b2430, sx * 1.42, 2.4, -5.3)); // mirrors
+  g.add(box(2.3, 0.5, 0.1, 0x1b2430, 0, 1.0, -5.55)); // grille
+  for (const sx of [-1, 1]) {
+    const l = mesh(new THREE.BoxGeometry(0.45, 0.28, 0.06), new THREE.MeshBasicMaterial({ color: 0xfff3c4 }));
+    l.position.set(sx * 0.85, 1.25, -5.58);
+    g.add(l);
+    const r = mesh(new THREE.BoxGeometry(0.3, 0.25, 0.06), new THREE.MeshBasicMaterial({ color: 0xdc2626 }));
+    r.position.set(sx * 1.0, 1.4, 6.12);
+    g.add(r);
+  }
+  const wheel = new THREE.CylinderGeometry(0.55, 0.55, 0.45, 14);
+  wheel.rotateZ(Math.PI / 2);
+  for (const z of [-4.3, 2.6, 4.0]) for (const sx of [-1, 1]) {
+    const w = mesh(wheel, mat(0x1b2430));
+    w.position.set(sx * 1.1, 0.55, z);
+    g.add(w);
+  }
+  scene.add(g);
+}
+
+// ── scroll → trip, camera modes ───────────────────────────────────────────
+let mode = new URLSearchParams(location.search).get("cam") || "down";
+for (const b of document.querySelectorAll("[data-cam]")) {
+  b.setAttribute("aria-pressed", String(b.dataset.cam === mode));
+  b.onclick = () => {
+    mode = b.dataset.cam;
+    for (const o of document.querySelectorAll("[data-cam]")) o.setAttribute("aria-pressed", String(o === b));
+  };
+}
+const U0 = 0.04, U1 = 0.97;
+let u = U0;
+const target = () => {
+  const max = document.documentElement.scrollHeight - innerHeight;
+  return U0 + (U1 - U0) * Math.min(1, Math.max(0, scrollY / max));
+};
+addEventListener("scroll", () => { document.getElementById("hint").style.opacity = scrollY > 40 ? "0" : "1"; }, { passive: true });
+
+const camPos = new THREE.Vector3(), camLook = new THREE.Vector3();
+const wantPos = new THREE.Vector3(), wantLook = new THREE.Vector3();
+let first = true;
+const chaiEl = document.getElementById("chai");
+const chaiAt = new THREE.Vector3(CHAI.x + 10, 7, CHAI.z + 13);
+const v = new THREE.Vector3();
+
+function frame() {
+  u += (target() - u) * 0.08;
+  const p = road.getPointAt(u), t = road.getTangentAt(u);
+  truck.position.set(p.x, 0, p.z);
+  truck.rotation.y = Math.atan2(-t.x, -t.z);
+  track.geometry.setDrawRange(0, Math.floor(u * N) * 6);
+
+  const narrow = innerWidth < innerHeight;
+  if (mode === "chase") {
+    wantPos.set(p.x - t.x * 34, narrow ? 30 : 22, p.z - t.z * 34);
+    wantLook.set(p.x + t.x * 30, 0, p.z + t.z * 30);
+  } else if (mode === "down") {
+    // ahead of the truck, looking back at it: it drives down the screen,
+    // like on the landing; the road it came by runs off into the distance
+    wantPos.set(p.x * 0.7, narrow ? 80 : 56, p.z - (narrow ? 100 : 76));
+    wantLook.set(p.x * 0.9, 0, p.z - (narrow ? 24 : 18));
+  } else if (mode === "top") {
+    wantPos.set(p.x, narrow ? 230 : 170, p.z + 0.01);
+    wantLook.set(p.x, 0, p.z);
+  } else {
+    // behind and above, facing the way the trip goes (north)
+    wantPos.set(p.x * 0.75, narrow ? 52 : 38, p.z + (narrow ? 50 : 42));
+    wantLook.set(p.x * 0.9, 0, p.z - 16);
+  }
+  if (first) { camPos.copy(wantPos); camLook.copy(wantLook); first = false; }
+  camPos.lerp(wantPos, 0.08);
+  camLook.lerp(wantLook, 0.1);
+  camera.position.copy(camPos);
+  camera.lookAt(camLook);
+
+  sun.position.copy(p).add(SUN_OFF);
+  sun.target.position.copy(p);
+
+  v.copy(chaiAt).project(camera);
+  const vis = v.z < 1 && Math.abs(v.x) < 1.1 && Math.abs(v.y) < 1.1;
+  chaiEl.style.display = vis ? "" : "none";
+  if (vis) chaiEl.style.transform = `translate(${((v.x + 1) / 2) * innerWidth}px, ${((1 - v.y) / 2) * innerHeight}px) translate(-50%, -50%)`;
+
+  renderer.render(scene, camera);
+}
+
+// fps meter
+let frames = 0, since = performance.now();
+const fpsEl = document.getElementById("fps");
+renderer.setAnimationLoop(() => {
+  frame();
+  frames++;
+  const now = performance.now();
+  if (now - since > 500) {
+    fpsEl.textContent = `${Math.round((frames * 1000) / (now - since))} fps · ${renderer.info.render.calls} dc`;
+    frames = 0;
+    since = now;
+  }
+});
+addEventListener("resize", () => {
+  renderer.setSize(innerWidth, innerHeight);
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+});
+</script>
+</body>
+</html>

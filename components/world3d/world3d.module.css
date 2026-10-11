@@ -1,0 +1,136 @@
+/* The 3D map: a canvas pinned to the screen while the section scrolls by. */
+
+.stage {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+/* lvh: the canvas keeps its size while a phone's browser bars come and go,
+   so it never resizes mid-scroll; the truck's place is reckoned in svh. */
+.view {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100lvh;
+  overflow: hidden;
+}
+.view canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* The poster: a picture of the first frame (07:40, the truck at the
+   Tashkent dock) until the engine draws it. The camera's vertical field of
+   view spans the canvas' height, so the picture is drawn at that height
+   (100lvh) and the scene has the same scale; then it is shifted so the
+   point the camera aims at lands where viewOf (World3D.tsx) puts it: phone
+   — the middle, 40 % of 100svh down; desktop — 216px + a third of the width
+   (half-way between the 400px card and the participants' column), 45 %
+   down. --fx is where that point is across the picture, in picture heights
+   (docs/3d/tools/poster.mjs renders the pictures and prints it). */
+.poster {
+  position: absolute;
+  inset: 0;
+  transition:
+    opacity 0.45s ease,
+    visibility 0s 0.45s;
+}
+.poster img {
+  --fx: 0.4;
+  --ay: 0.4;
+  position: absolute;
+  height: 100%;
+  width: auto;
+  max-width: none;
+  left: calc(50% - var(--fx) * 100lvh);
+  top: calc(var(--ay) * (100svh - 100lvh));
+}
+@media (min-width: 1024px) {
+  .poster img {
+    --fx: 1.0733;
+    --ay: 0.45;
+    left: calc(216px + 100% / 3 - var(--fx) * 100lvh);
+  }
+}
+[data-ready="1"] > .poster {
+  opacity: 0;
+  visibility: hidden;
+}
+/* opened further down the trip: the first frame would be the wrong place */
+[data-poster="0"] > .poster {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .poster {
+    transition: none;
+  }
+}
+
+/* A word of the map (Overlays.tsx), at the screen point of its place in
+   the world; the engine moves it after every frame. Over the canvas, under
+   the chapter cards and the participants. Unseen until the engine has
+   placed it (it sets the opacity by distance). */
+.at {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  will-change: transform;
+}
+
+/* no room either side of its point: only the mark, not the words */
+.at[data-tight="1"] [data-bind] {
+  display: none;
+}
+
+.gap > [data-side="r"] {
+  margin-left: 16px;
+}
+.gap > [data-side="l"] {
+  margin-left: -16px;
+}
+
+/* Where the truck, the pickup flag and the step rings are on screen: the
+   engine moves these after every frame, pulse.ts aims at them. */
+.anchor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  visibility: hidden;
+  will-change: transform;
+}
+
+/* the hero: "the answer is on the map now" points at the truck */
+.truck::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 64px;
+  height: 64px;
+  margin: -32px 0 0 -32px;
+  border-radius: 50%;
+  border: 2px solid #2081f8;
+  opacity: 0;
+}
+[data-ch="0"][data-intro="2"] .truck::after {
+  animation: ping 1.6s ease-out 0.5s 3;
+}
+@keyframes ping {
+  from {
+    transform: scale(0.5);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .truck::after {
+    display: none;
+  }
+}

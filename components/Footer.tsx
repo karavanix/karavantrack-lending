@@ -12,7 +12,7 @@ export function Footer() {
     <footer className="bg-[var(--color-bg)] text-white/70">
       <div className="container-page py-16 grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div>
-          <Link href={`/${locale}`} aria-label="Yool" className="inline-flex text-white">
+          <Link href={`/${locale}`} aria-label="YoolLive" className="inline-flex text-white">
             <Logo />
           </Link>
           <p className="mt-4 max-w-xs text-sm leading-relaxed">{t("tagline")}</p>
@@ -39,13 +39,12 @@ export function Footer() {
         </div>
 
         <FooterCol title={t("product")}>
-          <FooterLink href="#features">{t("links.features")}</FooterLink>
-          <FooterLink href="#pricing">{t("links.pricing")}</FooterLink>
+          <FooterLink href="#trip">{t("links.how")}</FooterLink>
+          <FooterLink href="#drivers">{t("links.drivers")}</FooterLink>
           <FooterLink href="#faq">{t("links.faq")}</FooterLink>
         </FooterCol>
 
         <FooterCol title={t("company")}>
-          <FooterLink href="#">{t("links.about")}</FooterLink>
           <FooterLink href={`mailto:${SITE.email}`}>{t("links.contacts")}</FooterLink>
         </FooterCol>
 
