@@ -5,10 +5,13 @@ import { BufferGeometry, Float32BufferAttribute, Mesh, type Material } from "thr
 import { LEN, N, PTS, TANS } from "../route";
 
 // Width w, height y above the ground, between samples a and b; v of the UVs
-// runs along the strip, one unit per `period` metres.
+// runs along the strip, one unit per `period` metres. With `w` = 0 both
+// edges stay on the centre line and `aSide` holds the step to each edge for
+// a unit width (grow.ts widens it in the shader).
 export function ribbon(w: number, y: number, m: Material, a = 0, b = N, period = 24): Mesh {
   const pos: number[] = [];
   const uv: number[] = [];
+  const side: number[] = [];
   const idx: number[] = [];
   for (let i = a; i <= b; i++) {
     const p = PTS[i];
@@ -16,6 +19,7 @@ export function ribbon(w: number, y: number, m: Material, a = 0, b = N, period =
     const nx = -t.z;
     const nz = t.x;
     pos.push(p.x + (nx * w) / 2, y, p.z + (nz * w) / 2, p.x - (nx * w) / 2, y, p.z - (nz * w) / 2);
+    if (!w) side.push(nx / 2, nz / 2, -nx / 2, -nz / 2);
     const v = ((i - a) * LEN) / N / period;
     uv.push(0, v, 1, v);
     if (i > a) {
@@ -27,7 +31,8 @@ export function ribbon(w: number, y: number, m: Material, a = 0, b = N, period =
   g.setAttribute("position", new Float32BufferAttribute(pos, 3));
   g.setAttribute("uv", new Float32BufferAttribute(uv, 2));
   g.setIndex(idx);
-  g.computeVertexNormals();
+  if (w) g.computeVertexNormals();
+  else g.setAttribute("aSide", new Float32BufferAttribute(side, 2));
   const o = new Mesh(g, m);
   o.receiveShadow = true;
   o.userData = { a, b };

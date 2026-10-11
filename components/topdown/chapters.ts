@@ -41,6 +41,10 @@ export const TAIL = 0.55 + CHAPTERS[K - 1].hold;
 // World y of chapter i's bend, in screens from the top of the section.
 export const anchorOf = (i: number) => CAMERA + i * STEP;
 export const SECTION_SCREENS = anchorOf(K - 1) + TAIL;
+// The 3D map's finale: scroll after the last chapter in which the camera
+// rises over the whole route, now drawn blue (world3d/camera.ts). The flat
+// map has none.
+export const FINALE = 1.1;
 
 // A chapter starts this share of a screen before the truck reaches its bend.
 export const LEAD = 0.04;

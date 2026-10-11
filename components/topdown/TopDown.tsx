@@ -26,6 +26,7 @@ import {
   DEPOT_END,
   DROPOFF_AT,
   DUSK_MIN,
+  FINALE,
   K,
   LEAD,
   OFFLINE_FROM,
@@ -227,6 +228,7 @@ export function TopDown() {
       const posOf = (len: number) => posAtY(road.yAtLen(len), L);
       const st = world.get();
       link.frame = {
+        at: posAtY(cam, L),
         pos: posAtY(y, L),
         track: ranges.map(([a, b]) => [posOf(a), posOf(b)]),
         plan: track.plan ? [l > lStart ? posAtY(y, L) : PICKUP_AT, posOf(lPin + (lDrop - lPin) * track.plan)] : null,
@@ -393,7 +395,7 @@ export function TopDown() {
 
     const sc = gsap.context(() => {
       const cam = { s: L.anchors[0] };
-      const span = L.height - L.vh;
+      const span = L.height + (map3d ? FINALE * L.vh : 0) - L.vh;
       gsap.to(cam, {
         s: cameraOf(span, L),
         ease: "none",
@@ -436,7 +438,7 @@ export function TopDown() {
       stop();
       sc.revert();
     };
-  }, [L, road, link]);
+  }, [L, road, link, map3d]);
 
   const chapters = t.raw("chapters") as { title: string; text: string }[];
   const at = (pos: number) => (L && road ? road.at(road.lenAt(anchorOf(pos) * L.vh)) : null);
@@ -456,7 +458,7 @@ export function TopDown() {
       data-intro="0"
       data-dusk="0"
       data-map={map3d ? "3d" : "flat"}
-      style={{ height: `${SECTION_SCREENS * 100}svh` }}
+      style={{ height: `${(SECTION_SCREENS + (map3d ? FINALE : 0)) * 100}svh` }}
     >
       <div ref={probeRef} className={s.probe} aria-hidden />
 

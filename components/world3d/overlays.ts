@@ -7,7 +7,10 @@
 // up over a world that is already lost in the haze. On desktop it also fades
 // as it slides under the participants' column. Behind the camera, or well
 // off screen, it is not shown at all. A place name is kept whole on screen,
-// as maps do: it slides in from the edge rather than being cut.
+// as maps do: it slides in from the edge rather than being cut. From high
+// above (Top) the road numbers go: they would sit on the place names; so do
+// the depots' names once the flags are up, whose tags stand on the same spot
+// and say it in the cabinet's words.
 
 import { Vector3, type PerspectiveCamera } from "three";
 import { STOP } from "../topdown/chapters";
@@ -62,6 +65,8 @@ export function createOverlays(host: HTMLElement, points: Record<string, Vector3
     return {
       el,
       place: el.querySelector<HTMLElement>("[data-kind]"),
+      shield: !!el.querySelector('[data-kind="shield"]'),
+      depot: el.dataset.at === "depot" || el.dataset.at === "fergana",
       half: -1, // half its width, measured the first time it shows
       at: points[el.dataset.at!] ?? new Vector3(),
       flip,
@@ -74,8 +79,9 @@ export function createOverlays(host: HTMLElement, points: Record<string, Vector3
   const pend = items.find((o) => o.el.dataset.at === "pend")!;
   const v = new Vector3();
 
-  // fade: full up to `near` metres from the camera, gone at `far`
-  return (camera: PerspectiveCamera, w: number, h: number, free: [number, number], f: Frame, fade: { near: number; far: number }) => {
+  // fade: full up to `near` metres from the camera, gone at `far`; `map`:
+  // how far the camera has gone towards the map view, 0–1
+  return (camera: PerspectiveCamera, w: number, h: number, free: [number, number], f: Frame, fade: { near: number; far: number; map: number }) => {
     // the grey run's tag
     let run = 0;
     if (f.pend) {
@@ -92,7 +98,8 @@ export function createOverlays(host: HTMLElement, points: Record<string, Vector3
       const x = ((v.x + 1) / 2) * w;
       const y = ((1 - v.y) / 2) * h;
       const d = camera.position.distanceTo(o.at);
-      const shown = v.z < 1 && x > -200 && x < free[1] && y > -100 && y < h + 100 && d < fade.far;
+      const off = o.shield || (o.depot && f.pins) ? fade.map : 0;
+      const shown = off < 1 && v.z < 1 && x > -200 && x < free[1] && y > -100 && y < h + 100 && d < fade.far;
       if (shown !== o.shown) {
         o.shown = shown;
         o.el.style.display = shown ? "" : "none";
@@ -106,15 +113,20 @@ export function createOverlays(host: HTMLElement, points: Record<string, Vector3
       o.el.style.transform = `translate3d(${px.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
       const far = (fade.far - d) / (fade.far - fade.near);
       const rail = free[1] < w ? (free[1] - x) / RAIL_FADE : 1;
-      const op = Math.min(1, Math.max(0, Math.min(far, rail))).toFixed(2);
+      const op = Math.min(1, Math.max(0, Math.min(far, rail, 1 - off))).toFixed(2);
       if (op !== o.op) o.el.style.opacity = o.op = op;
       // A tag that hangs to one side: the right if it fits before the
       // column (or the screen edge), else the left if it fits there, else
-      // the roomier one.
+      // the roomier one, and without its text if it still doesn't fit
+      // (the "P" in the middle of a phone screen, the stop's times beside).
       if (o.flip) {
         const need = o.extra + (o.flip.textContent?.length ?? 0) * CHAR_W;
-        const side = x + need <= free[1] - 8 ? "r" : x - need >= free[0] + 8 || x - free[0] > free[1] - x ? "l" : "r";
+        const r = x + need <= free[1] - 8;
+        const l = x - need >= free[0] + 8;
+        const side = r ? "r" : l || x - free[0] > free[1] - x ? "l" : "r";
         if (side !== o.side) o.flip.dataset.side = o.side = side;
+        const tight = r || l ? "0" : "1";
+        if (o.el.dataset.tight !== tight) o.el.dataset.tight = tight;
       }
     }
   };

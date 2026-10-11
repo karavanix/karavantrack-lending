@@ -34,7 +34,7 @@ import { RINGS } from "../topdown/chapters";
 import { buildGround } from "./build/ground";
 import { disposeMaterials, P } from "./build/materials";
 import { buildWorld } from "./build/world";
-import { FOV, roadShot } from "./camera";
+import { FOV, apply, cutAt, cutKey, newShot, pxPerMetre, shotAt } from "./camera";
 import { buildMarks } from "./marks";
 import { createOverlays, overlayPoints } from "./overlays";
 import { roadAt, sAtPos } from "./route";
@@ -43,6 +43,7 @@ import { buildTruck } from "./truck";
 
 // Positions are station positions (see route.ts).
 export type Frame = {
+  at: number; // where the scroll is (the camera follows it, camera.ts)
   pos: number; // where the truck is
   track: [number, number][]; // stretches of blue track
   plan: [number, number] | null; // the planned route's grey dots drawn so far
@@ -71,8 +72,16 @@ const DPR = { wide: 1.5, narrow: 1 };
 const SUN = { az: 135, el: 36, color: 0xfff2e0, i: 1.55 };
 const HEMI = { sky: 0xf6f6f2, ground: 0xb9b09a, i: 2.2 };
 
-// The map's words fade out between these distances past the truck.
-const WORDS = { near: 130, far: 230 };
+// The map's words fade out between these distances past the point the
+// camera looks at. From high above the whole route is that close: MAP is
+// how much further they reach there.
+const WORDS = { near: 130, far: 230, map: 1600 };
+// From this far the world reads as a map (Top, and on the way there).
+const MAP_FROM = 300;
+const MAP_TO = 900;
+// The track is 1.1 m wide, and never thinner on screen than this, px.
+const TRACK_W = 1.1;
+const TRACK_PX = 3.5;
 
 const turn = () => new Promise((r) => setTimeout(r, 0));
 
@@ -92,6 +101,7 @@ export async function createEngine(host: HTMLElement, anchors: Anchors, initial:
   scene.background = new Color(P.sky);
   scene.fog = new Fog(P.sky, 200, 600);
   const camera = new PerspectiveCamera(FOV, 1, 2, 2500);
+  const shot = newShot();
 
   const hemi = new HemisphereLight(HEMI.sky, HEMI.ground, HEMI.i);
   const sun = new DirectionalLight(SUN.color, SUN.i);
@@ -139,6 +149,11 @@ export async function createEngine(host: HTMLElement, anchors: Anchors, initial:
 
   let view = initial;
   let frame: Frame | null = null;
+  let cut = cutAt(0, reduce);
+  // From high above nothing that casts a shadow moves: while the camera
+  // holds there, the shadow map drawn on the way in is kept (the plan
+  // drawing itself in chapter 1 then costs half the draw calls).
+  let shadowsFor = "";
   let w = 0;
   let h = 0;
   let raf = 0;
@@ -154,6 +169,7 @@ export async function createEngine(host: HTMLElement, anchors: Anchors, initial:
     sun.shadow.mapSize.setScalar(view.wide ? 2048 : 1024);
     sun.shadow.map?.dispose();
     sun.shadow.map = null;
+    shadowsFor = "";
     invalidate();
   };
 
@@ -247,22 +263,25 @@ export async function createEngine(host: HTMLElement, anchors: Anchors, initial:
     truck.position.set(here.x, 0, here.z);
     truck.rotation.y = Math.atan2(-here.tx, -here.tz);
 
-    const d = roadShot(camera, here.x, here.z, view.wide);
-    camera.aspect = w / h;
-    // the truck at the aim point instead of the middle of the screen
-    camera.setViewOffset(w, h, w / 2 - view.aimX, h / 2 - view.aimY, w, h);
-    camera.updateProjectionMatrix();
+    shotAt(cut, here.x, here.z, view, w, h, shot);
+    apply(camera, shot, w, h);
+    const d = shot.dist;
     const fog = scene.fog as Fog;
     fog.near = d * 0.9 + 60;
     fog.far = d * 2 + 420;
 
     fitShadow(fog.far);
+    const key = cutKey(cut);
+    renderer.shadowMap.autoUpdate = !(key === "top" && shadowsFor === key);
+    shadowsFor = key;
 
-    setTrack(frame.track);
-    const busy = marks.update(frame, performance.now());
+    const pxm = pxPerMetre(shot, h);
+    setTrack(frame.track, Math.max(TRACK_W, TRACK_PX / pxm));
+    const busy = marks.update(frame, performance.now(), pxm);
     renderer.render(scene, camera);
     placeAnchors();
-    placeWords(camera, w, h, view.free, frame, { near: d + WORDS.near, far: d + WORDS.far });
+    const map = Math.min(1, Math.max(0, (d - MAP_FROM) / (MAP_TO - MAP_FROM)));
+    placeWords(camera, w, h, view.free, frame, { near: d + WORDS.near + map * WORDS.map, far: d + WORDS.far + map * WORDS.map, map });
     if (busy) invalidate(); // a flag or a ring is still landing
   };
 
@@ -279,9 +298,12 @@ export async function createEngine(host: HTMLElement, anchors: Anchors, initial:
 
   return {
     set(f: Frame) {
-      // While the truck stands at a bend the scroll goes on: same picture.
-      if (frame && same(frame, f)) return;
+      // While the truck stands at a bend the scroll goes on: same picture,
+      // unless the camera is on the move.
+      const c = cutAt(f.at, reduce);
+      if (frame && cutKey(c) === cutKey(cut) && same(frame, f)) return;
       frame = f;
+      cut = c;
       invalidate();
     },
     setView(next: View) {

@@ -34,6 +34,11 @@
   will-change: transform;
 }
 
+/* no room either side of its point: only the mark, not the words */
+.at[data-tight="1"] [data-bind] {
+  display: none;
+}
+
 .gap > [data-side="r"] {
   margin-left: 16px;
 }

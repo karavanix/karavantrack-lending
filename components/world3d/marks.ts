@@ -34,6 +34,7 @@ import { DROPOFF_AT, OFFLINE_FROM, OFFLINE_TO, PICKUP_AT, RINGS } from "../topdo
 import { roadAt, sAtPos } from "./route";
 import type { Tower } from "./build/pass";
 import type { Frame } from "./engine";
+import { grow } from "./grow";
 
 const C = {
   plan: 0x64748b,
@@ -61,22 +62,37 @@ const HEAD_Y = 7.5;
 const HEAD_R = 1.6;
 
 const SEG = 12;
+
+// The plan's dots: radius and spacing, metres.
+const PLAN_R = 0.75;
+const PLAN_STEP = 9;
+// ...and never smaller on screen than this, px (Top camera, 2 km up).
+const DOT_PX = 4;
+const GAP_PX = 9;
 const UP = -Math.PI / 2;
 
 // Round dots along the road every `step` metres over [s0, s1]: a coloured
 // disc, on a slightly larger white one when `rim` > 0. All in one geometry,
-// dot after dot, so any run of them is one draw range.
-function dotRow(s0: number, s1: number, step: number, r: number, rim: number, color: number, y: number) {
+// dot after dot, so any run of them is one draw range. A row that `grows`
+// keeps its size on screen from afar (grow.ts).
+function dotRow(s0: number, s1: number, step: number, r: number, rim: number, color: number, y: number, grows = false) {
   const ss: number[] = [];
   for (let s = s0; s <= s1; s += step) ss.push(s);
   const pos: number[] = [];
   const col: number[] = [];
+  const centre: number[] = [];
+  const nth: number[] = [];
   const idx: number[] = [];
   const white = new Color(0xffffff);
   const ink = new Color(color);
   const at = { x: 0, z: 0, tx: 0, tz: -1 };
   const disc = (x: number, z: number, yy: number, rr: number, c: Color) => {
     const base = pos.length / 3;
+    const k = centre.length / (3 * (SEG + 1) * (rim ? 2 : 1));
+    for (let j = 0; j <= SEG; j++) {
+      centre.push(x, yy, z);
+      nth.push(Math.floor(k));
+    }
     pos.push(x, yy, z);
     col.push(c.r, c.g, c.b);
     for (let j = 0; j < SEG; j++) {
@@ -96,7 +112,13 @@ function dotRow(s0: number, s1: number, step: number, r: number, rim: number, co
   g.setAttribute("position", new Float32BufferAttribute(pos, 3));
   g.setAttribute("color", new Float32BufferAttribute(col, 3));
   g.setIndex(idx);
-  const o = new Mesh(g, new MeshBasicMaterial({ vertexColors: true }));
+  const m = new MeshBasicMaterial({ vertexColors: true });
+  if (grows) {
+    g.setAttribute("aCentre", new Float32BufferAttribute(centre, 3));
+    g.setAttribute("aIdx", new Float32BufferAttribute(nth, 1));
+  }
+  const u = grows ? grow(m, "dots") : null;
+  const o = new Mesh(g, m);
   o.frustumCulled = false; // its bounds are the whole row; the draw range is what shows
   const per = (rim ? 2 : 1) * SEG * 3;
   // Dots with s in (a, b], as station positions.
@@ -110,7 +132,7 @@ function dotRow(s0: number, s1: number, step: number, r: number, rim: number, co
     o.geometry.setDrawRange(from * per, Math.max(0, n) * per);
   };
   show(null);
-  return { o, show };
+  return { o, show, u };
 }
 
 // Index of the first value > v in an ascending list.
@@ -172,7 +194,7 @@ type Mark = { on: boolean; t0: number };
 
 export function buildMarks(scene: Scene, reduce: boolean, tower: Tower) {
   // ── the planned route and the queued points ────────────────────────────
-  const plan = dotRow(sAtPos(PICKUP_AT), sAtPos(DROPOFF_AT), 9, 0.75, 0, C.plan, Y.plan);
+  const plan = dotRow(sAtPos(PICKUP_AT), sAtPos(DROPOFF_AT), PLAN_STEP, PLAN_R, 0, C.plan, Y.plan, true);
   const pend = dotRow(sAtPos(OFFLINE_FROM) + 4, sAtPos(OFFLINE_TO), 6, 0.9, 0.4, C.pending, Y.pending);
 
   // A track point as the cabinet draws it: blue with a white rim.
@@ -267,11 +289,15 @@ export function buildMarks(scene: Scene, reduce: boolean, tower: Tower) {
   return {
     flagTops: flags.map((f) => f.top), // where the tags hang
     flagHeads: flags.map((f) => f.g.position.clone().setY(HEAD_Y)), // where impulses land
-    // Lays the marks out for this frame; true while something is still
-    // landing or pinging, so the engine draws again.
-    update(f: Frame, now: number): boolean {
+    // Lays the marks out for this frame, with `pxm` screen pixels to a
+    // metre where the camera looks; true while something is still landing
+    // or pinging, so the engine draws again.
+    update(f: Frame, now: number, pxm: number): boolean {
       let busy = false;
       plan.show(f.plan);
+      // from afar: dots at least DOT_PX across, at least GAP_PX apart
+      plan.u!.scale.value = Math.max(1, DOT_PX / (2 * PLAN_R * pxm));
+      plan.u!.every.value = Math.max(1, Math.ceil(GAP_PX / (PLAN_STEP * pxm)));
       pend.show(f.pend);
       front.visible = f.front !== null;
       if (f.front !== null) {
