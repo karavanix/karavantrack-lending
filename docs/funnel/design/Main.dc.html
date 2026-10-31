@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Лендинг yool.live</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Wix+Madefor+Display:wght@800&amp;family=Cormorant+Garamond:ital,wght@1,600&amp;family=Golos+Text:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0658bc}a:hover{color:#2081f8}
+.acc{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:600;font-size:1.12em;letter-spacing:-0.01em;color:#2081f8}
+.acc-dark{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:600;font-size:1.12em;letter-spacing:-0.01em;color:#6babfa}
+.ph{background:repeating-linear-gradient(135deg,#f6f8fa 0 12px,#eef1f4 12px 24px);font-family:'JetBrains Mono',monospace;font-size:12px;color:#627084;display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;box-sizing:border-box}
+.rail{scrollbar-width:none;scroll-snap-type:x mandatory;scroll-padding-inline:max(20px, calc((100% - 1200px) / 2))}
+.rail::-webkit-scrollbar{display:none}
+.rail>*{scroll-snap-align:start}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px 40px}
+.steps{scrollbar-width:none}.steps::-webkit-scrollbar{display:none}
+.feat{display:flex;align-items:center;gap:40px 72px}
+.feat.rev{flex-direction:row-reverse}
+details>summary{list-style:none;cursor:pointer}
+details>summary::-webkit-details-marker{display:none}
+details[open] .chev{transform:rotate(180deg)}
+@media (max-width:760px){.hide-sm{display:none !important}.feat,.feat.rev{flex-direction:column;align-items:stretch}.feat>*{flex:none !important}.steps{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -20px;padding:0 20px 8px;scroll-padding-inline:20px}.steps>*{flex:0 0 80%;scroll-snap-align:start}}
+</style>
+</helmet>
+<div style="background: #f2f4f6; color: #171c26; font-family: 'Golos Text', ui-sans-serif, system-ui, sans-serif; min-height: 100vh;">
+
+  <header style="background: #0f141b; padding: 0 20px;">
+    <div style="max-width: 1200px; height: 64px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 24px;">
+      <a href="#" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: #f2f4f6;">
+        <img src="/_blob/3ebe66e7ea5fcc15c8101f975bc899e7" alt="" style="width: 28px; height: 28px;">
+        <span style="font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: 20px; letter-spacing: -0.025em;">YoolLive</span>
+      </a>
+      <nav class="hide-sm" style="display: flex; gap: 32px; font-size: 14px; font-weight: 500;">
+        <a href="#how" style="color: rgba(255,255,255,0.75); text-decoration: none;">Как это работает</a>
+        <a href="#drivers" style="color: rgba(255,255,255,0.75); text-decoration: none;">Водителям</a>
+        <a href="#faq" style="color: rgba(255,255,255,0.75); text-decoration: none;">Вопросы</a>
+      </nav>
+      <div style="display: flex; align-items: center; gap: 20px; font-size: 14px; font-weight: 500;">
+        <a href="#" class="hide-sm" style="color: rgba(255,255,255,0.75); text-decoration: none;">RU</a>
+        <a href="#" style="color: #f2f4f6; text-decoration: none; padding: 12px 0;">Войти</a>
+        <a href="#start" class="hide-sm" style="background: #0658bc; color: #ffffff; text-decoration: none; font-weight: 600; padding: 10px 16px; border-radius: 10px;">Попробовать бесплатно</a>
+      </div>
+    </div>
+  </header>
+
+  <section style="padding: clamp(28px, 5vw, 72px) 20px clamp(64px, 6vw, 80px);">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: clamp(20px, 3vw, 40px);">
+      <div style="display: flex; align-items: center; gap: 12px; font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: #627084;">
+        <span style="width: 32px; height: 1px; background: #627084;"></span>
+        <span>Для грузовладельцев и диспетчеров</span>
+      </div>
+      <h1 style="margin: 0; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: clamp(48px, 8.5vw, 120px); line-height: 0.98; letter-spacing: -0.04em; text-wrap: balance;">Хватит звонить <span class="acc">водителю.</span></h1>
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 24px 40px;">
+        <p style="margin: 0; flex: 1 1 360px; max-width: 520px; font-size: clamp(17px, 1.6vw, 20px); line-height: 1.55; color: #627084;">Водитель ставит приложение, вы видите весь рейс: где едет, где стоит, когда приедет. Без трекеров и монтажа.</p>
+        <div style="flex: 0 1 500px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; flex-wrap: wrap; gap: 8px 12px;">
+            <a href="#start" style="flex: 1 1 240px; background: #0658bc; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 16px; height: 54px; border-radius: 10px; box-shadow: 0 10px 60px -20px rgba(32,129,248,0.35); display: flex; align-items: center; justify-content: center; gap: 8px;">Попробовать бесплатно
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+            </a>
+            <a href="#drivers" style="flex: 1 1 160px; background: #ffffff; color: #171c26; text-decoration: none; font-weight: 600; font-size: 16px; height: 54px; border-radius: 10px; border: 1px solid #dae0e7; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">Я водитель</a>
+          </div>
+          <span style="font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 12px; color: #627084;">Вход через Telegram или почту</span>
+        </div>
+      </div>
+      <div style="position: relative; margin-top: clamp(8px, 2vw, 24px); padding-right: 12%;">
+        <div style="background: #ffffff; border: 1px solid #dae0e7; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 60px -20px rgba(32,129,248,0.35); display: flex; flex-direction: column;">
+          <div style="height: 40px; border-bottom: 1px solid #dae0e7; display: flex; align-items: center; gap: 8px; padding: 0 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #627084;">
+            <span style="width: 10px; height: 10px; border-radius: 999px; background: #dae0e7;"></span>
+            <span style="width: 10px; height: 10px; border-radius: 999px; background: #dae0e7;"></span>
+            <span style="width: 10px; height: 10px; border-radius: 999px; background: #dae0e7;"></span>
+            <span style="margin-left: 12px;">app.yool.live</span>
+          </div>
+          <div class="ph" style="aspect-ratio: 16 / 9;">[Запись кабинета, 10–15 с: груз в пути, статус меняется на «Загружен», приходит фото]</div>
+        </div>
+        <div style="position: absolute; right: 0; top: 14%; width: 22%; min-width: 108px; aspect-ratio: 1 / 2; background: #0f141b; border-radius: clamp(20px, 3vw, 40px); padding: clamp(6px, 0.8vw, 12px); box-sizing: border-box;">
+          <div class="ph" style="height: 100%; border-radius: clamp(14px, 2.2vw, 30px); font-size: 11px;">[Запись приложения: «Груз загружен»]</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" style="padding: clamp(64px, 7vw, 112px) 20px; background: #ffffff; border-top: 1px solid #dae0e7;">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: clamp(32px, 4vw, 56px);">
+      <div style="display: flex; flex-direction: column; gap: 16px; max-width: 760px;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: #627084;">Как это работает</span>
+        <h2 style="margin: 0; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: clamp(34px, 5vw, 64px); line-height: 1.02; letter-spacing: -0.035em; text-wrap: balance;">Подключение за три минуты</h2>
+        <p style="margin: 0; font-size: clamp(17px, 1.6vw, 20px); line-height: 1.55; color: #627084;">Ничего не нужно ставить на машину. Хватит смартфона водителя.</p>
+      </div>
+      <ol class="steps" style="margin: 0; padding: 0; list-style: none;">
+        <li style="display: flex; flex-direction: column; gap: 14px; border-top: 2px solid #171c26; padding-top: 20px;">
+          <span aria-hidden="true" style="font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: clamp(104px, 11vw, 168px); line-height: 0.8; letter-spacing: -0.06em; color: #c6d0dc;">1</span>
+          <h3 style="margin: 8px 0 0; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: 26px; line-height: 1.15; letter-spacing: -0.02em;">Создайте груз</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #627084;">Вставьте ссылку на адрес из 2GIS, Яндекс Карт или Google Maps. Маршрут и время в пути посчитаются сами.</p>
+          <div class="ph" style="margin-top: auto; aspect-ratio: 16 / 10; border-radius: 12px; border: 1px solid #dae0e7; font-size: 11px;">[Кадр: форма «Создать груз»]</div>
+        </li>
+        <li style="display: flex; flex-direction: column; gap: 14px; border-top: 2px solid #171c26; padding-top: 20px;">
+          <span aria-hidden="true" style="font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: clamp(104px, 11vw, 168px); line-height: 0.8; letter-spacing: -0.06em; color: #c6d0dc;">2</span>
+          <h3 style="margin: 8px 0 0; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: 26px; line-height: 1.15; letter-spacing: -0.02em;">Отправьте водителю ссылку</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #627084;">В Telegram или любом мессенджере. Водитель открывает её и принимает груз одним касанием.</p>
+          <div class="ph" style="margin-top: auto; aspect-ratio: 16 / 10; border-radius: 12px; border: 1px solid #dae0e7; font-size: 11px;">[Кадр: ссылка на груз в Telegram]</div>
+        </li>
+        <li style="display: flex; flex-direction: column; gap: 14px; border-top: 2px solid #171c26; padding-top: 20px;">
+          <span aria-hidden="true" style="font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: clamp(104px, 11vw, 168px); line-height: 0.8; letter-spacing: -0.06em; color: #c6d0dc;">3</span>
+          <h3 style="margin: 8px 0 0; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: 26px; line-height: 1.15; letter-spacing: -0.02em;">Смотрите рейс</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #627084;">Где едет, где стоит, когда приедет. Фото документов приходят на каждом шаге.</p>
+          <div class="ph" style="margin-top: auto; aspect-ratio: 16 / 10; border-radius: 12px; border: 1px solid #dae0e7; font-size: 11px;">[Кадр: карточка груза в пути]</div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section style="padding: clamp(64px, 7vw, 112px) 0; border-top: 1px solid #dae0e7;">
+    <div style="display: flex; flex-direction: column; gap: clamp(28px, 3.5vw, 48px);">
+      <div style="padding: 0 20px;">
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 20px 40px;">
+          <div style="display: flex; flex-direction: column; gap: 16px; max-width: 760px;">
+            <span style="font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: #627084;">Что вы получаете</span>
+            <h2 style="margin: 0; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: clamp(34px, 5vw, 64px); line-height: 1.02; letter-spacing: -0.035em; text-wrap: balance;">Звонить больше <span class="acc">незачем</span></h2>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 12px; color: #627084;">
+            <span>листайте</span>
+            <span style="width: 64px; height: 2px; border-radius: 2px; background: #dae0e7; display: flex;"><span style="width: 22px; height: 2px; border-radius: 2px; background: #0658bc;"></span></span>
+            <span>12</span>
+          </div>
+        </div>
+      </div>
+      <div class="rail" style="display: flex; gap: 16px; overflow-x: auto; padding: 4px max(20px, calc((100% - 1200px) / 2)) 8px;">
+        <div style="flex: 0 0 min(340px, 82%); min-height: 280px; box-sizing: border-box; background: #ffffff; border: 1px solid #dae0e7; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: #f2f4f6; color: #0658bc; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h.01"></path><path d="M8.5 16.429a5 5 0 0 1 7 0"></path><path d="M5 12.859a10 10 0 0 1 5.17-2.69"></path><path d="M19 12.859a10 10 0 0 0-2.007-1.523"></path><path d="M2 8.82a15 15 0 0 1 4.177-2.643"></path><path d="M22 8.82a15 15 0 0 0-11.288-3.764"></path><path d="m2 2 20 20"></path></svg></span>
+          <h3 style="margin: 12px 0 0; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: 22px; line-height: 1.2; letter-spacing: -0.02em;">Отслеживаем даже без интернета</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #627084;">Нет сети на трассе — телефон всё равно записывает путь и присылает его целиком, как только связь вернётся.</p>
+        </div>
+        <div style="flex: 0 0 min(340px, 82%); min-height: 280px; box-sizing: border-box; background: #ffffff; border: 1px solid #dae0e7; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: #f2f4f6; color: #0658bc; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></span>
+          <h3 style="margin: 12px 0 0; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: 22px; line-height: 1.2; letter-spacing: -0.02em;">Клиент перестанет вам звонить</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #627084;">Отправьте ему ссылку: он сам видит, где его груз. Без регистрации.</p>
+        </div>
+        <div style="flex: 0 0 min(340px, 82%); min-height: 280px; box-sizing: border-box; background: #ffffff; border: 1px solid #dae0e7; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: #f2f4f6; color: #0658bc; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></span>
+          <h3 style="margin: 12px 0 0; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: 22px; line-height: 1.2; letter-spacing: -0.02em;">Простой больше не на словах</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #627084;">Видно, где водитель стоял и сколько: с 12:10, сорок минут. Спорить не о чем.</p>
+        </div>
+        <div style="flex: 0 0 min(340px, 82%); min-height: 280px; box-sizing: border-box; background: #ffffff; border: 1px solid #dae0e7; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: #f2f4f6; color: #0658bc; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="m9 15 2 2 4-4"></path></svg></span>
+          <h3 style="margin: 12px 0 0; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: 22px; line-height: 1.2; letter-spacing: -0.02em;">Ни одна накладная не потеряется</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #627084;">Водитель снимает документы в приложении, и фото сразу лежат в грузе, а не в чатах.</p>
+        </div>
+        <div style="flex: 0 0 min(340px, 82%); min-height: 280px; box-sizing: border-box; background: #ffffff; border: 1px solid #dae0e7; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: #f2f4f6; color: #0658bc; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 22h14"></path><path d="M5 2h14"></path><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"></path><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"></path></svg></span>
+          <h3 style="margin: 12px 0 0; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: 22px; line-height: 1.2; letter-spacing: -0.02em;">Клиенту отвечаете сразу</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #627084;">Кабинет считает, сколько осталось ехать, так что «когда приедет?» больше не вопрос.</p>
+        </div>
+        <div style="flex: 0 0 min(340px, 82%); min-height: 280px; box-sizing: border-box; background: #ffffff; border: 1px solid #dae0e7; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: #f2f4f6; color: #0658bc; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg></span>
+          <h3 style="margin: 12px 0 0; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: 22px; line-height: 1.2; letter-spacing: -0.02em;">Узнаёте первым</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #627084;">Уведомление приходит, когда водитель загрузился и когда доставил. Даже если вы не в кабинете.</p>
+        </div>
+        <div style="flex: 0 0 min(340px, 82%); min-height: 280px; box-sizing: border-box; background: #ffffff; border: 1px solid #dae0e7; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: #f2f4f6; color: #0658bc; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="16" height="10" x="2" y="7" rx="2" ry="2"></rect><line x1="22" x2="22" y1="11" y2="13"></line><line x1="6" x2="6" y1="11" y2="13"></line></svg></span>
+          <h3 style="margin: 12px 0 0; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: 22px; line-height: 1.2; letter-spacing: -0.02em;">Водитель не пропал. У него сел телефон</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #627084;">Заряд и связь видны в кабинете, поэтому вы не паникуете зря.</p>
+        </div>
+        <div style="flex: 0 0 min(340px, 82%); min-height: 280px; box-sizing: border-box; background: #ffffff; border: 1px solid #dae0e7; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: #f2f4f6; color: #0658bc; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg></span>
+          <h3 style="margin: 12px 0 0; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: 22px; line-height: 1.2; letter-spacing: -0.02em;">Адрес — одной ссылкой</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #627084;">Вставьте ссылку из 2GIS, Яндекс Карт или Google Maps, и адрес с маршрутом найдутся сами.</p>
+        </div>
+        <div style="flex: 0 0 min(340px, 82%); min-height: 280px; box-sizing: border-box; background: #ffffff; border: 1px solid #dae0e7; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: #f2f4f6; color: #0658bc; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect><path d="M12 18h.01"></path></svg></span>
+          <h3 style="margin: 12px 0 0; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: 22px; line-height: 1.2; letter-spacing: -0.02em;">Никаких трекеров и монтажа</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #627084;">Работает на смартфоне водителя. Подходит и для наёмных машин, на которые трекер не поставишь.</p>
+        </div>
+        <div style="flex: 0 0 min(340px, 82%); min-height: 280px; box-sizing: border-box; background: #ffffff; border: 1px solid #dae0e7; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: #f2f4f6; color: #0658bc; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"></path></svg></span>
+          <h3 style="margin: 12px 0 0; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: 22px; line-height: 1.2; letter-spacing: -0.02em;">Батарею водителя бережём</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #627084;">На стоянке приложение само выключает GPS, а локацию пишет только во время рейса.</p>
+        </div>
+        <div style="flex: 0 0 min(340px, 82%); min-height: 280px; box-sizing: border-box; background: #ffffff; border: 1px solid #dae0e7; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: #f2f4f6; color: #0658bc; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span>
+          <h3 style="margin: 12px 0 0; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: 22px; line-height: 1.2; letter-spacing: -0.02em;">Вся команда видит одну картину</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #627084;">Диспетчеры не переспрашивают друг друга: все рейсы в одном месте.</p>
+        </div>
+        <div style="flex: 0 0 min(340px, 82%); min-height: 280px; box-sizing: border-box; background: #ffffff; border: 1px solid #dae0e7; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: #f2f4f6; color: #0658bc; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="5" x="2" y="3" rx="1"></rect><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"></path><path d="M10 12h4"></path></svg></span>
+          <h3 style="margin: 12px 0 0; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: 22px; line-height: 1.2; letter-spacing: -0.02em;">Каждый рейс остаётся в истории</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #627084;">Все шаги, фото и маршрут сохраняются. Пригодится для споров и отчётов.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding: clamp(32px, 4vw, 56px) 20px clamp(64px, 8vw, 128px);">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: clamp(72px, 9vw, 136px);">
+      <div class="feat">
+        <div style="flex: 1 1 560px; min-width: 0; background: #ffffff; border: 1px solid #dae0e7; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 60px -20px rgba(32,129,248,0.35); display: flex; flex-direction: column;">
+          <div style="height: 40px; border-bottom: 1px solid #dae0e7; display: flex; align-items: center; gap: 8px; padding: 0 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #627084;">
+            <span style="width: 10px; height: 10px; border-radius: 999px; background: #dae0e7;"></span>
+            <span style="width: 10px; height: 10px; border-radius: 999px; background: #dae0e7;"></span>
+            <span style="width: 10px; height: 10px; border-radius: 999px; background: #dae0e7;"></span>
+            <span style="margin-left: 12px;">app.yool.live</span>
+          </div>
+          <div class="ph" style="aspect-ratio: 16 / 10;">[Запись кабинета: «Нет связи», затем маршрут дорисовывается целиком]</div>
+        </div>
+        <div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 20px;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 14px; color: #0658bc;">01</span>
+          <h2 style="margin: 0; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: clamp(34px, 4.4vw, 56px); line-height: 1.02; letter-spacing: -0.035em; text-wrap: balance;">Отслеживаем даже <span class="acc">без интернета</span></h2>
+          <p style="margin: 0; font-size: clamp(17px, 1.6vw, 19px); line-height: 1.55; color: #627084;">На перевале связь пропадает, а телефон водителя продолжает записывать путь и хранит его до 14 дней. Сеть вернулась — весь маршрут появляется в кабинете целиком.</p>
+          <span style="display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 12px; color: #627084;"><span style="width: 6px; height: 6px; border-radius: 999px; background: #2081f8;"></span>кабинет — «нет связи» → маршрут целиком</span>
+        </div>
+      </div>
+
+      <div class="feat rev">
+        <div style="flex: 1 1 560px; min-width: 0; display: flex; justify-content: center;">
+          <div style="width: min(300px, 72%); aspect-ratio: 1 / 2; background: #0f141b; border-radius: 40px; padding: 12px; box-sizing: border-box; box-shadow: 0 10px 60px -20px rgba(32,129,248,0.35);">
+            <div class="ph" style="height: 100%; border-radius: 30px;">[Запись: страница груза по ссылке на телефоне получателя]</div>
+          </div>
+        </div>
+        <div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 20px;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 14px; color: #0658bc;">02</span>
+          <h2 style="margin: 0; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: clamp(34px, 4.4vw, 56px); line-height: 1.02; letter-spacing: -0.035em; text-wrap: balance;">Клиент перестанет <span class="acc">вам звонить</span></h2>
+          <p style="margin: 0; font-size: clamp(17px, 1.6vw, 19px); line-height: 1.55; color: #627084;">Отправьте получателю ссылку. Он видит груз на карте и пройденный путь. Регистрация не нужна, ссылку можно отозвать в любой момент.</p>
+          <span style="display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 12px; color: #627084;"><span style="width: 6px; height: 6px; border-radius: 999px; background: #2081f8;"></span>ссылка для получателя — без входа</span>
+        </div>
+      </div>
+
+      <div class="feat">
+        <div style="flex: 1 1 560px; min-width: 0; background: #ffffff; border: 1px solid #dae0e7; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 60px -20px rgba(32,129,248,0.35); display: flex; flex-direction: column;">
+          <div style="height: 40px; border-bottom: 1px solid #dae0e7; display: flex; align-items: center; gap: 8px; padding: 0 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #627084;">
+            <span style="width: 10px; height: 10px; border-radius: 999px; background: #dae0e7;"></span>
+            <span style="width: 10px; height: 10px; border-radius: 999px; background: #dae0e7;"></span>
+            <span style="width: 10px; height: 10px; border-radius: 999px; background: #dae0e7;"></span>
+            <span style="margin-left: 12px;">app.yool.live</span>
+          </div>
+          <div class="ph" style="aspect-ratio: 16 / 10;">[Запись кабинета: грузовик встал, на карте отметка «стоит с 12:10», счётчик минут]</div>
+        </div>
+        <div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 20px;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 14px; color: #0658bc;">03</span>
+          <h2 style="margin: 0; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: clamp(34px, 4.4vw, 56px); line-height: 1.02; letter-spacing: -0.035em; text-wrap: balance;">Простой больше <span class="acc">не на словах</span></h2>
+          <p style="margin: 0; font-size: clamp(17px, 1.6vw, 19px); line-height: 1.55; color: #627084;">Водитель остановился — в кабинете видно, где и с какого времени он стоит. Сорок минут на выгрузке или три часа теперь видно, а не со слов.</p>
+          <span style="display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 12px; color: #627084;"><span style="width: 6px; height: 6px; border-radius: 999px; background: #2081f8;"></span>кабинет — стоит с 12:10</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="drivers" style="padding: clamp(64px, 7vw, 112px) 20px; background: #ffffff; border-top: 1px solid #dae0e7; border-bottom: 1px solid #dae0e7;">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 40px 64px;">
+      <div style="flex: 1 1 380px; display: flex; flex-direction: column; gap: 20px;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: #627084;">Водителям</span>
+        <h2 style="margin: 0; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: clamp(34px, 4.4vw, 56px); line-height: 1.02; letter-spacing: -0.035em; text-wrap: balance;">Одна кнопка на каждый шаг</h2>
+        <p style="margin: 0; font-size: clamp(17px, 1.6vw, 19px); line-height: 1.55; color: #627084;">Принял груз, загрузился, поехал, доставил: водитель нажимает одну кнопку и прикладывает фото. Работает без сети, бережёт батарею на стоянках и следит за локацией только во время рейса.</p>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px;">
+          <a href="#" aria-label="Скачать в Google Play" style="display: flex; height: 52px; align-items: center;"><img src="/_blob/4cc4c98256fd4f90b9ea2d135fca0634" alt="Доступно в Google Play" style="height: 78px; margin: 0 -12px;"></a>
+          <a href="#" aria-label="Загрузить в App Store" style="display: flex; height: 52px; align-items: center;"><img src="/_blob/5b307c336b7b7e3e520f42c7759436f3" alt="Загрузите в App Store" style="height: 52px;"></a>
+        </div>
+      </div>
+      <div style="flex: 1 1 420px; min-width: 0; display: flex; justify-content: center;">
+        <div style="width: min(280px, 72%); aspect-ratio: 1 / 2; background: #0f141b; border-radius: 40px; padding: 12px; box-sizing: border-box;">
+          <div class="ph" style="height: 100%; border-radius: 30px;">[Запись приложения водителя: кнопка «Начать перевозку»]</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="start" style="padding: clamp(64px, 7vw, 112px) 20px; background: #0f141b; color: #f2f4f6;">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 48px 80px; align-items: flex-start;">
+      <div style="flex: 1 1 420px; display: flex; flex-direction: column; gap: 28px;">
+        <h2 style="margin: 0; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: clamp(34px, 5vw, 64px); line-height: 1.02; letter-spacing: -0.035em; text-wrap: balance;">Первый груз за три минуты. <span class="acc-dark">Бесплатно.</span></h2>
+        <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 14px; font-size: 18px; line-height: 1.5; color: rgba(255,255,255,0.8);">
+          <li style="display: flex; gap: 14px;"><span style="font-family: 'JetBrains Mono', monospace; font-weight: 500; color: #6babfa;">01</span>Войдите через Telegram или почту</li>
+          <li style="display: flex; gap: 14px;"><span style="font-family: 'JetBrains Mono', monospace; font-weight: 500; color: #6babfa;">02</span>Создайте груз: вставьте ссылку на адрес</li>
+          <li style="display: flex; gap: 14px;"><span style="font-family: 'JetBrains Mono', monospace; font-weight: 500; color: #6babfa;">03</span>Отправьте водителю ссылку</li>
+        </ol>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center;">
+          <a href="#" style="flex: 0 1 300px; background: #f2f4f6; color: #0f141b; text-decoration: none; font-weight: 600; font-size: 16px; height: 54px; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 24px;">Попробовать бесплатно
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+          </a>
+          <a href="#" style="color: #6babfa; font-size: 15px; font-weight: 500;">У меня уже есть аккаунт</a>
+        </div>
+      </div>
+      <form style="flex: 1 1 380px; background: hsl(222 20% 9%); border: 1px solid hsl(215 20% 17%); border-radius: 16px; padding: clamp(24px, 3vw, 36px); display: flex; flex-direction: column; gap: 18px; box-sizing: border-box;">
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <h3 style="margin: 0; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: 26px; letter-spacing: -0.02em;">Большой автопарк?</h3>
+          <p style="margin: 0; font-size: 15px; line-height: 1.5; color: rgba(255,255,255,0.7);">Поможем подключить водителей и покажем кабинет на ваших маршрутах.</p>
+        </div>
+        <label for="f-name" style="display: flex; flex-direction: column; gap: 8px; font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.7);">Ваше имя
+          <input id="f-name" type="text" style="height: 48px; border-radius: 10px; border: 1px solid hsl(215 20% 17%); background: #0f141b; color: #f2f4f6; padding: 0 14px; font: 400 16px 'Golos Text', sans-serif;">
+        </label>
+        <label for="f-company" style="display: flex; flex-direction: column; gap: 8px; font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.7);">Компания
+          <input id="f-company" type="text" style="height: 48px; border-radius: 10px; border: 1px solid hsl(215 20% 17%); background: #0f141b; color: #f2f4f6; padding: 0 14px; font: 400 16px 'Golos Text', sans-serif;">
+        </label>
+        <div style="display: flex; flex-wrap: wrap; gap: 18px 12px;">
+          <label for="f-phone" style="flex: 1 1 180px; display: flex; flex-direction: column; gap: 8px; font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.7);">Телефон
+            <input id="f-phone" type="tel" style="height: 48px; border-radius: 10px; border: 1px solid hsl(215 20% 17%); background: #0f141b; color: #f2f4f6; padding: 0 14px; font: 400 16px 'Golos Text', sans-serif;">
+          </label>
+          <label for="f-fleet" style="flex: 1 1 140px; display: flex; flex-direction: column; gap: 8px; font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.7);">Машин в парке
+            <select id="f-fleet" style="height: 48px; border-radius: 10px; border: 1px solid hsl(215 20% 17%); background: #0f141b; color: #f2f4f6; padding: 0 12px; font: 400 16px 'Golos Text', sans-serif;">
+              <option>1–5</option><option>6–20</option><option>21–50</option><option>50+</option>
+            </select>
+          </label>
+        </div>
+        <button type="button" style="height: 52px; border: 0; border-radius: 10px; background: #0658bc; color: #ffffff; font: 600 16px 'Golos Text', sans-serif; cursor: pointer;">Отправить заявку</button>
+      </form>
+    </div>
+  </section>
+
+  <section id="faq" style="padding: clamp(64px, 7vw, 112px) 20px;">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 32px 80px;">
+      <div style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 16px;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: #627084;">Вопросы</span>
+        <h2 style="margin: 0; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: clamp(34px, 4.4vw, 56px); line-height: 1.02; letter-spacing: -0.035em; text-wrap: balance;">Что обычно спрашивают</h2>
+      </div>
+      <div style="flex: 2 1 560px; min-width: 0; display: flex; flex-direction: column;">
+        <details open="open" style="border-top: 1px solid #dae0e7; padding: 22px 0;">
+          <summary style="display: flex; justify-content: space-between; align-items: center; gap: 16px; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: 20px; letter-spacing: -0.015em;">Что будет, если у водителя пропадёт интернет?<svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0;"><path d="m6 9 6 6 6-6"></path></svg></summary>
+          <p style="margin: 12px 0 0; max-width: 640px; font-size: 16px; line-height: 1.6; color: #627084;">Ничего не потеряется. Телефон хранит маршрут до 14 дней и отправит его, как только появится сеть. Пока связи нет, в кабинете так и написано: «нет связи», а не старое место на карте.</p>
+        </details>
+        <details style="border-top: 1px solid #dae0e7; padding: 22px 0;">
+          <summary style="display: flex; justify-content: space-between; align-items: center; gap: 16px; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: 20px; letter-spacing: -0.015em;">Нужно ли ставить трекер на машину?<svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0;"><path d="m6 9 6 6 6-6"></path></svg></summary>
+          <p style="margin: 12px 0 0; max-width: 640px; font-size: 16px; line-height: 1.6; color: #627084;">Нет. Хватает смартфона водителя на Android или iPhone.</p>
+        </details>
+        <details style="border-top: 1px solid #dae0e7; padding: 22px 0;">
+          <summary style="display: flex; justify-content: space-between; align-items: center; gap: 16px; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: 20px; letter-spacing: -0.015em;">Сильно ли приложение сажает батарею?<svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0;"><path d="m6 9 6 6 6-6"></path></svg></summary>
+          <p style="margin: 12px 0 0; max-width: 640px; font-size: 16px; line-height: 1.6; color: #627084;">Когда грузовик стоит, приложение само выключает GPS. Локация пишется только пока у водителя есть активный груз, а в кабинете виден заряд его телефона.</p>
+        </details>
+        <details style="border-top: 1px solid #dae0e7; padding: 22px 0;">
+          <summary style="display: flex; justify-content: space-between; align-items: center; gap: 16px; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: 20px; letter-spacing: -0.015em;">Что видит клиент по ссылке?<svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0;"><path d="m6 9 6 6 6-6"></path></svg></summary>
+          <p style="margin: 12px 0 0; max-width: 640px; font-size: 16px; line-height: 1.6; color: #627084;">Название и статус груза, грузовик на карте и пройденный путь. Регистрация не нужна. Ссылку можно отозвать в любой момент.</p>
+        </details>
+        <details style="border-top: 1px solid #dae0e7; border-bottom: 1px solid #dae0e7; padding: 22px 0;">
+          <summary style="display: flex; justify-content: space-between; align-items: center; gap: 16px; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: 20px; letter-spacing: -0.015em;">Нужно ли водителю регистрироваться?<svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0;"><path d="m6 9 6 6 6-6"></path></svg></summary>
+          <p style="margin: 12px 0 0; max-width: 640px; font-size: 16px; line-height: 1.6; color: #627084;">Да, в приложении YoolLive. Это занимает минуту: вход через Telegram, Apple или почту. Если вы отправили ссылку на груз, после входа груз примется сам.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding: clamp(64px, 8vw, 128px) 20px; background: #ffffff; border-top: 1px solid #dae0e7;">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: flex-start; gap: 28px;">
+      <h2 style="margin: 0; font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: clamp(44px, 7.5vw, 104px); line-height: 0.98; letter-spacing: -0.04em; text-wrap: balance;">Хватит звонить <span class="acc">водителю.</span></h2>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px 12px; width: min(100%, 520px);">
+        <a href="#start" style="flex: 1 1 240px; background: #0658bc; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 16px; height: 54px; border-radius: 10px; box-shadow: 0 10px 60px -20px rgba(32,129,248,0.35); display: flex; align-items: center; justify-content: center; gap: 8px;">Попробовать бесплатно
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+        </a>
+        <a href="#drivers" style="flex: 1 1 160px; background: #ffffff; color: #171c26; text-decoration: none; font-weight: 600; font-size: 16px; height: 54px; border-radius: 10px; border: 1px solid #dae0e7; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">Я водитель</a>
+      </div>
+    </div>
+  </section>
+
+  <footer style="background: #0f141b; color: #f2f4f6; padding: 56px 20px 32px;">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px;">
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 32px 64px;">
+        <div style="flex: 1 1 280px; max-width: 360px; display: flex; flex-direction: column; gap: 14px;">
+          <a href="#" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: #f2f4f6;">
+            <img src="/_blob/3ebe66e7ea5fcc15c8101f975bc899e7" alt="" style="width: 28px; height: 28px;">
+            <span style="font-family: 'Wix Madefor Display', sans-serif; font-weight: 800; font-size: 20px; letter-spacing: -0.025em;">YoolLive</span>
+          </a>
+          <p style="margin: 0; font-size: 14px; line-height: 1.55; color: rgba(255,255,255,0.7);">Отслеживание грузоперевозок: кабинет для грузовладельца и приложение для водителя.</p>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 32px 64px; font-size: 14px;">
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <span style="font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.55);">Продукт</span>
+            <a href="#how" style="color: rgba(255,255,255,0.8); text-decoration: none;">Как это работает</a>
+            <a href="#drivers" style="color: rgba(255,255,255,0.8); text-decoration: none;">Водителям</a>
+            <a href="#faq" style="color: rgba(255,255,255,0.8); text-decoration: none;">Вопросы</a>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <span style="font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.55);">Контакты</span>
+            <a href="#" style="color: #6babfa; text-decoration: none;">support@yool.live</a>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <span style="font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.55);">Документы</span>
+            <a href="#" style="color: rgba(255,255,255,0.8); text-decoration: none;">Политика конфиденциальности</a>
+            <a href="#" style="color: rgba(255,255,255,0.8); text-decoration: none;">Условия использования</a>
+          </div>
+        </div>
+      </div>
+      <div style="border-top: 1px solid hsl(215 20% 17%); padding-top: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-size: 13px; color: rgba(255,255,255,0.55);">
+        <span>© 2026 YoolLive</span>
+        <span>Русский · Oʻzbekcha · English</span>
+      </div>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":7900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
