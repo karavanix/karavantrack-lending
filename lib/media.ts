@@ -33,6 +33,12 @@ const registry = {
 
 export type ClipName = keyof typeof registry;
 
+/**
+ * Cache buster for `public/media`: next.config.ts serves the folder as immutable for a year, so
+ * bump this whenever a recording or poster is re-rendered under the same file name.
+ */
+export const MEDIA_VERSION = "3";
+
 export function mediaLocale(locale: string): Locale {
   return (MEDIA_LOCALES as readonly string[]).includes(locale) ? (locale as Locale) : defaultLocale;
 }
@@ -40,5 +46,5 @@ export function mediaLocale(locale: string): Locale {
 export function clip(name: ClipName, locale: string): Clip {
   const [id, width, height] = registry[name];
   const base = `/media/${id}.${mediaLocale(locale)}`;
-  return { src: `${base}.mp4`, poster: `${base}.webp`, width, height };
+  return { src: `${base}.mp4?v=${MEDIA_VERSION}`, poster: `${base}.webp?v=${MEDIA_VERSION}`, width, height };
 }
