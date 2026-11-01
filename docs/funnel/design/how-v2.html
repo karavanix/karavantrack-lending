@@ -1,0 +1,139 @@
+<!doctype html>
+<!-- «Как это работает», вариант 2 (01.11): список шагов + одна большая сцена (Stripe/Linear-style).
+     Десктоп: слева три шага с полоской прогресса у активного, справа сцена 16:10 с роликом шага.
+     Телефон (< 900px): шаги подряд, у каждого свой ролик на всю ширину, без переключателя.
+     Здесь статика: первый блок — активен шаг 1 (окно), второй — активен шаг 2 (телефон в сцене). -->
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Как это работает v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Wix+Madefor+Display:wght@800&family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root { --surface:#f2f4f6; --card:#fff; --ink:#171c26; --muted:#627084; --line:#dae0e7; --accent:#2081f8; --deep:#0658bc; --bg:#0f141b; }
+  * { box-sizing:border-box; margin:0; }
+  body { background:var(--surface); color:var(--ink); font-family:'Golos Text',sans-serif; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:1200px; margin:0 auto; padding:0 20px; }
+  section { background:var(--card); border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:clamp(64px,7vw,112px) 0; }
+  section + section { margin-top:48px; }
+  .eyebrow { font:500 12px/16px 'JetBrains Mono',monospace; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
+  h2 { font:800 clamp(34px,5vw,64px)/1.02 'Wix Madefor Display',sans-serif; letter-spacing:-.035em; text-wrap:balance; margin-top:16px; }
+  .lead { font-size:clamp(17px,1.6vw,20px); line-height:1.55; color:var(--muted); margin-top:16px; max-width:760px; }
+
+  .how { display:grid; grid-template-columns:380px 1fr; gap:48px 64px; align-items:start; margin-top:clamp(32px,4vw,56px); }
+  .steps { display:flex; flex-direction:column; }
+  .step { position:relative; display:flex; flex-direction:column; gap:8px; padding:22px 0 24px; border-top:1px solid var(--line); text-align:left; background:none; border-left:0; border-right:0; border-bottom:0; cursor:pointer; color:inherit; font:inherit; }
+  .step:last-child { border-bottom:1px solid var(--line); }
+  .step .n { font:500 13px/16px 'JetBrains Mono',monospace; color:var(--deep); }
+  .step h3 { font:800 22px/1.15 'Wix Madefor Display',sans-serif; letter-spacing:-.02em; }
+  .step p { font-size:16px; line-height:1.55; color:var(--muted); }
+  .step[aria-selected="false"] { opacity:.5; }
+  .step[aria-selected="false"] p { display:none; }
+  .step .bar { position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--line); overflow:hidden; }
+  .step .bar i { display:block; height:100%; width:38%; background:var(--accent); }
+  .step[aria-selected="false"] .bar { display:none; }
+
+  .stage { position:relative; }
+  .win { background:var(--card); border:1px solid var(--line); border-radius:16px; overflow:hidden; box-shadow:0 10px 60px -20px rgba(32,129,248,.35); }
+  .win .bar { height:40px; display:flex; align-items:center; gap:6px; padding:0 16px; border-bottom:1px solid var(--line); font:500 12px/16px 'JetBrains Mono',monospace; color:var(--muted); }
+  .win .bar i { width:10px; height:10px; border-radius:50%; background:var(--line); }
+  .win .bar span { margin-left:10px; }
+  .win .scr { aspect-ratio:16/10; position:relative; background:var(--surface); }
+  .win .scr img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .box { aspect-ratio:16/10; background:var(--surface); border:1px solid var(--line); border-radius:16px; display:flex; justify-content:center; align-items:flex-start; overflow:hidden; padding-top:clamp(20px,3%,36px); }
+  .phone { width:34%; background:var(--bg); border-radius:clamp(20px,3vw,40px) clamp(20px,3vw,40px) 0 0; padding:clamp(6px,.8vw,12px) clamp(6px,.8vw,12px) 0; }
+  .phone .scr { aspect-ratio:720/1528; border-radius:clamp(14px,2.2vw,30px) clamp(14px,2.2vw,30px) 0 0; overflow:hidden; background:var(--card); position:relative; }
+  .phone .scr img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:top; }
+  .phone.full { border-radius:clamp(20px,3vw,40px); padding:clamp(6px,.8vw,12px); }
+  .phone.full .scr { border-radius:clamp(14px,2.2vw,30px); }
+  .box.full { align-items:center; padding:0; }
+  .box.full .phone { width:26%; }
+  .pair { position:relative; padding-right:10%; }
+  .pair .phone.over { position:absolute; right:0; top:8%; width:23%; box-shadow:0 20px 60px -20px rgba(15,20,27,.45); }
+
+  /* phone layout: steps stacked, each with its own media */
+  @media (max-width: 899px) {
+    .how { grid-template-columns:1fr; gap:0; }
+    .stage { display:none; }
+    .steps { gap:40px; }
+    .step { opacity:1 !important; padding-top:20px; gap:10px; }
+    .step p { display:block !important; }
+    .step .bar { display:none; }
+    .step .media { margin-top:12px; }
+    .step .media .phone { width:62%; margin:0 auto; }
+  }
+  @media (min-width: 900px) { .step .media { display:none; } }
+  .note { max-width:1200px; margin:40px auto 0; padding:0 20px; font:500 12px/16px 'JetBrains Mono',monospace; color:var(--muted); letter-spacing:.06em; text-transform:uppercase; }
+</style>
+</head>
+<body>
+<p class="note">Десктоп: активен шаг 1</p>
+<section id="how">
+  <div class="wrap">
+    <p class="eyebrow">Как это работает</p>
+    <h2>Подключение за три минуты</h2>
+    <p class="lead">Ничего не нужно ставить на машину. Хватит смартфона водителя.</p>
+    <div class="how">
+      <div class="steps" role="tablist">
+        <button class="step" role="tab" aria-selected="true">
+          <span class="n">01</span><h3>Создайте груз</h3>
+          <p>Вставьте ссылку на адрес из 2GIS, Яндекс Карт или Google Maps. Маршрут и время в пути посчитаются сами.</p>
+          <div class="media"><div class="win"><div class="bar"><i></i><i></i><i></i><span>app.yool.live</span></div><div class="scr"><img src="../recordings/media/03-create-load.ru.webp" alt=""></div></div></div>
+          <span class="bar"><i></i></span>
+        </button>
+        <button class="step" role="tab" aria-selected="false">
+          <span class="n">02</span><h3>Отправьте водителю ссылку</h3>
+          <p>В Telegram или любом мессенджере. Водитель открывает её и принимает груз одним касанием.</p>
+          <div class="media"><div class="phone full"><div class="scr"><img src="../recordings/media/04-telegram-link.ru.webp" alt=""></div></div></div>
+          <span class="bar"><i></i></span>
+        </button>
+        <button class="step" role="tab" aria-selected="false">
+          <span class="n">03</span><h3>Смотрите рейс</h3>
+          <p>Где едет, где стоит, когда приедет. Фото документов приходят на каждом шаге.</p>
+          <div class="media"><div class="win"><div class="bar"><i></i><i></i><i></i><span>app.yool.live</span></div><div class="scr"><img src="../recordings/media/05-in-transit.ru.webp" alt=""></div></div></div>
+          <span class="bar"><i></i></span>
+        </button>
+      </div>
+      <div class="stage">
+        <div class="win"><div class="bar"><i></i><i></i><i></i><span>app.yool.live</span></div><div class="scr"><img src="../recordings/media/03-create-load.ru.webp" alt=""></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<p class="note">Десктоп: активен шаг 2 (телефон в той же сцене)</p>
+<section>
+  <div class="wrap">
+    <p class="eyebrow">Как это работает</p>
+    <h2>Подключение за три минуты</h2>
+    <p class="lead">Ничего не нужно ставить на машину. Хватит смартфона водителя.</p>
+    <div class="how">
+      <div class="steps" role="tablist">
+        <button class="step" role="tab" aria-selected="false">
+          <span class="n">01</span><h3>Создайте груз</h3>
+          <p>Вставьте ссылку на адрес из 2GIS, Яндекс Карт или Google Maps. Маршрут и время в пути посчитаются сами.</p>
+          <span class="bar"><i></i></span>
+        </button>
+        <button class="step" role="tab" aria-selected="true">
+          <span class="n">02</span><h3>Отправьте водителю ссылку</h3>
+          <p>В Telegram или любом мессенджере. Водитель открывает её и принимает груз одним касанием.</p>
+          <span class="bar"><i></i></span>
+        </button>
+        <button class="step" role="tab" aria-selected="false">
+          <span class="n">03</span><h3>Смотрите рейс</h3>
+          <p>Где едет, где стоит, когда приедет. Фото документов приходят на каждом шаге.</p>
+          <span class="bar"><i></i></span>
+        </button>
+      </div>
+      <div class="stage">
+        <div class="pair">
+          <div class="win"><div class="bar"><i></i><i></i><i></i><span>app.yool.live</span></div><div class="scr"><img src="invite-preview.webp" alt=""></div></div>
+          <div class="phone full over"><div class="scr"><img src="../recordings/media/04-telegram-link.ru.webp" alt=""></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</body>
+</html>
