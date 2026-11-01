@@ -1,13 +1,15 @@
 import { useTranslations } from "next-intl";
 import { Eyebrow } from "./ui/Eyebrow";
 import { BrowserFrame } from "./ui/BrowserFrame";
+import { PhoneFrame } from "./ui/PhoneFrame";
 
 // «Как это работает»: three steps with huge grey numerals over a rule, frames aligned to the
 // bottom. On phones the steps become a horizontal strip with scroll-snap (no JS).
-// Frames: steps 1 and 3 are cabinet screenshots in a browser window, step 2 is the Telegram message.
+// Frames: steps 1 and 3 are cabinet screenshots in a browser window, step 2 is the Telegram chat
+// on a phone (720×1528, same device as the other mobile frames), narrower and taller than the windows.
 const frames = [
   { src: "/media/03-create-load.ru.webp", width: 1600, height: 1000, window: true },
-  { src: "/media/04-telegram-link.ru.webp", width: 920, height: 575, window: false },
+  { src: "/media/04-telegram-link.ru.webp", width: 720, height: 1528, window: false },
   { src: "/media/05-in-transit.ru.webp", width: 1600, height: 1000, window: true },
 ] as const;
 
@@ -60,11 +62,10 @@ export function HowItWorks() {
                   {f.window ? (
                     <BrowserFrame ratio="16 / 10">{img}</BrowserFrame>
                   ) : (
-                    <div
-                      className="relative overflow-hidden rounded-card border border-line-soft bg-surface"
-                      style={{ aspectRatio: "16 / 10" }}
-                    >
-                      {img}
+                    <div className="flex justify-center">
+                      <PhoneFrame ratio="720 / 1528" className="w-[54%]">
+                        {img}
+                      </PhoneFrame>
                     </div>
                   )}
                 </div>
