@@ -86,6 +86,16 @@
   text-wrap: balance;
 }
 
+/* Headline of a feature block and of «Водителям»: between `section` and `title`. */
+@utility t-feature {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(34px, 4.4vw, 56px);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
 @utility t-title {
   font-family: var(--font-display);
   font-weight: 800;

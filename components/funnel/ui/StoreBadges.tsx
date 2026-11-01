@@ -1,8 +1,9 @@
 import { SITE } from "@/lib/site";
 
-// Official store badges, one visual height (App Store 52px; the Google Play PNG carries its own
-// padding, so it is 78px tall with a negative side margin). Files live in public/badges/.
-// TODO(session 3): replace the English badges with the Russian ones.
+// Official Russian store badges, one visual height (App Store 52px; the Google Play PNG carries
+// its own padding, so it is 78px tall with a negative side margin). Files in public/badges/:
+// Google Play from play.google.com/intl/ru/badges, App Store = Apple's
+// Download_on_the_App_Store_Badge_RU_RGB_blk (tools.applemarketingtools.com does not resolve here).
 export function StoreBadges({
   googlePlay,
   appStore,
