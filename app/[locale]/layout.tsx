@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Golos_Text, JetBrains_Mono, Wix_Madefor_Display } from "next/font/google";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { locales, liveLocales, isLocale } from "@/i18n/routing";
+import { defaultLocale, locales, liveLocales, isLocale } from "@/i18n/routing";
 import { SITE } from "@/lib/site";
 import { Analytics } from "@/components/layout/Analytics";
 import "../globals.css";
@@ -60,8 +60,8 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "meta" });
   const title = t("title");
   const description = t("description");
-  // Static 1200×630 PNG per locale, built by docs/funnel/tools/og/og.mjs. Only ru exists so far.
-  const ogImage = { url: `/og.${liveLocales.includes(locale) ? locale : "ru"}.png`, width: 1200, height: 630, alt: title };
+  // Static 1200×630 PNG per locale, built by docs/funnel/tools/og/og.mjs.
+  const ogImage = { url: `/og.${locale}.png`, width: 1200, height: 630, alt: title };
   // Search-console meta tags, only if the owner verifies that way instead of DNS.
   const verification = {
     ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION && { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }),
@@ -87,12 +87,13 @@ export async function generateMetadata({
       siteName: "YoolLive",
       url: `/${locale}`,
       locale: OG_LOCALES[locale],
+      alternateLocale: liveLocales.filter((l) => l !== locale).map((l) => OG_LOCALES[l]),
       images: [ogImage],
     },
     twitter: { card: "summary_large_image", title, description, images: [ogImage.url] },
     alternates: {
       canonical: `/${locale}`,
-      languages: Object.fromEntries(liveLocales.map((l) => [l, `/${l}`])),
+      languages: { ...Object.fromEntries(liveLocales.map((l) => [l, `/${l}`])), "x-default": `/${defaultLocale}` },
     },
     ...(Object.keys(verification).length && { verification }),
   };

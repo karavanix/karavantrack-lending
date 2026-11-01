@@ -2,13 +2,14 @@ import { useTranslations, useLocale } from "next-intl";
 import { SITE, ANCHORS } from "@/lib/site";
 import { Logo } from "@/components/ui/Logo";
 import { TelegramLink } from "@/components/ui/Telegram";
+import type { Locale } from "@/i18n/routing";
+import { Languages } from "./Languages";
 
 // Navy footer: brand and tagline, link columns (contacts: Telegram, phones, e-mail, office
-// address — the address is what Yandex Webmaster needs to set the region), © line. The languages line from the
-// mock-up waits for the uz/en translations.
+// address — the address is what Yandex Webmaster needs to set the region), © line with the languages.
 export function Footer() {
   const t = useTranslations("footer");
-  const locale = useLocale();
+  const locale = useLocale() as Locale;
   const n = useTranslations("nav");
 
   return (
@@ -60,6 +61,7 @@ export function Footer() {
 
         <div className="flex flex-wrap justify-between gap-3 border-t border-line pt-6 text-[13px] text-white/55">
           <span>{t("rights")}</span>
+          <Languages current={locale} label={t("language")} variant="names" className="gap-x-5 gap-y-2" />
         </div>
       </div>
     </footer>

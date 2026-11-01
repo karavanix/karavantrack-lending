@@ -7,7 +7,10 @@ export type Locale = (typeof locales)[number];
 export const defaultLocale: Locale = "ru";
 
 /** Locales that are actually served. The rest redirect to `defaultLocale` (middleware.ts). */
-export const liveLocales: readonly Locale[] = ["ru"];
+export const liveLocales: readonly Locale[] = ["ru", "uz", "en"];
+
+/** Each language in its own name, for the switcher. */
+export const LOCALE_NAMES: Record<Locale, string> = { ru: "Русский", uz: "Oʻzbekcha", en: "English" };
 
 export function isLocale(value: string | undefined): value is Locale {
   return (locales as readonly string[]).includes(value ?? "");
