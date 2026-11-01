@@ -1,20 +1,31 @@
 import type { Metadata, Viewport } from "next";
-import { Golos_Text, JetBrains_Mono, Onest } from "next/font/google";
-import { NextIntlClientProvider } from "next-intl";
-import { getTranslations, setRequestLocale, getMessages } from "next-intl/server";
+import { Cormorant_Garamond, Golos_Text, JetBrains_Mono, Wix_Madefor_Display } from "next/font/google";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { locales } from "@/i18n/request";
+import { locales, liveLocales } from "@/i18n/request";
+import { SITE } from "@/lib/site";
+import "../globals.css";
 
 function hasLocale(value: string): value is (typeof locales)[number] {
   return (locales as readonly string[]).includes(value);
 }
-import "../globals.css";
 
-const onest = Onest({
+// Fonts per docs/funnel/design/system/README.md. Only the headline face and the text face are
+// preloaded; the accent italic and the mono are small and come after first paint.
+const wix = Wix_Madefor_Display({
   subsets: ["latin", "cyrillic"],
-  weight: ["600", "700", "800"],
-  variable: "--font-onest",
+  weight: "800",
+  variable: "--font-wix",
   display: "swap",
+});
+
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin", "cyrillic"],
+  weight: "600",
+  style: "italic",
+  variable: "--font-cormorant",
+  display: "swap",
+  preload: false,
 });
 
 const golos = Golos_Text({
@@ -26,9 +37,10 @@ const golos = Golos_Text({
 
 const mono = JetBrains_Mono({
   subsets: ["latin", "cyrillic"],
-  weight: ["500", "700"],
+  weight: "500",
   variable: "--font-jetbrains",
   display: "swap",
+  preload: false,
 });
 
 export const viewport: Viewport = {
@@ -52,7 +64,7 @@ export async function generateMetadata({
   return {
     title: t("title"),
     description: t("description"),
-    metadataBase: new URL("https://yool.live"),
+    metadataBase: new URL(SITE.url),
     icons: {
       icon: [{ url: "/logo.svg", type: "image/svg+xml" }],
       shortcut: "/logo.svg",
@@ -65,11 +77,7 @@ export async function generateMetadata({
     },
     twitter: { card: "summary_large_image", title: t("title"), description: t("description") },
     alternates: {
-      languages: {
-        ru: "/ru",
-        uz: "/uz",
-        en: "/en",
-      },
+      languages: Object.fromEntries(liveLocales.map((l) => [l, `/${l}`])),
     },
   };
 }
@@ -84,14 +92,16 @@ export default async function LocaleLayout({
   const { locale } = await params;
   if (!hasLocale(locale)) notFound();
   setRequestLocale(locale);
-  const messages = await getMessages();
 
   return (
-    <html lang={locale} className={`${onest.variable} ${golos.variable} ${mono.variable}`}>
-      <body>
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          {children}
-        </NextIntlClientProvider>
+    <html
+      lang={locale}
+      className={`${wix.variable} ${cormorant.variable} ${golos.variable} ${mono.variable}`}
+    >
+      <body className="bg-surface text-ink">
+        {/* No NextIntlClientProvider: client components get their strings as props,
+            which keeps the messages and the intl runtime out of the browser bundle. */}
+        {children}
       </body>
     </html>
   );

@@ -1,259 +1,171 @@
 {
-  "nav": {
-    "how": "Qanday ishlaydi",
-    "drivers": "Haydovchilarga",
-    "faq": "Savollar",
-    "login": "Kirish",
-    "start": "Boshlash"
+  "meta": {
+    "title": "YoolLive — где груз, видно без звонка водителю",
+    "description": "Водитель ставит приложение, вы видите весь рейс: где едет, где стоит, когда приедет, фото документов на каждом шаге. Без трекеров и монтажа. Попробуйте бесплатно."
   },
-  "trip": {
-    "route": "Toshkent → Farg‘ona",
-    "scroll": "Pastga suring, Farg‘onaga yo‘l olamiz",
-    "chapterOf": "{n} / {total}",
-    "hero": {
-      "title": "Endi so‘rash shart emas.",
-      "subtitle": "YoolLive butun reysni ko‘rsatadi: mashina qayerda, qayerda turibdi va aloqa nega yo‘qoldi. Haydovchi ilovada faqat qadamlarni belgilaydi.",
-      "cta": "Boshlash",
-      "driver": "Haydovchi ilovasi"
-    },
-    "chapters": [
+  "nav": {
+    "how": "Как это работает",
+    "drivers": "Водителям",
+    "faq": "Вопросы",
+    "login": "Войти",
+    "start": "Попробовать бесплатно",
+    "menu": "Меню"
+  },
+  "hero": {
+    "eyebrow": "Для грузовладельцев и диспетчеров",
+    "title": "Хватит звонить",
+    "titleAccent": "водителю.",
+    "lead": "Водитель ставит приложение, вы видите весь рейс: где едет, где стоит, когда приедет. Без трекеров и монтажа.",
+    "cta": "Попробовать бесплатно",
+    "driver": "Я водитель",
+    "note": "Вход через Telegram или почту",
+    "windowUrl": "app.yool.live",
+    "videoCabinet": "Кабинет: водитель отметил «Груз загружен» — статус и фото накладной появились сами, затем груз поехал",
+    "videoPhone": "Приложение водителя: фото накладной, «Груз загружен», «Начать перевозку»"
+  },
+  "how": {
+    "eyebrow": "Как это работает",
+    "title": "Подключение за три минуты",
+    "lead": "Ничего не нужно ставить на машину. Хватит смартфона водителя.",
+    "steps": [
       {
-        "title": "Yuk bir daqiqada yaratildi",
-        "text": "2GIS, Yandex yoki Google Maps havolasini qo‘ying, manzil o‘zi topiladi. Kabinet yo‘l bo‘yicha marshrut va yo‘l vaqtini darhol hisoblaydi."
+        "title": "Создайте груз",
+        "text": "Вставьте ссылку на адрес из 2GIS, Яндекс Карт или Google Maps. Маршрут и время в пути посчитаются сами.",
+        "image": "Форма «Создать новый груз»: адреса из ссылок 2GIS и маршрут на карте"
       },
       {
-        "title": "Haydovchi bitta havola orqali",
-        "text": "Haydovchining raqami kerak emas. Havolani Telegramda yuboring: haydovchi uni ochadi va yukni bir bosishda qabul qiladi."
+        "title": "Отправьте водителю ссылку",
+        "text": "В Telegram или любом мессенджере. Водитель открывает её и принимает груз одним касанием.",
+        "image": "Сообщение в Telegram со ссылкой на груз"
       },
       {
-        "title": "Yuklandi. Rasm bilan va xaritada",
-        "text": "Har bir qadamni haydovchi tugma bilan belgilaydi va hujjatlar rasmini qo‘shadi. Sizga bildirishnoma keladi, xaritada esa bu qayerda bo‘lgani belgilanadi."
-      },
-      {
-        "title": "U qanday ketayotganini ko‘rasiz",
-        "text": "Haydovchi hech narsa qilishi shart emas: telefon nuqtalarni o‘zi yuboradi. Kabinetda tezlik, bosib o‘tilgan kilometrlar, yetib kelish vaqti va hatto telefon quvvati ko‘rinadi."
-      },
-      {
-        "title": "Turibdi, sababi ham aniq",
-        "text": "Choyxonada tushlik. Telefon GPSni o‘zi o‘chiradi va batareyani tejaydi, kabinetda esa ko‘rinadi: 12:10 dan beri turibdi. Qo‘ng‘iroq qilish shart emas."
-      },
-      {
-        "title": "Dovon. Aloqa yo‘q",
-        "text": "Qamchiqda tarmoq yo‘qoladi. Ilova nuqtalarni yo‘qotmaydi, ularni telefonda yig‘adi, hatto ikki hafta. Kabinet rostini yozadi: «ma’lumot yo‘q», yashil nuqta chizmaydi."
-      },
-      {
-        "title": "Tarmoq qaytdi, trek butun",
-        "text": "Aloqa paydo bo‘lishi bilan barcha nuqtalar birdaniga yuboriladi. Marshrut uzilishlarsiz chiziladi, go‘yo aloqa umuman yo‘qolmagandek."
-      },
-      {
-        "title": "Mijoz o‘zi kuzatadi",
-        "text": "Qabul qiluvchiga havola yuboring. U ro‘yxatdan o‘tmasdan mashinani xaritada ko‘radi va sizga har yarim soatda qo‘ng‘iroq qilmaydi."
-      },
-      {
-        "title": "Yetkazildi",
-        "text": "Haydovchi yuk xatini suratga oladi, siz yetkazishni tasdiqlaysiz. Reys tarixga o‘tadi: barcha qadamlar, rasmlar va trek saqlanadi."
+        "title": "Смотрите рейс",
+        "text": "Где едет, где стоит, когда приедет. Фото документов приходят на каждом шаге.",
+        "image": "Карточка груза в пути: скорость, время прибытия, пройденный путь на карте"
       }
     ]
   },
-  "td": {
-    "who": {
-      "dispatcher": "Dispetcher",
-      "driver": "Haydovchi",
-      "receiver": "Qabul qiluvchi"
+  "benefits": {
+    "eyebrow": "Что вы получаете",
+    "title": "Звонить больше",
+    "titleAccent": "незачем",
+    "hint": "листайте",
+    "prev": "Назад",
+    "next": "Дальше",
+    "items": [
+      { "title": "Отслеживаем даже без интернета", "text": "Нет сети на трассе — телефон всё равно записывает путь и присылает его целиком, как только связь вернётся." },
+      { "title": "Клиент перестанет вам звонить", "text": "Отправьте ему ссылку: он сам видит, где его груз. Без регистрации." },
+      { "title": "Простой больше не на словах", "text": "Видно, где водитель стоял и сколько: с 12:10, сорок минут. Спорить не о чем." },
+      { "title": "Ни одна накладная не потеряется", "text": "Водитель снимает документы в приложении, и фото сразу лежат в грузе, а не в чатах." },
+      { "title": "Клиенту отвечаете сразу", "text": "Кабинет считает, сколько осталось ехать, так что «когда приедет?» больше не вопрос." },
+      { "title": "Узнаёте первым", "text": "Уведомление приходит, когда водитель загрузился и когда доставил. Даже если вы не в кабинете." },
+      { "title": "Водитель не пропал. У него сел телефон", "text": "Заряд и связь видны в кабинете, поэтому вы не паникуете зря." },
+      { "title": "Адрес — одной ссылкой", "text": "Вставьте ссылку из 2GIS, Яндекс Карт или Google Maps, и адрес с маршрутом найдутся сами." },
+      { "title": "Никаких трекеров и монтажа", "text": "Работает на смартфоне водителя. Подходит и для наёмных машин, на которые трекер не поставишь." },
+      { "title": "Батарею водителя бережём", "text": "На стоянке приложение само выключает GPS, а локацию пишет только во время рейса." },
+      { "title": "Вся команда видит одну картину", "text": "Диспетчеры не переспрашивают друг друга: все рейсы в одном месте." },
+      { "title": "Каждый рейс остаётся в истории", "text": "Все шаги, фото и маршрут сохраняются. Пригодится для споров и отчётов." }
+    ]
+  },
+  "features": [
+    {
+      "num": "01",
+      "title": "Отслеживаем даже",
+      "titleAccent": "без интернета",
+      "text": "На перевале связь пропадает, а телефон водителя продолжает записывать путь и хранит его до 14 дней. Сеть вернулась — весь маршрут появляется в кабинете целиком.",
+      "caption": "кабинет — «нет данных» → маршрут целиком",
+      "video": "Кабинет: бейдж «Нет данных», грузовик замер; связь вернулась — пройденный путь появился целиком"
     },
-    "load": {
-      "ref": "KT-2031",
-      "title": "Yuk #KT-2031",
-      "route": "Toshkent → Farg'ona",
-      "company": "Toshkent Logistik",
-      "from": "Toshkent, Sergeli, 3-ombor",
-      "to": "Farg'ona, ulgurji baza",
-      "driver": "Akmal T."
+    {
+      "num": "02",
+      "title": "Клиент перестанет",
+      "titleAccent": "вам звонить",
+      "text": "Отправьте получателю ссылку. Он видит груз на карте и пройденный путь. Регистрация не нужна.",
+      "caption": "ссылка для получателя — без входа",
+      "video": "Страница груза по ссылке на телефоне получателя: статус, заряд, грузовик на карте"
     },
-    "status": {
-      "created": "Yaratilgan",
-      "accepted": "Qabul qilingan",
-      "picking": "Yuklanmoqda",
-      "loaded": "Yuklandi",
-      "transit": "Yo'lda",
-      "delivered": "Yetkazildi",
-      "dropping": "Tushirilmoqda",
-      "confirmed": "Tasdiqlangan"
-    },
-    "cab": {
-      "carrier": "Tashuvchi",
-      "pickup": "Yuklash",
-      "dropoff": "Tushirish",
-      "inviteTab": "Havola orqali taklif qilish",
-      "generate": "Taklif havolasini yaratish",
-      "link": "app.yool.live/invite/7Kq2…",
-      "copy": "Nusxalash",
-      "copied": "Havola nusxalandi",
-      "lastPoint": "Oxirgi nuqta",
-      "justNow": "hozirgina",
-      "moving": "Yo'lda",
-      "stopped": "{time} dan beri turibdi",
-      "noData": "13:05 dan beri ma'lumot yo'q",
-      "share": "Kuzatuvni ulashish",
-      "hero": "Aka, qayerdasiz?",
-      "batch": "+{count} ta nuqta",
-      "noDataHint": "Haydovchining telefoni ancha vaqtdan beri nuqta yubormadi. Ko'pincha mobil tarmoq yo'q bo'ladi: to'plangan nuqtalar tarmoq paydo bo'lganda keladi.",
-      "stoppedHint": "Turganda telefon GPS uchun quvvat sarflamaydi va hech narsa yubormaydi. Mashina yurishi bilan trek davom etadi.",
-      "askNote": "Javob endi xaritada",
-      "formTitle": "Yangi yuk yaratish",
-      "formSearch": "Yuklash manzilini qidiring yoki havolani joylang...",
-      "formLink": "https://2gis.uz/tashkent/geo/70030076122…",
-      "formDetected": "📍 2GIS havolasidan joylashuv aniqlandi",
-      "formEstimate": "≈ 318 km · ~5 soat 10 daq",
-      "formSubmit": "Yuk yaratish",
-      "noteTitle": "Yuk yuklandi",
-      "noteBody": "Haydovchi yuklashni tasdiqladi: {title}",
-      "speed": "Tezlik",
-      "eta": "ETA",
-      "driven": "Yo'l bo'yicha masofa",
-      "kmh": "km/soat",
-      "km": "{v} km",
-      "etaValue": "~{h} soat {m} daq",
-      "generateTrack": "Kuzatuv havolasini yaratish",
-      "trackLink": "app.yool.live/track/9fX2…",
-      "confirm": "Yetkazib berishni tasdiqlash",
-      "confirmHint": "Haydovchi kuzatuvi tasdiqlaguningizcha davom etadi",
-      "noteDropTitle": "Yuk yetkazildi",
-      "noteDropBody": "Haydovchi yetkazishni yakunladi: {title}",
-      "step": {
-        "pickedUp": "Yuk yuklandi",
-        "inTransit": "Yo'lga chiqdi",
-        "droppedOff": "Yetkazildi"
-      },
-      "etaMin": "~{m} daq"
-    },
-    "app": {
-      "loads": "Yuklar",
-      "invite": "Taklif",
-      "noActive": "Faol yuk yo'q",
-      "noActiveSub": "Yangi yuklar shu yerda paydo bo'ladi",
-      "offer": "Sizga yuk taklif qilindi",
-      "details": "Tafsilotlar",
-      "company": "Kompaniya",
-      "pickup": "Yuklash",
-      "dropoff": "Tushirish",
-      "accept": "Yukni qabul qilish",
-      "accepted": "Yuk qabul qilindi!",
-      "activeLoad": "Faol yuk",
-      "online": "Onlayn",
-      "offline": "Oflayn",
-      "gpsActive": "GPS faol",
-      "gpsWaiting": "GPS: Kutilmoqda...",
-      "act": {
-        "beginPickup": "Yuklashni boshlash",
-        "confirmPickup": "Yuk yuklandi",
-        "startTransit": "Tashishni boshlash",
-        "beginDropoff": "Tushirishni boshlash",
-        "confirmDropoff": "Yetkazishni tasdiqlash"
-      },
-      "queued": "{count} ta nuqta yuborilishini kutmoqda",
-      "addPhoto": "Foto qo'shish",
-      "gpsRest": "GPS dam olmoqda",
-      "gpsRestSub": "Mashina turibdi, telefon quvvatni tejaydi",
-      "awaiting": "Jo'natuvchi tasdig'ini kutmoqda",
-      "confirmed": "Yuk tasdiqlandi"
-    },
-    "pulse": {
-      "telegram": "Telegram orqali"
-    },
-    "map": {
-      "onPhone": "haydovchi telefonida",
-      "stop": "To'xtash {m} daq",
-      "stopDone": "To'xtash {m} daq · {from}–{to}",
-      "places": {
-        "depot": "Toshkent · 3-ombor",
-        "road": "A373",
-        "chaikhana": "Choyxona",
-        "pass": "Qamchiq dovoni · 2268 m",
-        "valley": "Farg'ona vodiysi",
-        "fergana": "Farg'ona · ulgurji baza"
-      }
-    },
-    "rcv": {
-      "url": "app.yool.live/track/9fX2…",
-      "loading": "Kuzatuv ma'lumotlari yuklanmoqda...",
-      "updated": "Oxirgi yangilanish",
-      "noSignup": "Ro'yxatdan o'tmasdan"
+    {
+      "num": "03",
+      "title": "Простой больше",
+      "titleAccent": "не на словах",
+      "text": "Водитель остановился — в кабинете видно, где и с какого времени он стоит. Сорок минут на выгрузке или три часа теперь видно, а не со слов.",
+      "caption": "кабинет — «стоит с …», минуты идут",
+      "video": "Кабинет: «Стоит с 05:53», в подсказке — уже 6, потом 12 минут"
     }
+  ],
+  "drivers": {
+    "eyebrow": "Водителям",
+    "title": "Одна кнопка на каждый шаг",
+    "text": "Принял груз, загрузился, поехал, доставил: водитель нажимает одну кнопку и прикладывает фото. Работает без сети, бережёт батарею на стоянках и следит за локацией только во время рейса.",
+    "googlePlay": "Скачать в Google Play",
+    "appStore": "Загрузить в App Store",
+    "video": "Приложение водителя: кнопка «Начать перевозку», груз переходит в «В пути»"
   },
   "start": {
-    "title": "Birinchi yuk uch daqiqada",
+    "title": "Первый груз за три минуты.",
+    "titleAccent": "Бесплатно.",
     "steps": [
-      "Telegram yoki pochta orqali kiring",
-      "Yuk yarating: manzil havolasini qo‘ying",
-      "Haydovchiga havola yuboring"
+      "Войдите через Telegram или почту",
+      "Создайте груз: вставьте ссылку на адрес",
+      "Отправьте водителю ссылку"
     ],
-    "cta": "Boshlash",
-    "login": "Menda allaqachon akkaunt bor",
-    "driverTag": "Haydovchiga",
-    "driverTitle": "Yuk tashing. Pul ishlang.",
-    "driverText": "Bitta ekran va keyingi qadam uchun bitta tugma. Tarmoqsiz ishlaydi, to‘xtaganda batareyani tejaydi, joylashuvni faqat reys davomida kuzatadi. Telegram orqali kirish.",
-    "googlePlay": "Google Play",
-    "appStore": "App Store",
-    "soon": "tez kunda"
+    "cta": "Попробовать бесплатно",
+    "login": "У меня уже есть аккаунт"
+  },
+  "lead": {
+    "title": "Большой автопарк?",
+    "text": "Поможем подключить водителей и покажем кабинет на ваших маршрутах.",
+    "name": "Ваше имя",
+    "company": "Компания",
+    "phone": "Телефон",
+    "fleet": "Машин в парке",
+    "fleetOptions": ["1–5", "6–20", "21–50", "50+"],
+    "submit": "Отправить заявку",
+    "sending": "Отправляем…",
+    "success": "Заявка отправлена. Мы свяжемся с вами по телефону.",
+    "error": "Не получилось отправить. Попробуйте ещё раз или напишите на support@yool.live.",
+    "required": "Заполните это поле"
   },
   "faq": {
-    "title": "Savollar",
+    "eyebrow": "Вопросы",
+    "title": "Что обычно спрашивают",
     "items": [
       {
-        "q": "Haydovchining interneti yo‘qolsa nima bo‘ladi?",
-        "a": "Hech narsa yo‘qolmaydi. Telefon marshrut nuqtalarini 14 kungacha saqlaydi va tarmoq paydo bo‘lishi bilan yuboradi. Bu vaqtda kabinetda eskirgan nuqta emas, «tarmoq yo‘q» ko‘rinadi."
+        "q": "Что будет, если у водителя пропадёт интернет?",
+        "a": "Ничего не потеряется. Телефон хранит маршрут до 14 дней и отправит его, как только появится сеть. Пока связи нет, в кабинете так и написано: «нет данных», а не старое место на карте."
       },
       {
-        "q": "Ilova batareyani ko‘p sarflaydimi?",
-        "a": "Mashina turganda ilova GPSni o‘zi o‘chiradi. Joylashuv faqat haydovchida faol yuk bo‘lganda yoziladi, kabinetda esa uning telefoni quvvati ko‘rinadi."
+        "q": "Нужно ли ставить трекер на машину?",
+        "a": "Нет. Хватает смартфона водителя на Android или iPhone."
       },
       {
-        "q": "Mijoz havola orqali nimani ko‘radi?",
-        "a": "Yuk nomi va holatini, xaritadagi mashinani va bosib o‘tilgan yo‘lni. Ro‘yxatdan o‘tish shart emas. Havolani istalgan vaqtda bekor qilish mumkin."
+        "q": "Сильно ли приложение сажает батарею?",
+        "a": "Когда грузовик стоит, приложение само выключает GPS. Локация пишется только пока у водителя есть активный груз, а в кабинете виден заряд его телефона."
       },
       {
-        "q": "Haydovchi ro‘yxatdan o‘tishi kerakmi?",
-        "a": "Ha, YoolLive ilovasida. Bu bir daqiqa oladi: Telegram, Apple yoki pochta orqali kirish. Agar siz yuk havolasini yuborgan bo‘lsangiz, kirgandan keyin yuk o‘zi qabul qilinadi."
+        "q": "Что видит клиент по ссылке?",
+        "a": "Название и статус груза, грузовик на карте и пройденный путь. Регистрация не нужна."
+      },
+      {
+        "q": "Нужно ли водителю регистрироваться?",
+        "a": "Да, в приложении YoolLive. Это занимает минуту: вход через Telegram, Apple или почту. Если вы отправили ссылку на груз, после входа груз примется сам."
       }
     ]
   },
-  "finalCta": {
-    "title": "Avtoparkingiz kattami?",
-    "subtitle": "Kontaktlaringizni qoldiring. Haydovchilarni ulashga yordam beramiz va kabinetni sizning marshrutlaringizda ko‘rsatamiz.",
-    "form": {
-      "name": "Ismingiz",
-      "company": "Kompaniya",
-      "phone": "Telefon",
-      "fleet": "Parkdagi mashinalar",
-      "fleetOptions": [
-        "1–5",
-        "6–20",
-        "21–50",
-        "50+"
-      ],
-      "submit": "Yuborish",
-      "success": "Rahmat! Ish kuni davomida siz bilan bog‘lanamiz.",
-      "error": "Yuborib bo‘lmadi. Qayta urinib ko‘ring yoki support@yool.live manziliga yozing."
-    }
+  "final": {
+    "title": "Хватит звонить",
+    "titleAccent": "водителю.",
+    "cta": "Попробовать бесплатно",
+    "driver": "Я водитель"
   },
   "footer": {
-    "tagline": "Yuk tashishni kuzatish: yuk egasi uchun kabinet va haydovchi uchun ilova.",
-    "product": "Mahsulot",
-    "company": "Kompaniya",
-    "legal": "Huquqiy ma’lumot",
-    "links": {
-      "how": "Qanday ishlaydi",
-      "drivers": "Haydovchilarga",
-      "faq": "Savollar",
-      "contacts": "Kontaktlar",
-      "privacy": "Maxfiylik siyosati",
-      "terms": "Foydalanish shartlari"
-    },
-    "rights": "© 2026 YoolLive. Barcha huquqlar himoyalangan."
-  },
-  "meta": {
-    "title": "YoolLive: yukingiz qayerda, qo‘ng‘iroqsiz ko‘rinadi",
-    "description": "Yuk egasi kabineti va haydovchi ilovasi. Butun reys xaritada: to‘xtashlar, aloqasiz qismlar, har qadamda rasm va mijoz uchun havola. O‘zbekiston."
+    "tagline": "Отслеживание грузоперевозок: кабинет для грузовладельца и приложение для водителя.",
+    "product": "Продукт",
+    "contacts": "Контакты",
+    "docs": "Документы",
+    "privacy": "Политика конфиденциальности",
+    "terms": "Условия использования",
+    "rights": "© 2026 YoolLive",
+    "languages": "Русский · Oʻzbekcha · English"
   }
 }
