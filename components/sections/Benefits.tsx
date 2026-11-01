@@ -14,11 +14,13 @@ import {
   WifiOff,
   type LucideIcon,
 } from "lucide-react";
-import { AccentWord } from "./ui/AccentWord";
-import { Eyebrow } from "./ui/Eyebrow";
-import { Rail } from "./Rail";
+import type { Benefit } from "@/lib/content";
+import { Section } from "@/components/ui/Section";
+import { SectionHeader } from "@/components/ui/SectionHeader";
+import { AccentWord } from "@/components/ui/AccentWord";
+import { Rail } from "@/components/ui/Rail";
 
-// One icon per card, in the order of `benefits.items` in messages/ru.json.
+// One icon per card, in the order of `benefits.items` in messages.
 const icons: LucideIcon[] = [
   WifiOff, Link, Timer, FileText, Clock, Bell, BatteryLow, MapPin, Smartphone, Battery, Users, History,
 ];
@@ -27,18 +29,20 @@ const icons: LucideIcon[] = [
 // container. CSS scroll-snap does the scrolling; `Rail` adds the buttons and the progress mark.
 export function Benefits() {
   const t = useTranslations("benefits");
-  const items = t.raw("items") as { title: string; text: string }[];
+  const items = t.raw("items") as Benefit[];
 
   return (
-    <section className="border-t border-line-soft py-[clamp(64px,7vw,112px)]">
+    <Section border="top" container={false}>
       <Rail
         head={
-          <div className="flex max-w-[760px] flex-col gap-4">
-            <Eyebrow>{t("eyebrow")}</Eyebrow>
-            <h2 className="t-section">
-              {t("title")} <AccentWord>{t("titleAccent")}</AccentWord>
-            </h2>
-          </div>
+          <SectionHeader
+            eyebrow={t("eyebrow")}
+            title={
+              <>
+                {t("title")} <AccentWord>{t("titleAccent")}</AccentWord>
+              </>
+            }
+          />
         }
         hint={t("hint")}
         prev={t("prev")}
@@ -63,6 +67,6 @@ export function Benefits() {
           );
         })}
       </Rail>
-    </section>
+    </Section>
   );
 }

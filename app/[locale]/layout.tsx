@@ -2,13 +2,10 @@ import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Golos_Text, JetBrains_Mono, Wix_Madefor_Display } from "next/font/google";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { locales, liveLocales } from "@/i18n/request";
+import { locales, liveLocales, isLocale } from "@/i18n/routing";
 import { SITE } from "@/lib/site";
 import "../globals.css";
 
-function hasLocale(value: string): value is (typeof locales)[number] {
-  return (locales as readonly string[]).includes(value);
-}
 
 // Fonts per docs/funnel/design/system/README.md. Only the headline face and the text face are
 // preloaded; the accent italic and the mono are small and come after first paint.
@@ -59,7 +56,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  if (!hasLocale(locale)) return {};
+  if (!isLocale(locale)) return {};
   const t = await getTranslations({ locale, namespace: "meta" });
   return {
     title: t("title"),
@@ -90,7 +87,7 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  if (!hasLocale(locale)) notFound();
+  if (!isLocale(locale)) notFound();
   setRequestLocale(locale);
 
   return (

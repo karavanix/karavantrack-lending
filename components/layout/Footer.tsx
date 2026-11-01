@@ -1,6 +1,6 @@
 import { useTranslations, useLocale } from "next-intl";
 import { SITE, ANCHORS } from "@/lib/site";
-import { Logo } from "./ui/Logo";
+import { Logo } from "@/components/ui/Logo";
 
 // Navy footer: brand and tagline, link columns, © line. The languages line from the
 // mock-up waits for the uz/en translations.

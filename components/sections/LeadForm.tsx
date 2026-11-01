@@ -2,28 +2,12 @@
 
 import { useId, useState, type FormEvent, type ReactNode } from "react";
 import { Check, ChevronDown } from "lucide-react";
+import type { LeadLabels } from "@/lib/content";
+import { LEAD_FIELDS, submitLead, type Lead, type LeadField } from "@/lib/leads";
 
-// Lead form for large fleets. Posts {name, company, phone, fleet, honeypot} to /api/leads
-// (app/api/leads/route.ts forwards it to api-server). States: idle → sending → success
-// (the message replaces the fields) | error (text under the button, fields stay filled).
+// Lead form for large fleets. Posts a `Lead` to /api/leads (lib/leads.ts). States: idle → sending →
+// success (the message replaces the fields) | error (text under the button, fields stay filled).
 // Required fields are checked here (noValidate), the message is `lead.required`.
-export type LeadLabels = {
-  title: string;
-  text: string;
-  name: string;
-  company: string;
-  phone: string;
-  fleet: string;
-  fleetOptions: string[];
-  submit: string;
-  sending: string;
-  success: string;
-  error: string;
-  required: string;
-};
-
-type Field = "name" | "company" | "phone" | "fleet";
-const FIELDS: Field[] = ["name", "company", "phone", "fleet"];
 type Status = "idle" | "sending" | "success" | "error";
 
 const label =
@@ -35,14 +19,14 @@ const control =
 export function LeadForm({ t }: { t: LeadLabels }) {
   const id = useId();
   const [status, setStatus] = useState<Status>("idle");
-  const [missing, setMissing] = useState<Field[]>([]);
+  const [missing, setMissing] = useState<LeadField[]>([]);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
     const fd = new FormData(form);
     const read = (k: string) => String(fd.get(k) ?? "").trim();
-    const data = {
+    const lead: Lead = {
       name: read("name"),
       company: read("company"),
       phone: read("phone"),
@@ -50,7 +34,7 @@ export function LeadForm({ t }: { t: LeadLabels }) {
       honeypot: read("honeypot"),
     };
 
-    const empty = FIELDS.filter((k) => !data[k]);
+    const empty = LEAD_FIELDS.filter((k) => !lead[k]);
     setMissing(empty);
     if (empty.length) {
       (form.elements.namedItem(empty[0]) as HTMLElement | null)?.focus();
@@ -58,25 +42,16 @@ export function LeadForm({ t }: { t: LeadLabels }) {
     }
 
     setStatus("sending");
-    try {
-      const res = await fetch("/api/leads", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      setStatus(res.ok ? "success" : "error");
-    } catch {
-      setStatus("error");
-    }
+    setStatus((await submitLead(lead)) ? "success" : "error");
   }
 
   // A field that was flagged empty clears its message as soon as something is typed into it.
   function onInput(e: FormEvent<HTMLFormElement>) {
     const el = e.target as HTMLInputElement | HTMLSelectElement;
-    if (el.value && missing.includes(el.name as Field)) setMissing(missing.filter((k) => k !== el.name));
+    if (el.value && missing.includes(el.name as LeadField)) setMissing(missing.filter((k) => k !== el.name));
   }
 
-  function field(name: Field, children: ReactNode, className = "") {
+  function field(name: LeadField, children: ReactNode, className = "") {
     const bad = missing.includes(name);
     return (
       <div className={`flex flex-col gap-2 ${className}`}>
@@ -93,7 +68,7 @@ export function LeadForm({ t }: { t: LeadLabels }) {
     );
   }
 
-  function attrs(name: Field) {
+  function attrs(name: LeadField) {
     const bad = missing.includes(name);
     return {
       id: `${id}-${name}`,

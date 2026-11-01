@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { liveLocales } from "@/i18n/request";
+import { liveLocales } from "@/i18n/routing";
 import { SITE } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {

@@ -1,17 +1,17 @@
 import { setRequestLocale } from "next-intl/server";
-import { Nav } from "@/components/funnel/Nav";
-import { Hero } from "@/components/funnel/Hero";
-import { HowItWorks } from "@/components/funnel/HowItWorks";
-import { Benefits } from "@/components/funnel/Benefits";
-import { Features } from "@/components/funnel/Features";
-import { Drivers } from "@/components/funnel/Drivers";
-import { StartBlock } from "@/components/funnel/StartBlock";
-import { Faq } from "@/components/funnel/Faq";
-import { FinalCta } from "@/components/funnel/FinalCta";
-import { Footer } from "@/components/funnel/Footer";
+import { Nav } from "@/components/layout/Nav";
+import { Footer } from "@/components/layout/Footer";
+import { Hero } from "@/components/sections/Hero";
+import { HowItWorks } from "@/components/sections/HowItWorks";
+import { Benefits } from "@/components/sections/Benefits";
+import { Features } from "@/components/sections/Features";
+import { Drivers } from "@/components/sections/Drivers";
+import { Start } from "@/components/sections/Start";
+import { Faq } from "@/components/sections/Faq";
+import { FinalCta } from "@/components/sections/FinalCta";
 
-// Block order follows docs/funnel/design/landing.html:
-// Nav → Hero → HowItWorks → Benefits → Features → Drivers → StartBlock (+ LeadForm) → Faq → FinalCta → Footer.
+// The funnel, top to bottom (docs/funnel/README.md). Every block is a server component that
+// reads its texts from messages/<locale>.json and hands clips and strings to its client parts.
 export default async function Page({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
@@ -25,7 +25,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
         <Benefits />
         <Features />
         <Drivers />
-        <StartBlock />
+        <Start />
         <Faq />
         <FinalCta />
       </main>

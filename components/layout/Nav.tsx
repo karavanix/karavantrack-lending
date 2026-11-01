@@ -1,7 +1,7 @@
 import { useTranslations, useLocale } from "next-intl";
 import { SITE, ANCHORS } from "@/lib/site";
-import { Logo } from "./ui/Logo";
-import { Button } from "./ui/Button";
+import { Logo } from "@/components/ui/Logo";
+import { Button } from "@/components/ui/Button";
 import { MobileMenu } from "./MobileMenu";
 
 // Navy bar, 64px: mark + wordmark, anchors, «Войти», main button. On phones the anchors and the

@@ -1,6 +1,6 @@
 import createMiddleware from "next-intl/middleware";
 import { NextResponse, type NextRequest } from "next/server";
-import { locales, defaultLocale, liveLocales } from "./i18n/request";
+import { defaultLocale, isLiveLocale, isLocale, locales } from "./i18n/routing";
 
 const intl = createMiddleware({
   locales,
@@ -13,9 +13,7 @@ const intl = createMiddleware({
 export default function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const [, first, ...rest] = pathname.split("/");
-  const isLocale = (locales as readonly string[]).includes(first);
-  const isLive = (liveLocales as readonly string[]).includes(first);
-  if (isLocale && !isLive) {
+  if (isLocale(first) && !isLiveLocale(first)) {
     // Temporary: /uz and /en → /ru (307) until the translations and recordings are ready.
     const url = req.nextUrl.clone();
     url.pathname = `/${defaultLocale}${rest.length ? `/${rest.join("/")}` : ""}`;
