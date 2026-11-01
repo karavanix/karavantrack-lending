@@ -31,7 +31,7 @@ export function Nav() {
         </nav>
 
         <div className="flex items-center gap-5 text-sm font-medium">
-          <a href={SITE.login} data-track="login" className="py-3 text-surface transition hover:text-white">
+          <a href={SITE.login} data-track="login" className="py-3 text-[15px] text-surface transition hover:text-white md:text-sm">
             {t("login")}
           </a>
           <span className="hidden md:block">
@@ -41,7 +41,6 @@ export function Nav() {
           </span>
           <MobileMenu
             items={items}
-            login={{ href: SITE.login, label: t("login") }}
             start={{ href: SITE.register, label: t("start") }}
             telegram={t("telegram")}
             menuLabel={t("menu")}

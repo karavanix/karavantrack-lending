@@ -12,28 +12,24 @@ export function TelegramIcon({ className = "h-4 w-4" }: { className?: string }) 
 
 export type TelegramPlace = "start" | "faq" | "footer" | "menu";
 
-/** «Написать в Telegram»: opens the chat (the app on a phone, t.me on a computer), goal `tg_contact`. */
-export function TelegramLink({
-  place,
-  className = "",
-  onClick,
-  children,
-}: {
-  place: TelegramPlace;
-  className?: string;
-  onClick?: () => void;
-  children: ReactNode;
-}) {
+/**
+ * Anchor attributes for «Написать в Telegram»: opens the chat (the app on a phone, t.me on a
+ * computer), goal `tg_contact` with the place. Spread onto a `Button` or a plain `<a>`.
+ */
+export function telegramAttrs(place: TelegramPlace) {
+  return {
+    href: SITE.telegram,
+    target: "_blank",
+    rel: "noopener noreferrer",
+    "data-track": "tg_contact",
+    "data-track-place": place,
+  } as const;
+}
+
+/** Plain text link with the icon (footer). The buttons use `Button` + `telegramAttrs`. */
+export function TelegramLink({ place, className = "", children }: { place: TelegramPlace; className?: string; children: ReactNode }) {
   return (
-    <a
-      href={SITE.telegram}
-      target="_blank"
-      rel="noopener noreferrer"
-      data-track="tg_contact"
-      data-track-place={place}
-      onClick={onClick}
-      className={`inline-flex items-center gap-2 ${className}`}
-    >
+    <a {...telegramAttrs(place)} className={`inline-flex items-center gap-2 ${className}`}>
       <TelegramIcon />
       {children}
     </a>

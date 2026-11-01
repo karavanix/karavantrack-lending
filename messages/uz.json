@@ -126,8 +126,8 @@
     "success": "Заявка отправлена. Мы свяжемся с вами по телефону.",
     "error": "Не получилось отправить. Попробуйте ещё раз или напишите на support@yool.live.",
     "required": "Заполните это поле",
-    "telegramHint": "Messenjerda qulayroqmi?",
-    "telegram": "Bizga Telegramda yozing"
+    "or": "yoki",
+    "telegram": "Telegramda yozish"
   },
   "faq": {
     "eyebrow": "Вопросы",
@@ -155,7 +155,7 @@
       }
     ],
     "more": "Javob topmadingizmi?",
-    "telegram": "Telegramda soʻrang"
+    "telegram": "Telegramda soʻrash"
   },
   "final": {
     "title": "Хватит звонить",
@@ -167,7 +167,7 @@
     "tagline": "Отслеживание грузоперевозок: кабинет для грузовладельца и приложение для водителя.",
     "product": "Продукт",
     "contacts": "Контакты",
-    "telegram": "Telegramda yozish",
+    "telegram": "Telegram",
     "address": "Toshkent sh., Mirobod tumani",
     "docs": "Документы",
     "privacy": "Политика конфиденциальности",

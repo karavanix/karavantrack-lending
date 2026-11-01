@@ -3,11 +3,12 @@ import { ChevronDown } from "lucide-react";
 import type { FaqItem } from "@/lib/content";
 import { Section } from "@/components/ui/Section";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { TelegramLink } from "@/components/ui/Telegram";
+import { Button } from "@/components/ui/Button";
+import { TelegramIcon, telegramAttrs } from "@/components/ui/Telegram";
 
 // «Вопросы» (#faq): five <details>/<summary> items, no JS. The first one is open,
 // the chevron turns with the `open` attribute. <summary> is focusable and toggles on Enter/Space.
-// Under the list — «didn't find an answer?» with the Telegram link.
+// Under the list — «didn't find an answer?» with the Telegram button.
 export function Faq() {
   const t = useTranslations("faq");
   const items = t.raw("items") as FaqItem[];
@@ -25,12 +26,13 @@ export function Faq() {
             <p className="t-body mt-3 max-w-[640px] leading-[1.6] text-ink-muted">{it.a}</p>
           </details>
         ))}
-        <p className="t-body mt-8 text-ink-muted">
-          {t("more")}{" "}
-          <TelegramLink place="faq" className="font-medium text-accent-deep transition hover:underline">
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+          <p className="t-body text-ink-muted">{t("more")}</p>
+          <Button {...telegramAttrs("faq")} variant="secondary" size="sm">
+            <TelegramIcon />
             {t("telegram")}
-          </TelegramLink>
-        </p>
+          </Button>
+        </div>
       </div>
     </Section>
   );

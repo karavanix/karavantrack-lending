@@ -1,7 +1,7 @@
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
 
-type Variant = "primary" | "secondary" | "light";
+type Variant = "primary" | "secondary" | "light" | "outline";
 type Size = "md" | "sm";
 
 const base =
@@ -14,6 +14,8 @@ const variants: Record<Variant, string> = {
   secondary: "bg-card text-ink border border-line-soft hover:border-ink-muted",
   // Main button on the navy bands (the start block): `surface` fill, `bg` text, no shadow.
   light: "bg-surface text-bg hover:bg-white",
+  // Second button on the navy bands (Telegram next to the form, in the menu): border only.
+  outline: "border border-line text-surface hover:bg-white/5",
 };
 
 const sizes: Record<Size, string> = {
