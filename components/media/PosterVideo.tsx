@@ -21,7 +21,7 @@ export function PosterVideo({
   clip: Clip;
   /** What the recording shows, for people who cannot see it. */
   label: string;
-  /** First-screen media: eager poster with high fetch priority (the LCP candidate). */
+  /** First-screen media: eager poster (not `fetchpriority=high` — it would be fetched ahead of the fonts). */
   priority?: boolean;
   loop?: boolean;
   videoRef?: RefObject<HTMLVideoElement | null>;
@@ -36,7 +36,7 @@ export function PosterVideo({
         width={clip.width}
         height={clip.height}
         loading={priority ? "eager" : "lazy"}
-        fetchPriority={priority ? "high" : "low"}
+        fetchPriority={priority ? undefined : "low"}
         decoding="async"
         className={fill}
       />
