@@ -107,7 +107,7 @@ Next.js 15.1 (App Router, `output: "standalone"`), React 19, Tailwind v4 (`@tail
 - Прод-сборка в копии репо в scratchpad (см. «Грабли»), `pnpm start -p 3124`, `tools/vitals.mjs http://localhost:3124/ru` → `BUDGETS OK`. Если JS > 100 КБ — смотреть, что тянет клиентские компоненты (`next build` печатает First Load JS).
 - `tools/shot.mjs` на 360/390/1440 всей страницы, сравнить с макетом глазами; сложить скриншоты в `design/built-*.png` для владельца.
 - Настоящий телефон (Honor владельца, adb — спросить владельца, подключён ли): открыть `http://<IP ноутбука>:3124/ru` (`adb shell am start -a android.intent.action.VIEW -d …`), снять экран `adb exec-out screencap -p`, проверить автозапуск роликов и плавность прокрутки.
-- Обновить `README.md` (журнал, статус этапа «Код»), подготовить заголовок и описание PR из `landing/funnel` в `main` (gh на машине нет — PR открывает владелец по ссылке `https://github.com/karavanix/karavantrack-lending/compare/main...landing/funnel?expand=1 (репозиторий на GitHub называется `karavantrack-lending`)`).
+- Обновить `README.md` (журнал, статус этапа «Код»), подготовить заголовок и описание PR из `landing/funnel` в `main` (gh на машине нет — PR открывает владелец по ссылке `https://github.com/karavanix/karavantrack-lending/compare/main...landing/funnel?expand=1` — репозиторий на GitHub называется `karavantrack-lending`).
 - **Приёмка:** бюджеты зелёные, скриншоты разложены, описание PR готово.
 
 ## Бюджеты и проверка
