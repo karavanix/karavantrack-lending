@@ -43,6 +43,7 @@ export function Nav() {
             items={items}
             login={{ href: SITE.login, label: t("login") }}
             start={{ href: SITE.register, label: t("start") }}
+            telegram={t("telegram")}
             menuLabel={t("menu")}
           />
         </div>

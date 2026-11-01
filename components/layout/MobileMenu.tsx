@@ -2,20 +2,23 @@
 
 import { useEffect, useId, useState } from "react";
 import { Menu, X } from "lucide-react";
+import { TelegramLink } from "@/components/ui/Telegram";
 
 type Item = { href: string; label: string };
 
 // Phone-width menu: a button in the bar, a navy panel under it with the anchors,
-// «Войти» and the main button. Closes on a link tap and on Escape.
+// «Написать в Telegram», «Войти» and the main button. Closes on a link tap and on Escape.
 export function MobileMenu({
   items,
   login,
   start,
+  telegram,
   menuLabel,
 }: {
   items: Item[];
   login: Item;
   start: Item;
+  telegram: string;
   menuLabel: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -56,6 +59,13 @@ export function MobileMenu({
                 {it.label}
               </a>
             ))}
+            <TelegramLink
+              place="menu"
+              onClick={() => setOpen(false)}
+              className="py-3 text-base font-medium text-accent-soft transition hover:text-white"
+            >
+              {telegram}
+            </TelegramLink>
             <a
               href={login.href}
               data-track="login"

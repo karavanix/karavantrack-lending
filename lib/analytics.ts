@@ -19,11 +19,25 @@ export const GOALS = [
   "store_apple",
   "lead_submit",
   "lead_success",
+  "tg_contact",
+  "phone_click",
 ] as const;
 export type Goal = (typeof GOALS)[number];
 
-/** `data-track="<goal>"` on a link or button; `Analytics` reports the click. */
+/**
+ * `data-track="<goal>"` on a link or button; `Analytics` reports the click. Goal parameters ride
+ * along as `data-track-<name>="<value>"`, e.g. `data-track-place="faq"` → `{ place: "faq" }`.
+ */
 export const TRACK_ATTR = "data-track";
+
+/** The `data-track-*` parameters of a tracked element, or undefined when it has none. */
+export function trackParams(el: HTMLElement): Record<string, string> | undefined {
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(el.dataset)) {
+    if (k.length > 5 && k.startsWith("track") && v) out[k[5].toLowerCase() + k.slice(6)] = v;
+  }
+  return Object.keys(out).length ? out : undefined;
+}
 
 type YmFn = ((...args: unknown[]) => void) & { a?: unknown[]; l?: number };
 

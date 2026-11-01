@@ -4,10 +4,12 @@ import type { LeadLabels } from "@/lib/content";
 import { Section } from "@/components/ui/Section";
 import { AccentWord } from "@/components/ui/AccentWord";
 import { Button } from "@/components/ui/Button";
+import { TelegramLink } from "@/components/ui/Telegram";
 import { LeadForm } from "./LeadForm";
 
 // The navy start band (#start): headline, three steps 01–03, the light main button and the
-// «already have an account» link; the lead form for large fleets sits beside them.
+// «already have an account» link; the lead form for large fleets sits beside them, with
+// «write to us in Telegram» under it for those who'd rather message than fill in fields.
 export function Start() {
   const t = useTranslations("start");
   const l = useTranslations("lead");
@@ -50,7 +52,15 @@ export function Start() {
           </a>
         </div>
       </div>
-      <LeadForm t={labels} />
+      <div className="flex min-w-0 flex-[1_1_380px] flex-col gap-5">
+        <LeadForm t={labels} />
+        <p className="px-1 text-[15px] leading-[1.5] text-white/70">
+          {l("telegramHint")}{" "}
+          <TelegramLink place="start" className="font-medium text-accent-soft transition hover:text-white">
+            {l("telegram")}
+          </TelegramLink>
+        </p>
+      </div>
     </Section>
   );
 }

@@ -1,8 +1,10 @@
 import { useTranslations, useLocale } from "next-intl";
 import { SITE, ANCHORS } from "@/lib/site";
 import { Logo } from "@/components/ui/Logo";
+import { TelegramLink } from "@/components/ui/Telegram";
 
-// Navy footer: brand and tagline, link columns, © line. The languages line from the
+// Navy footer: brand and tagline, link columns (contacts: Telegram, phones, e-mail, office
+// address — the address is what Yandex Webmaster needs to set the region), © line. The languages line from the
 // mock-up waits for the uz/en translations.
 export function Footer() {
   const t = useTranslations("footer");
@@ -27,9 +29,23 @@ export function Footer() {
               <FooterLink href={ANCHORS.faq}>{n("faq")}</FooterLink>
             </FooterCol>
             <FooterCol title={t("contacts")}>
+              <TelegramLink place="footer" className="text-accent-soft transition hover:text-white">
+                {t("telegram")}
+              </TelegramLink>
+              {SITE.phones.map((p) => (
+                <a
+                  key={p.tel}
+                  href={`tel:${p.tel}`}
+                  data-track="phone_click"
+                  className="whitespace-nowrap text-white/80 transition hover:text-white"
+                >
+                  {p.display}
+                </a>
+              ))}
               <a href={`mailto:${SITE.email}`} className="text-accent-soft transition hover:text-white">
                 {SITE.email}
               </a>
+              <address className="max-w-[220px] not-italic leading-[1.5] text-white/70">{t("address")}</address>
             </FooterCol>
             <FooterCol title={t("docs")}>
               <FooterLink href={SITE.privacy} external>

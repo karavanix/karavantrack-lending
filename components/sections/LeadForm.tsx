@@ -84,7 +84,7 @@ export function LeadForm({ t }: { t: LeadLabels }) {
   }
 
   return (
-    <div className="min-w-0 flex-[1_1_380px] rounded-card border border-line bg-bg-soft p-[clamp(24px,3vw,36px)]">
+    <div className="min-w-0 rounded-card border border-line bg-bg-soft p-[clamp(24px,3vw,36px)]">
       <div className="flex flex-col gap-2">
         <h3 className="font-display text-[26px] font-extrabold leading-tight tracking-[-0.02em]">{t.title}</h3>
         <p className="text-[15px] leading-[1.5] text-white/70">{t.text}</p>
