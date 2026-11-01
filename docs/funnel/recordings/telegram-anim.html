@@ -1,0 +1,116 @@
+<!doctype html>
+<!-- ANIMATED variant for the step-2 clip (#11): window.play() runs the timeline, rec-telegram.mjs records it.
+     Frame #4 «Отправьте водителю ссылку»: a Telegram (Android, light theme) chat with the invite link
+     and its preview, rendered as a phone screen 360×764 CSS px @2 = 720×1528.
+     It is a replica, not a screenshot: the real shot (raw/out/tg_chat.png) was taken in the owner's
+     purple-themed Saved Messages, which clashed with the page. Text and link are the real ones.
+     Render: node tools/shot-telegram.mjs → media/04-telegram-link.ru.png -->
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<style>
+  :root { --tg-blue: #3390ec; --out: #effdde; --out-link: #4fae4e; --ink: #000; --muted: #707579; }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 360px; height: 764px; overflow: hidden; }
+  body { font-family: Roboto, "Noto Sans", "Segoe UI", system-ui, sans-serif; color: var(--ink);
+    background:
+      radial-gradient(120% 80% at 20% 0%, #e2ecf7 0%, transparent 60%),
+      radial-gradient(100% 70% at 100% 100%, #dfeedb 0%, transparent 60%),
+      #e6eef0;
+    display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; }
+  .status { height: 28px; display: flex; align-items: center; justify-content: space-between;
+    padding: 0 16px; font-size: 13px; font-weight: 500; background: #fff; }
+  .status .icons { display: flex; gap: 5px; align-items: center; }
+  .status .bar { display: inline-block; width: 14px; height: 10px; border-radius: 2px; background: #111; position: relative; }
+  .status .bat { width: 22px; height: 11px; border: 1.5px solid #111; border-radius: 3px; position: relative; }
+  .status .bat::after { content: ""; position: absolute; left: 1px; top: 1px; bottom: 1px; width: 60%; background: #111; border-radius: 1px; }
+  header { height: 56px; background: #fff; display: flex; align-items: center; padding: 0 8px 0 4px; gap: 6px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+  header .back { width: 40px; height: 40px; display: grid; place-items: center; }
+  header .ava { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
+    background: linear-gradient(135deg, #ff885e, #ff516a); color: #fff; font-weight: 500; font-size: 16px; }
+  header .who { flex: 1; min-width: 0; line-height: 1.2; }
+  header .name { font-size: 16.5px; font-weight: 500; }
+  header .seen { font-size: 13px; color: var(--muted); }
+  header .act { width: 40px; height: 40px; display: grid; place-items: center; color: var(--muted); }
+  main { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 8px 8px 6px; gap: 6px; }
+  .date { align-self: center; background: rgba(0,0,0,.28); color: #fff; font-size: 13px; font-weight: 500;
+    padding: 3px 10px; border-radius: 12px; backdrop-filter: blur(4px); margin-bottom: 4px; }
+  .msg { align-self: flex-end; max-width: 300px; background: var(--out); border-radius: 14px 14px 4px 14px;
+    padding: 6px 8px 6px 10px; box-shadow: 0 1px 1px rgba(0,0,0,.12); font-size: 15.5px; line-height: 1.32; position: relative; }
+  .msg a { color: var(--out-link); text-decoration: underline; word-break: break-all; }
+  .preview { margin-top: 6px; border-left: 3px solid var(--out-link); padding: 2px 6px 4px 8px; border-radius: 2px; }
+  .preview .site { color: var(--out-link); font-weight: 500; font-size: 14.5px; }
+  .preview .title { font-weight: 500; font-size: 14.5px; margin-top: 1px; }
+  .preview .desc { font-size: 14.5px; color: #222; margin-top: 1px; line-height: 1.3; }
+  .meta { display: flex; justify-content: flex-end; align-items: center; gap: 3px; margin-top: 2px;
+    font-size: 11.5px; color: #6fb26a; }
+  .in { align-self: flex-start; background: #fff; border-radius: 14px 14px 14px 4px; padding: 6px 10px 6px 10px;
+    box-shadow: 0 1px 1px rgba(0,0,0,.12); font-size: 15.5px; line-height: 1.32; max-width: 260px; }
+  .in .meta { color: var(--muted); }
+  footer { height: 50px; background: #fff; display: flex; align-items: center; padding: 0 6px 0 10px; gap: 8px; }
+  footer .emoji { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #a2acb4; position: relative; }
+  footer .emoji::before, footer .emoji::after { content: ""; position: absolute; width: 3px; height: 3px; border-radius: 50%;
+    background: #a2acb4; top: 6px; left: 5px; }
+  footer .emoji::after { left: 12px; }
+  footer .ph { flex: 1; color: #a2acb4; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  footer .ph.typed { color: var(--ink); }
+  .msg.hidden, .preview.hidden { display: none; }
+  .meta .ck.hidden { visibility: hidden; }
+  .tap { position: absolute; width: 60px; height: 60px; border-radius: 50%; background: rgba(20,30,50,.28); border: 2.5px solid rgba(255,255,255,.95);
+    transform: translate(-50%,-50%); pointer-events: none; display: none; }
+  .tap.on { display: block; }
+  footer { position: relative; }
+  footer .mic svg.send { display: none; }
+  footer .mic.send svg.send { display: block; } footer .mic.send svg.mic { display: none; }
+  footer .mic { width: 44px; height: 44px; border-radius: 50%; background: var(--tg-blue); display: grid; place-items: center; }
+  svg { display: block; }
+</style>
+</head>
+<body>
+  <div class="status"><span>07:10</span><span class="icons"><span class="bar"></span><span class="bat"></span></span></div>
+  <header>
+    <div class="back"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#707579" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg></div>
+    <div class="ava">РА</div>
+    <div class="who"><div class="name">Рустам Алиев</div><div class="seen">был(а) недавно</div></div>
+    <div class="act"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+    <div class="act"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></div>
+  </header>
+  <main>
+    <div class="date">1 ноября</div>
+    <div class="in">Доброе утро! Какой груз сегодня?<div class="meta">07:08</div></div>
+    <div class="msg" id="out">
+      <a href="#">https://app.yool.live/invite/SRuUDHrLZ3diK1oyrRe2l-0MQCPw3At3iX3BltU0m6o</a>
+      <div class="preview" id="prev">
+        <div class="site">YoolLive</div>
+        <div class="title">YoolLive — отслеживание груза</div>
+        <div class="desc">Где едет машина, где стоит и когда приедет. Без звонков водителю.</div>
+      </div>
+      <div class="meta">07:10 <svg class="ck" width="16" height="11" viewBox="0 0 16 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6l3.2 3.2L10 3"/><path d="M6.5 9.2 15 1"/></svg></div>
+    </div>
+  </main>
+  <footer>
+    <span class="emoji"></span>
+    <span class="ph" id="ph">Сообщение</span>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a2acb4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+    <div class="mic" id="mic"><svg class="mic" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg><svg class="send" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></div>
+    <span class="tap" id="tap" style="right: 28px; top: 50%; left: auto; transform: translate(50%,-50%);"></span>
+  </footer>
+<script>
+  // Timeline (seconds): 0–1.2 the end state (cold open = poster = last frame), then the process.
+  const LINK = 'https://app.yool.live/invite/SRuUDHrLZ3diK1oyrRe2l-0MQCPw3At3iX3BltU0m6o';
+  const $ = (id) => document.getElementById(id);
+  const at = (t, fn) => setTimeout(fn, t * 1000);
+  function reset() { $('out').classList.add('hidden'); $('prev').classList.add('hidden'); $('ph').textContent = 'Сообщение'; $('ph').classList.remove('typed'); $('mic').classList.remove('send'); document.querySelector('.ck').classList.remove('hidden'); }
+  window.play = () => {
+    at(1.2, reset);
+    at(4.7, () => { $('ph').textContent = LINK; $('ph').classList.add('typed'); $('mic').classList.add('send'); });
+    at(5.5, () => $('tap').classList.add('on'));
+    at(5.8, () => { $('tap').classList.remove('on'); $('ph').textContent = 'Сообщение'; $('ph').classList.remove('typed'); $('mic').classList.remove('send');
+      $('out').classList.remove('hidden'); document.querySelector('.ck').classList.add('hidden'); });
+    at(6.9, () => $('prev').classList.remove('hidden'));
+    at(7.3, () => document.querySelector('.ck').classList.remove('hidden'));
+  };
+</script>
+</body>
+</html>

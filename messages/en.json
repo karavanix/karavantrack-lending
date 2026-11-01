@@ -1,259 +1,171 @@
 {
-  "nav": {
-    "how": "How it works",
-    "drivers": "For drivers",
-    "faq": "Questions",
-    "login": "Log in",
-    "start": "Get started"
+  "meta": {
+    "title": "YoolLive — где груз, видно без звонка водителю",
+    "description": "Водитель ставит приложение, вы видите весь рейс: где едет, где стоит, когда приедет, фото документов на каждом шаге. Без трекеров и монтажа. Попробуйте бесплатно."
   },
-  "trip": {
-    "route": "Tashkent → Fergana",
-    "scroll": "Scroll down, we’re driving to Fergana",
-    "chapterOf": "{n} of {total}",
-    "hero": {
-      "title": "No need to ask anymore.",
-      "subtitle": "YoolLive shows the whole trip: where the truck is, where it stopped and why the signal dropped. The driver just marks each step in the app.",
-      "cta": "Get started",
-      "driver": "Driver app"
-    },
-    "chapters": [
+  "nav": {
+    "how": "Как это работает",
+    "drivers": "Водителям",
+    "faq": "Вопросы",
+    "login": "Войти",
+    "start": "Попробовать бесплатно",
+    "menu": "Меню"
+  },
+  "hero": {
+    "eyebrow": "Для грузовладельцев и диспетчеров",
+    "title": "Хватит звонить",
+    "titleAccent": "водителю.",
+    "lead": "Водитель ставит приложение, вы видите весь рейс: где едет, где стоит, когда приедет. Без трекеров и монтажа.",
+    "cta": "Попробовать бесплатно",
+    "driver": "Я водитель",
+    "note": "Вход через Telegram или почту",
+    "windowUrl": "app.yool.live",
+    "videoCabinet": "Кабинет: водитель отметил «Груз загружен» — статус и фото накладной появились сами, затем груз поехал",
+    "videoPhone": "Приложение водителя: фото накладной, «Груз загружен», «Начать перевозку»"
+  },
+  "how": {
+    "eyebrow": "Как это работает",
+    "title": "Подключение за три минуты",
+    "lead": "Ничего не нужно ставить на машину. Хватит смартфона водителя.",
+    "steps": [
       {
-        "title": "A load in a minute",
-        "text": "Paste a link from 2GIS, Yandex or Google Maps and the address fills itself in. The cabinet works out the road route and drive time right away."
+        "title": "Создайте груз",
+        "text": "Вставьте ссылку на адрес из 2GIS, Яндекс Карт или Google Maps. Маршрут и время в пути посчитаются сами.",
+        "image": "Форма «Создать новый груз»: адреса из ссылок 2GIS и маршрут на карте"
       },
       {
-        "title": "A driver from one link",
-        "text": "You don’t need the driver’s number. Send a link in Telegram: the driver opens it and accepts the load with one tap."
+        "title": "Отправьте водителю ссылку",
+        "text": "В Telegram или любом мессенджере. Водитель открывает её и принимает груз одним касанием.",
+        "image": "Сообщение в Telegram со ссылкой на груз"
       },
       {
-        "title": "Loaded. With a photo, on the map",
-        "text": "The driver marks every step with a button and attaches a photo of the papers. You get a notification, and the map shows where it happened."
-      },
-      {
-        "title": "You see it moving",
-        "text": "The driver doesn’t have to do a thing: the phone sends points on its own. The cabinet shows speed, distance driven, time to arrival, even the phone’s battery."
-      },
-      {
-        "title": "Stopped, and you know why",
-        "text": "Lunch at a chaikhana. The phone turns GPS off by itself to save battery, and the cabinet says: stopped since 12:10. No call needed."
-      },
-      {
-        "title": "The pass. No signal",
-        "text": "On Kamchik the network drops. The app doesn’t lose points, it keeps them on the phone for up to two weeks. The cabinet says “no data” instead of drawing a green dot."
-      },
-      {
-        "title": "Signal back, track whole",
-        "text": "As soon as there’s coverage, every point goes out in one batch. The route fills in with no gaps, as if the signal never dropped."
-      },
-      {
-        "title": "The client watches on their own",
-        "text": "Send the receiver a link. They see the truck on the map without signing up, and stop calling you every half hour."
-      },
-      {
-        "title": "Delivered",
-        "text": "The driver photographs the waybill, you confirm delivery. The trip goes to history with every step, photo and the track."
+        "title": "Смотрите рейс",
+        "text": "Где едет, где стоит, когда приедет. Фото документов приходят на каждом шаге.",
+        "image": "Карточка груза в пути: скорость, время прибытия, пройденный путь на карте"
       }
     ]
   },
-  "td": {
-    "who": {
-      "dispatcher": "Dispatcher",
-      "driver": "Driver",
-      "receiver": "Receiver"
+  "benefits": {
+    "eyebrow": "Что вы получаете",
+    "title": "Звонить больше",
+    "titleAccent": "незачем",
+    "hint": "листайте",
+    "prev": "Назад",
+    "next": "Дальше",
+    "items": [
+      { "title": "Отслеживаем даже без интернета", "text": "Нет сети на трассе — телефон всё равно записывает путь и присылает его целиком, как только связь вернётся." },
+      { "title": "Клиент перестанет вам звонить", "text": "Отправьте ему ссылку: он сам видит, где его груз. Без регистрации." },
+      { "title": "Простой больше не на словах", "text": "Видно, где водитель стоял и сколько: с 12:10, сорок минут. Спорить не о чем." },
+      { "title": "Ни одна накладная не потеряется", "text": "Водитель снимает документы в приложении, и фото сразу лежат в грузе, а не в чатах." },
+      { "title": "Клиенту отвечаете сразу", "text": "Кабинет считает, сколько осталось ехать, так что «когда приедет?» больше не вопрос." },
+      { "title": "Узнаёте первым", "text": "Уведомление приходит, когда водитель загрузился и когда доставил. Даже если вы не в кабинете." },
+      { "title": "Водитель не пропал. У него сел телефон", "text": "Заряд и связь видны в кабинете, поэтому вы не паникуете зря." },
+      { "title": "Адрес — одной ссылкой", "text": "Вставьте ссылку из 2GIS, Яндекс Карт или Google Maps, и адрес с маршрутом найдутся сами." },
+      { "title": "Никаких трекеров и монтажа", "text": "Работает на смартфоне водителя. Подходит и для наёмных машин, на которые трекер не поставишь." },
+      { "title": "Батарею водителя бережём", "text": "На стоянке приложение само выключает GPS, а локацию пишет только во время рейса." },
+      { "title": "Вся команда видит одну картину", "text": "Диспетчеры не переспрашивают друг друга: все рейсы в одном месте." },
+      { "title": "Каждый рейс остаётся в истории", "text": "Все шаги, фото и маршрут сохраняются. Пригодится для споров и отчётов." }
+    ]
+  },
+  "features": [
+    {
+      "num": "01",
+      "title": "Отслеживаем даже",
+      "titleAccent": "без интернета",
+      "text": "На перевале связь пропадает, а телефон водителя продолжает записывать путь и хранит его до 14 дней. Сеть вернулась — весь маршрут появляется в кабинете целиком.",
+      "caption": "кабинет — «нет данных» → маршрут целиком",
+      "video": "Кабинет: бейдж «Нет данных», грузовик замер; связь вернулась — пройденный путь появился целиком"
     },
-    "load": {
-      "ref": "KT-2031",
-      "title": "Load #KT-2031",
-      "route": "Tashkent → Fergana",
-      "company": "Tashkent Logistics",
-      "from": "Tashkent, Sergeli, warehouse 3",
-      "to": "Fergana, wholesale depot",
-      "driver": "Akmal T."
+    {
+      "num": "02",
+      "title": "Клиент перестанет",
+      "titleAccent": "вам звонить",
+      "text": "Отправьте получателю ссылку. Он видит груз на карте и пройденный путь. Регистрация не нужна.",
+      "caption": "ссылка для получателя — без входа",
+      "video": "Страница груза по ссылке на телефоне получателя: статус, заряд, грузовик на карте"
     },
-    "status": {
-      "created": "Created",
-      "accepted": "Accepted",
-      "picking": "Picking Up",
-      "loaded": "Picked Up",
-      "transit": "In Transit",
-      "delivered": "Dropped Off",
-      "dropping": "Dropping Off",
-      "confirmed": "Confirmed"
-    },
-    "cab": {
-      "carrier": "Carrier",
-      "pickup": "Pickup",
-      "dropoff": "Dropoff",
-      "inviteTab": "Invite by link",
-      "generate": "Generate invite link",
-      "link": "app.yool.live/invite/7Kq2…",
-      "copy": "Copy",
-      "copied": "Link copied to clipboard",
-      "lastPoint": "Last point",
-      "justNow": "just now",
-      "moving": "Moving",
-      "stopped": "Stopped since {time}",
-      "noData": "No data since 13:05",
-      "share": "Share tracking",
-      "hero": "Where are you now?",
-      "batch": "{count, plural, =1 {+1 point} other {+# points}}",
-      "noDataHint": "The driver's phone hasn't sent points for a while. Usually there's no mobile network: the saved points arrive once it's back.",
-      "stoppedHint": "While the truck stands, the phone saves battery and sends nothing. The track resumes as soon as it moves.",
-      "askNote": "The answer is on the map now",
-      "formTitle": "Create New Load",
-      "formSearch": "Search pickup address or paste link...",
-      "formLink": "https://2gis.uz/tashkent/geo/70030076122…",
-      "formDetected": "📍 Location detected from 2GIS link",
-      "formEstimate": "≈ 318 km · ~5 h 10 min",
-      "formSubmit": "Create Load",
-      "noteTitle": "Cargo loaded",
-      "noteBody": "The driver confirmed pickup: {title}",
-      "speed": "Speed",
-      "eta": "ETA",
-      "driven": "Distance driven",
-      "kmh": "km/h",
-      "km": "{v} km",
-      "etaValue": "~{h} h {m} min",
-      "generateTrack": "Generate tracking link",
-      "trackLink": "app.yool.live/track/9fX2…",
-      "confirm": "Confirm Delivery",
-      "confirmHint": "Driver tracking runs until you confirm",
-      "noteDropTitle": "Cargo delivered",
-      "noteDropBody": "The driver completed delivery: {title}",
-      "step": {
-        "pickedUp": "Loaded",
-        "inTransit": "Trip started",
-        "droppedOff": "Delivered"
-      },
-      "etaMin": "~{m} min"
-    },
-    "app": {
-      "loads": "Loads",
-      "invite": "Invite",
-      "noActive": "No active load",
-      "noActiveSub": "New loads will appear here",
-      "offer": "You have been offered a load",
-      "details": "Details",
-      "company": "Company",
-      "pickup": "Pickup",
-      "dropoff": "Dropoff",
-      "accept": "Accept Load",
-      "accepted": "Load accepted!",
-      "activeLoad": "Active Load",
-      "online": "Online",
-      "offline": "Offline",
-      "gpsActive": "GPS active",
-      "gpsWaiting": "GPS: Waiting...",
-      "act": {
-        "beginPickup": "Begin Pickup",
-        "confirmPickup": "Confirm Cargo Loaded",
-        "startTransit": "Start Transit",
-        "beginDropoff": "Begin Dropoff",
-        "confirmDropoff": "Confirm Delivery"
-      },
-      "queued": "{count, plural, =1 {1 point waiting to be sent} other {# points waiting to be sent}}",
-      "addPhoto": "Add photo",
-      "gpsRest": "GPS is resting",
-      "gpsRestSub": "The truck stands still, the phone saves battery",
-      "awaiting": "Awaiting shipper confirmation",
-      "confirmed": "Load confirmed"
-    },
-    "pulse": {
-      "telegram": "via Telegram"
-    },
-    "map": {
-      "onPhone": "on the driver's phone",
-      "stop": "Stop {m} min",
-      "stopDone": "Stop {m} min · {from}–{to}",
-      "places": {
-        "depot": "Tashkent · warehouse 3",
-        "road": "A373",
-        "chaikhana": "Chaikhana",
-        "pass": "Kamchik Pass · 2,268 m",
-        "valley": "Fergana Valley",
-        "fergana": "Fergana · wholesale depot"
-      }
-    },
-    "rcv": {
-      "url": "app.yool.live/track/9fX2…",
-      "loading": "Loading tracking...",
-      "updated": "Last update",
-      "noSignup": "No sign-up"
+    {
+      "num": "03",
+      "title": "Простой больше",
+      "titleAccent": "не на словах",
+      "text": "Водитель остановился — в кабинете видно, где и с какого времени он стоит. Сорок минут на выгрузке или три часа теперь видно, а не со слов.",
+      "caption": "кабинет — «стоит с …», минуты идут",
+      "video": "Кабинет: «Стоит с 05:53», в подсказке — уже 6, потом 12 минут"
     }
+  ],
+  "drivers": {
+    "eyebrow": "Водителям",
+    "title": "Одна кнопка на каждый шаг",
+    "text": "Принял груз, загрузился, поехал, доставил: водитель нажимает одну кнопку и прикладывает фото. Работает без сети, бережёт батарею на стоянках и следит за локацией только во время рейса.",
+    "googlePlay": "Скачать в Google Play",
+    "appStore": "Загрузить в App Store",
+    "video": "Приложение водителя: кнопка «Начать перевозку», груз переходит в «В пути»"
   },
   "start": {
-    "title": "Your first load in three minutes",
+    "title": "Первый груз за три минуты.",
+    "titleAccent": "Бесплатно.",
     "steps": [
-      "Sign in with Telegram or email",
-      "Create a load: paste a link to the address",
-      "Send the driver a link"
+      "Войдите через Telegram или почту",
+      "Создайте груз: вставьте ссылку на адрес",
+      "Отправьте водителю ссылку"
     ],
-    "cta": "Get started",
-    "login": "I already have an account",
-    "driverTag": "For drivers",
-    "driverTitle": "Move loads. Get paid.",
-    "driverText": "One screen and one button for the next step. Works without network, saves battery when you stand, tracks location only during a trip. Sign in with Telegram.",
-    "googlePlay": "Google Play",
-    "appStore": "App Store",
-    "soon": "soon"
+    "cta": "Попробовать бесплатно",
+    "login": "У меня уже есть аккаунт"
+  },
+  "lead": {
+    "title": "Большой автопарк?",
+    "text": "Поможем подключить водителей и покажем кабинет на ваших маршрутах.",
+    "name": "Ваше имя",
+    "company": "Компания",
+    "phone": "Телефон",
+    "fleet": "Машин в парке",
+    "fleetOptions": ["1–5", "6–20", "21–50", "50+"],
+    "submit": "Отправить заявку",
+    "sending": "Отправляем…",
+    "success": "Заявка отправлена. Мы свяжемся с вами по телефону.",
+    "error": "Не получилось отправить. Попробуйте ещё раз или напишите на support@yool.live.",
+    "required": "Заполните это поле"
   },
   "faq": {
-    "title": "Questions",
+    "eyebrow": "Вопросы",
+    "title": "Что обычно спрашивают",
     "items": [
       {
-        "q": "What if the driver loses internet?",
-        "a": "Nothing is lost. The phone keeps route points for up to 14 days and sends them once the network is back. Meanwhile the cabinet shows “no network”, not a stale dot."
+        "q": "Что будет, если у водителя пропадёт интернет?",
+        "a": "Ничего не потеряется. Телефон хранит маршрут до 14 дней и отправит его, как только появится сеть. Пока связи нет, в кабинете так и написано: «нет данных», а не старое место на карте."
       },
       {
-        "q": "Does the app drain the battery?",
-        "a": "When the truck stands, the app turns GPS off by itself. Location is recorded only while the driver has an active load, and the cabinet shows their phone’s battery."
+        "q": "Нужно ли ставить трекер на машину?",
+        "a": "Нет. Хватает смартфона водителя на Android или iPhone."
       },
       {
-        "q": "What does the client see from the link?",
-        "a": "The load’s name and status, the truck on the map and the route driven so far. No sign-up needed. You can revoke the link at any time."
+        "q": "Сильно ли приложение сажает батарею?",
+        "a": "Когда грузовик стоит, приложение само выключает GPS. Локация пишется только пока у водителя есть активный груз, а в кабинете виден заряд его телефона."
       },
       {
-        "q": "Does the driver need to sign up?",
-        "a": "Yes, in the YoolLive app. It takes a minute: sign in with Telegram, Apple or email. If you sent them a load link, the load is accepted right after sign-in."
+        "q": "Что видит клиент по ссылке?",
+        "a": "Название и статус груза, грузовик на карте и пройденный путь. Регистрация не нужна."
+      },
+      {
+        "q": "Нужно ли водителю регистрироваться?",
+        "a": "Да, в приложении YoolLive. Это занимает минуту: вход через Telegram, Apple или почту. Если вы отправили ссылку на груз, после входа груз примется сам."
       }
     ]
   },
-  "finalCta": {
-    "title": "A large fleet?",
-    "subtitle": "Leave your contacts. We’ll help connect your drivers and show the cabinet on your routes.",
-    "form": {
-      "name": "Your name",
-      "company": "Company",
-      "phone": "Phone",
-      "fleet": "Trucks in fleet",
-      "fleetOptions": [
-        "1–5",
-        "6–20",
-        "21–50",
-        "50+"
-      ],
-      "submit": "Send",
-      "success": "Thank you! We’ll get back to you within a business day.",
-      "error": "Couldn’t send. Try again or write to support@yool.live."
-    }
+  "final": {
+    "title": "Хватит звонить",
+    "titleAccent": "водителю.",
+    "cta": "Попробовать бесплатно",
+    "driver": "Я водитель"
   },
   "footer": {
-    "tagline": "Freight tracking: a cabinet for shippers and an app for drivers.",
-    "product": "Product",
-    "company": "Company",
-    "legal": "Legal",
-    "links": {
-      "how": "How it works",
-      "drivers": "For drivers",
-      "faq": "Questions",
-      "contacts": "Contacts",
-      "privacy": "Privacy policy",
-      "terms": "Terms of service"
-    },
-    "rights": "© 2026 YoolLive. All rights reserved."
-  },
-  "meta": {
-    "title": "YoolLive: see where your load is, no calls",
-    "description": "A cabinet for shippers and an app for drivers. The whole trip on a map: stops, stretches without signal, a photo at every step and a link for your client. Uzbekistan."
+    "tagline": "Отслеживание грузоперевозок: кабинет для грузовладельца и приложение для водителя.",
+    "product": "Продукт",
+    "contacts": "Контакты",
+    "docs": "Документы",
+    "privacy": "Политика конфиденциальности",
+    "terms": "Условия использования",
+    "rights": "© 2026 YoolLive",
+    "languages": "Русский · Oʻzbekcha · English"
   }
 }
