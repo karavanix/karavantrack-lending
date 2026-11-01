@@ -6,7 +6,8 @@ const intl = createMiddleware({
   locales,
   defaultLocale,
   localePrefix: "always",
-  // Everyone lands on /ru until the uz/en translations exist.
+  // `/` always goes to /ru: the main audience reads Russian; uz and en are a click away in the
+  // switcher. Browser-language detection would also send Uzbek visitors with ru browsers astray.
   localeDetection: false,
 });
 
@@ -14,7 +15,7 @@ export default function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const [, first, ...rest] = pathname.split("/");
   if (isLocale(first) && !isLiveLocale(first)) {
-    // Temporary: /uz and /en → /ru (307) until the translations and recordings are ready.
+    // A locale that is built but not served yet (none right now) → /ru (307).
     const url = req.nextUrl.clone();
     url.pathname = `/${defaultLocale}${rest.length ? `/${rest.join("/")}` : ""}`;
     return NextResponse.redirect(url, 307);

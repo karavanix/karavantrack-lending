@@ -1,19 +1,24 @@
 import { useTranslations, useLocale } from "next-intl";
-import { SITE, ANCHORS } from "@/lib/site";
+import { SITE, ANCHORS, appLink } from "@/lib/site";
 import { Logo } from "@/components/ui/Logo";
 import { Button } from "@/components/ui/Button";
+import type { Locale } from "@/i18n/routing";
+import { Languages } from "./Languages";
 import { MobileMenu } from "./MobileMenu";
 
-// Navy bar, 64px: mark + wordmark, anchors, «Войти», main button. On phones the anchors and the
-// button fold into the menu. The language switcher comes back with the uz/en translations.
+// Navy bar, 64px: mark + wordmark, anchors, RU UZ EN, «Войти», main button. On phones the anchors,
+// the languages and the button fold into the menu; on tablets the languages live in the footer only
+// (the bar has no room for them next to the uz labels).
 export function Nav() {
   const t = useTranslations("nav");
-  const locale = useLocale();
+  const locale = useLocale() as Locale;
   const items = [
     { href: ANCHORS.how, label: t("how") },
     { href: ANCHORS.drivers, label: t("drivers") },
     { href: ANCHORS.faq, label: t("faq") },
   ];
+  const login = appLink(SITE.login, locale);
+  const register = appLink(SITE.register, locale);
 
   return (
     <header className="relative z-40 bg-bg text-surface">
@@ -22,7 +27,7 @@ export function Nav() {
           <Logo />
         </a>
 
-        <nav className="hidden items-center gap-8 text-sm font-medium md:flex">
+        <nav className="hidden items-center gap-6 whitespace-nowrap text-sm font-medium md:flex lg:gap-8">
           {items.map((it) => (
             <a key={it.href} href={it.href} className="text-white/75 transition hover:text-white">
               {it.label}
@@ -31,18 +36,23 @@ export function Nav() {
         </nav>
 
         <div className="flex items-center gap-5 text-sm font-medium">
-          <a href={SITE.login} data-track="login" className="py-3 text-[15px] text-surface transition hover:text-white md:text-sm">
+          <span className="hidden lg:block">
+            <Languages current={locale} label={t("language")} />
+          </span>
+          <a href={login} data-track="login" className="whitespace-nowrap py-3 text-[15px] text-surface transition hover:text-white md:text-sm">
             {t("login")}
           </a>
           <span className="hidden md:block">
-            <Button href={SITE.register} size="sm" data-track="nav_cta">
+            <Button href={register} size="sm" data-track="nav_cta" className="whitespace-nowrap">
               {t("start")}
             </Button>
           </span>
           <MobileMenu
             items={items}
-            start={{ href: SITE.register, label: t("start") }}
+            start={{ href: register, label: t("start") }}
             telegram={t("telegram")}
+            locale={locale}
+            languageLabel={t("language")}
             menuLabel={t("menu")}
           />
         </div>

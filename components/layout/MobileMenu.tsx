@@ -2,22 +2,28 @@
 
 import { useEffect, useId, useState } from "react";
 import { Menu, X } from "lucide-react";
+import type { Locale } from "@/i18n/routing";
 import { Button } from "@/components/ui/Button";
 import { TelegramIcon, telegramAttrs } from "@/components/ui/Telegram";
+import { Languages } from "./Languages";
 
 type Item = { href: string; label: string };
 
 // Phone-width menu: a button in the bar, a navy panel under it: the anchors, a line, the main
-// button and «Написать в Telegram» under it. «Войти» stays in the bar. Closes on a link tap and on Escape.
+// button and «Написать в Telegram» under it, the language pill. «Войти» stays in the bar. Closes on a link tap and on Escape.
 export function MobileMenu({
   items,
   start,
   telegram,
+  locale,
+  languageLabel,
   menuLabel,
 }: {
   items: Item[];
   start: Item;
   telegram: string;
+  locale: Locale;
+  languageLabel: string;
   menuLabel: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -73,6 +79,7 @@ export function MobileMenu({
               {telegram}
             </Button>
           </div>
+          <Languages current={locale} label={languageLabel} className="mt-6" />
         </div>
       )}
     </div>

@@ -2,14 +2,15 @@ import { useTranslations, useLocale } from "next-intl";
 import { SITE, ANCHORS } from "@/lib/site";
 import { Logo } from "@/components/ui/Logo";
 import { TelegramLink } from "@/components/ui/Telegram";
+import type { Locale } from "@/i18n/routing";
+import { Languages } from "./Languages";
 
-// Navy footer: brand and tagline, link columns, © line. Contacts are one list in one colour —
-// Telegram, phones (mono: they are data), e-mail — and the office address as a quiet line under
-// them (the address is what Yandex Webmaster needs to set the region). The languages line from
-// the mock-up waits for the uz/en translations.
+// Navy footer: brand and tagline, link columns, © line with the language pill. Contacts are one
+// list in one colour — Telegram, phones (mono: they are data), e-mail — and the office address as a
+// quiet line under them (the address is what Yandex Webmaster needs to set the region).
 export function Footer() {
   const t = useTranslations("footer");
-  const locale = useLocale();
+  const locale = useLocale() as Locale;
   const n = useTranslations("nav");
 
   return (
@@ -59,6 +60,7 @@ export function Footer() {
 
         <div className="flex flex-wrap justify-between gap-3 border-t border-line pt-6 text-[13px] text-white/55">
           <span>{t("rights")}</span>
+          <Languages current={locale} label={t("language")} />
         </div>
       </div>
     </footer>

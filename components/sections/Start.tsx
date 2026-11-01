@@ -1,5 +1,5 @@
-import { useTranslations } from "next-intl";
-import { SITE } from "@/lib/site";
+import { useLocale, useTranslations } from "next-intl";
+import { SITE, appLink } from "@/lib/site";
 import type { LeadLabels } from "@/lib/content";
 import { Section } from "@/components/ui/Section";
 import { AccentWord } from "@/components/ui/AccentWord";
@@ -10,6 +10,7 @@ import { LeadForm } from "./LeadForm";
 // «already have an account» link; the lead form for large fleets (with the Telegram button) sits beside them.
 export function Start() {
   const t = useTranslations("start");
+  const locale = useLocale();
   const l = useTranslations("lead");
   const steps = t.raw("steps") as string[];
   const labels: LeadLabels = {
@@ -44,10 +45,10 @@ export function Start() {
           ))}
         </ol>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-          <Button href={SITE.register} variant="light" arrow data-track="start_cta" className="flex-[0_1_300px]">
+          <Button href={appLink(SITE.register, locale)} variant="light" arrow data-track="start_cta" className="flex-[0_1_300px]">
             {t("cta")}
           </Button>
-          <a href={SITE.login} data-track="login" className="text-[15px] font-medium text-accent-soft transition hover:text-white">
+          <a href={appLink(SITE.login, locale)} data-track="login" className="text-[15px] font-medium text-accent-soft transition hover:text-white">
             {t("login")}
           </a>
         </div>

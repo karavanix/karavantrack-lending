@@ -27,3 +27,11 @@ export const ANCHORS = {
   faq: "#faq",
   start: "#start",
 } as const;
+
+/**
+ * A link into app.yool.live (registration, login) that opens the cabinet in the page's language.
+ * `Analytics` appends the utm marks on top.
+ */
+export function appLink(href: string, locale: string): string {
+  return `${href}?lang=${locale}`;
+}
