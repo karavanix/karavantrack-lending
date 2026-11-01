@@ -2,9 +2,12 @@ import type { RefObject } from "react";
 import type { Clip } from "@/lib/media";
 
 /**
- * Poster + video that fills its frame. The <img> underneath is what paints first (and is the LCP
- * candidate on the first screen); the <video> sits on top with the same poster, so the swap to the
- * first frame is invisible. The video is always rendered with preload="none": under
+ * Poster + video that fills its frame. The <img> underneath is the poster (and the LCP candidate on
+ * the first screen); the <video> on top is transparent until it has a frame, so the swap to the first
+ * frame is invisible. The video carries NO `poster` attribute on purpose: browsers fetch a video's
+ * poster eagerly even far below the fold, and ten posters (~460 KB) in parallel with the stylesheet
+ * pushed the LCP on a slow network from 0.7 s to 2.8 s. The <img> is lazy instead and yields to the
+ * critical resources. The video is always rendered with preload="none": under
  * `prefers-reduced-motion: reduce` it is hidden and never played, so nothing is downloaded.
  * Whoever plays it raises `preload` from an effect (lib/video.ts → allowPreload).
  */
@@ -33,14 +36,13 @@ export function PosterVideo({
         width={clip.width}
         height={clip.height}
         loading={priority ? "eager" : "lazy"}
-        fetchPriority={priority ? "high" : undefined}
+        fetchPriority={priority ? "high" : "low"}
         decoding="async"
         className={fill}
       />
       <video
         ref={videoRef}
         src={clip.src}
-        poster={clip.poster}
         muted
         playsInline
         loop={loop}
