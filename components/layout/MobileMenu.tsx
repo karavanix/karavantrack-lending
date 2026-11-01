@@ -58,6 +58,7 @@ export function MobileMenu({
             ))}
             <a
               href={login.href}
+              data-track="login"
               onClick={() => setOpen(false)}
               className="py-3 text-base font-medium text-surface transition hover:text-white"
             >
@@ -66,6 +67,7 @@ export function MobileMenu({
           </nav>
           <a
             href={start.href}
+            data-track="nav_cta"
             onClick={() => setOpen(false)}
             className="mt-3 inline-flex h-12 w-full items-center justify-center rounded-button bg-accent-deep text-base font-semibold text-white"
           >

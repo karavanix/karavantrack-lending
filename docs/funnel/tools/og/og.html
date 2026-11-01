@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>OG 1200×630 — yool.live</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Wix+Madefor+Display:wght@800&family=Cormorant+Garamond:ital,wght@1,600&family=Golos+Text:wght@400;500&family=JetBrains+Mono:wght@500&display=block">
+<style>
+  /* Tokens from docs/funnel/design/system/tokens.json; the composition repeats the first screen. */
+  html, body { margin: 0; }
+  body {
+    width: 1200px; height: 630px; overflow: hidden; position: relative;
+    background: #f2f4f6; color: hsl(222 25% 12%);
+    font-family: "Golos Text", sans-serif; -webkit-font-smoothing: antialiased;
+  }
+  .brand { position: absolute; left: 64px; top: 52px; display: flex; align-items: center; gap: 10px; }
+  .brand img { width: 36px; height: 36px; }
+  .brand span { font-family: "Wix Madefor Display", sans-serif; font-weight: 800; font-size: 26px; letter-spacing: -0.025em; }
+  .eyebrow {
+    position: absolute; left: 64px; top: 132px; display: flex; align-items: center; gap: 12px;
+    font-family: "JetBrains Mono", monospace; font-weight: 500; font-size: 15px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: hsl(215 15% 45%);
+  }
+  .eyebrow::before { content: ""; width: 28px; height: 2px; background: hsl(213 94% 55%); }
+  h1 {
+    position: absolute; left: 60px; top: 168px; margin: 0; width: 1000px;
+    font-family: "Wix Madefor Display", sans-serif; font-weight: 800; font-size: 96px;
+    line-height: 0.98; letter-spacing: -0.04em;
+  }
+  h1 .acc { font-family: "Cormorant Garamond", serif; font-style: italic; font-weight: 600; font-size: 1.12em; color: hsl(213 94% 55%); letter-spacing: -0.02em; }
+  .lead { position: absolute; left: 64px; top: 410px; margin: 0; width: 540px; font-size: 24px; line-height: 1.4; color: hsl(215 15% 45%); }
+  .note { position: absolute; left: 64px; bottom: 52px; font-family: "JetBrains Mono", monospace; font-weight: 500; font-size: 14px; color: hsl(215 15% 45%); }
+  /* The cabinet window: top-left of the real recording, leaving the frame at the bottom-right edge. */
+  .win {
+    position: absolute; left: 690px; top: 330px; width: 640px; height: 420px;
+    border-radius: 16px; border: 1px solid hsl(214 20% 88%); background: #fff; overflow: hidden;
+    box-shadow: 0 10px 60px -20px rgba(32, 129, 248, 0.35);
+  }
+  .bar { height: 40px; display: flex; align-items: center; gap: 8px; padding: 0 16px; border-bottom: 1px solid hsl(214 20% 88%); font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 500; color: hsl(215 15% 45%); }
+  .bar i { width: 10px; height: 10px; border-radius: 999px; background: hsl(214 20% 88%); }
+  .bar span { margin-left: 12px; }
+  .win img { display: block; width: 1000px; height: auto; }
+</style>
+</head>
+<body>
+  <div class="brand"><img src="logo.svg" alt=""><span>YoolLive</span></div>
+  <div class="eyebrow">Для грузовладельцев и диспетчеров</div>
+  <h1>Хватит звонить <span class="acc">водителю.</span></h1>
+  <p class="lead">Водитель ставит приложение, вы видите весь рейс: где едет, где стоит, когда приедет. Без трекеров и монтажа.</p>
+  <div class="note">yool.live · попробовать бесплатно</div>
+  <div class="win">
+    <div class="bar"><i></i><i></i><i></i><span>app.yool.live</span></div>
+    <img src="cabinet.jpg" alt="">
+  </div>
+</body>
+</html>

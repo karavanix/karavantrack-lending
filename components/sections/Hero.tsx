@@ -30,10 +30,10 @@ export function Hero() {
         </p>
         <div className="flex flex-[0_1_500px] flex-col gap-3">
           <div className="flex flex-wrap gap-x-3 gap-y-2">
-            <Button href={SITE.register} arrow data-hero-cta className="flex-[1_1_240px]">
+            <Button href={SITE.register} arrow data-hero-cta data-track="hero_cta" className="flex-[1_1_240px]">
               {t("cta")}
             </Button>
-            <Button href={ANCHORS.drivers} variant="secondary" className="flex-[1_1_160px]">
+            <Button href={ANCHORS.drivers} variant="secondary" data-track="driver_cta" className="flex-[1_1_160px]">
               {t("driver")}
             </Button>
           </div>

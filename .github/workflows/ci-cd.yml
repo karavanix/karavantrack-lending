@@ -11,10 +11,8 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  # Runs on every push and PR — no tests exist yet, so this is a typecheck
-  # gate only. `next lint` has no eslint config committed in this repo yet
-  # (it prompts interactively to create one), so it isn't wired in here —
-  # that's a setup decision for a separate pass, not a phase-0 hotfix.
+  # Runs on every push and PR — no tests exist yet, so this is a typecheck +
+  # lint gate (eslint.config.mjs: next/core-web-vitals + next/typescript).
   verify:
     runs-on: ubuntu-latest
 
@@ -37,6 +35,9 @@ jobs:
 
       - name: Typecheck
         run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
 
   # Docker image build + push. Only on push to main — this used to also run
   # (and its sibling `deploy` job below with it) on every pull_request,
@@ -72,8 +73,14 @@ jobs:
           context: .
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.sha.outputs.short_sha }}
+          # Repository → Settings → Secrets and variables → Actions → Variables (not secrets:
+          # NEXT_PUBLIC_* end up in the browser bundle). Empty values disable the feature.
           build-args: |
             NEXT_PUBLIC_APP_URL=${{ vars.NEXT_PUBLIC_APP_URL }}
+            NEXT_PUBLIC_YM_ID=${{ vars.NEXT_PUBLIC_YM_ID }}
+            NEXT_PUBLIC_GA4_ID=${{ vars.NEXT_PUBLIC_GA4_ID }}
+            NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=${{ vars.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }}
+            NEXT_PUBLIC_YANDEX_VERIFICATION=${{ vars.NEXT_PUBLIC_YANDEX_VERIFICATION }}
 
   deploy:
     if: github.event_name == 'push'

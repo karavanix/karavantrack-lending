@@ -31,11 +31,11 @@ export function Nav() {
         </nav>
 
         <div className="flex items-center gap-5 text-sm font-medium">
-          <a href={SITE.login} className="py-3 text-surface transition hover:text-white">
+          <a href={SITE.login} data-track="login" className="py-3 text-surface transition hover:text-white">
             {t("login")}
           </a>
           <span className="hidden md:block">
-            <Button href={SITE.register} size="sm">
+            <Button href={SITE.register} size="sm" data-track="nav_cta">
               {t("start")}
             </Button>
           </span>

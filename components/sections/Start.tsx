@@ -42,10 +42,10 @@ export function Start() {
           ))}
         </ol>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-          <Button href={SITE.register} variant="light" arrow className="flex-[0_1_300px]">
+          <Button href={SITE.register} variant="light" arrow data-track="start_cta" className="flex-[0_1_300px]">
             {t("cta")}
           </Button>
-          <a href={SITE.login} className="text-[15px] font-medium text-accent-soft transition hover:text-white">
+          <a href={SITE.login} data-track="login" className="text-[15px] font-medium text-accent-soft transition hover:text-white">
             {t("login")}
           </a>
         </div>

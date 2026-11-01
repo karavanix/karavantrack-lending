@@ -4,6 +4,7 @@ import { useId, useState, type FormEvent, type ReactNode } from "react";
 import { Check, ChevronDown } from "lucide-react";
 import type { LeadLabels } from "@/lib/content";
 import { LEAD_FIELDS, submitLead, type Lead, type LeadField } from "@/lib/leads";
+import { track } from "@/lib/analytics";
 
 // Lead form for large fleets. Posts a `Lead` to /api/leads (lib/leads.ts). States: idle → sending →
 // success (the message replaces the fields) | error (text under the button, fields stay filled).
@@ -42,7 +43,10 @@ export function LeadForm({ t }: { t: LeadLabels }) {
     }
 
     setStatus("sending");
-    setStatus((await submitLead(lead)) ? "success" : "error");
+    track("lead_submit", { fleet: lead.fleet });
+    const ok = await submitLead(lead);
+    if (ok) track("lead_success", { fleet: lead.fleet });
+    setStatus(ok ? "success" : "error");
   }
 
   // A field that was flagged empty clears its message as soon as something is typed into it.

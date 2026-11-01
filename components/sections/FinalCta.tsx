@@ -18,10 +18,10 @@ export function FinalCta() {
         {t("title")} <AccentWord>{t("titleAccent")}</AccentWord>
       </h2>
       <div className="flex w-[min(100%,520px)] flex-wrap gap-x-3 gap-y-2">
-        <Button href={SITE.register} arrow className="flex-[1_1_240px]">
+        <Button href={SITE.register} arrow data-track="final_cta" className="flex-[1_1_240px]">
           {t("cta")}
         </Button>
-        <Button href={ANCHORS.drivers} variant="secondary" className="flex-[1_1_160px]">
+        <Button href={ANCHORS.drivers} variant="secondary" data-track="driver_cta" className="flex-[1_1_160px]">
           {t("driver")}
         </Button>
       </div>

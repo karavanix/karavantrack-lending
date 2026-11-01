@@ -15,11 +15,17 @@ export function StoreBadges({
 }) {
   return (
     <div className={`flex flex-wrap items-center gap-x-2 gap-y-3 ${className}`}>
-      <a href={SITE.stores.googlePlay} target="_blank" rel="noopener noreferrer" className="-mx-2.5 inline-flex">
+      <a
+        href={SITE.stores.googlePlay}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-track="store_google"
+        className="-mx-2.5 inline-flex"
+      >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/badges/google-play.png" alt={googlePlay} height={78} className="h-[78px] w-auto" loading="lazy" />
       </a>
-      <a href={SITE.stores.appStore} target="_blank" rel="noopener noreferrer" className="inline-flex">
+      <a href={SITE.stores.appStore} target="_blank" rel="noopener noreferrer" data-track="store_apple" className="inline-flex">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/badges/app-store.svg" alt={appStore} height={52} className="h-[52px] w-auto" loading="lazy" />
       </a>
