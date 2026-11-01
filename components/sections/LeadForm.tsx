@@ -5,10 +5,13 @@ import { Check, ChevronDown } from "lucide-react";
 import type { LeadLabels } from "@/lib/content";
 import { LEAD_FIELDS, submitLead, type Lead, type LeadField } from "@/lib/leads";
 import { track } from "@/lib/analytics";
+import { Button } from "@/components/ui/Button";
+import { TelegramIcon, telegramAttrs } from "@/components/ui/Telegram";
 
 // Lead form for large fleets. Posts a `Lead` to /api/leads (lib/leads.ts). States: idle → sending →
 // success (the message replaces the fields) | error (text under the button, fields stay filled).
 // Required fields are checked here (noValidate), the message is `lead.required`.
+// Under the form — «или» and «Написать в Telegram» for those who'd rather message than fill in fields.
 type Status = "idle" | "sending" | "success" | "error";
 
 const label =
@@ -142,6 +145,16 @@ export function LeadForm({ t }: { t: LeadLabels }) {
           )}
         </form>
       )}
+
+      <div className="mt-[18px] flex items-center gap-3 text-[13px] text-white/55" aria-hidden="true">
+        <span className="h-px flex-1 bg-line" />
+        {t.or}
+        <span className="h-px flex-1 bg-line" />
+      </div>
+      <Button {...telegramAttrs("start")} variant="outline" className="mt-[18px] h-[52px] w-full">
+        <TelegramIcon />
+        {t.telegram}
+      </Button>
     </div>
   );
 }

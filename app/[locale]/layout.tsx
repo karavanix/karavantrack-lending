@@ -109,6 +109,14 @@ function jsonLd(description: string) {
     url: SITE.url,
     logo: `${SITE.url}/logo-512.png`,
     email: SITE.email,
+    telephone: SITE.phones.map((p) => p.tel),
+    // Office as the footer shows it (district only for now); Yandex Webmaster's region needs it.
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "Mirabad district",
+      addressLocality: "Tashkent",
+      addressCountry: "UZ",
+    },
   };
   const application = {
     "@type": "SoftwareApplication",

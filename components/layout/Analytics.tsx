@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import Script from "next/script";
 import { SITE } from "@/lib/site";
-import { GA4_ID, YM_ID, TRACK_ATTR, currentUtm, initCounters, track, withUtm, type Goal } from "@/lib/analytics";
+import { GA4_ID, YM_ID, TRACK_ATTR, currentUtm, initCounters, track, trackParams, withUtm, type Goal } from "@/lib/analytics";
 
 /**
  * Mounted once in the layout. Three jobs, all behind the counters' ids:
@@ -33,8 +33,9 @@ export function Analytics() {
       if (target instanceof HTMLAnchorElement && isAppEntry(target.href)) {
         target.href = withUtm(target.href, utm);
       }
-      const goal = target.closest<HTMLElement>(`[${TRACK_ATTR}]`)?.getAttribute(TRACK_ATTR);
-      if (goal) track(goal as Goal);
+      const tracked = target.closest<HTMLElement>(`[${TRACK_ATTR}]`);
+      const goal = tracked?.getAttribute(TRACK_ATTR);
+      if (goal) track(goal as Goal, trackParams(tracked!));
     };
     document.addEventListener("click", onClick, true);
     return () => document.removeEventListener("click", onClick, true);

@@ -3,9 +3,12 @@ import { ChevronDown } from "lucide-react";
 import type { FaqItem } from "@/lib/content";
 import { Section } from "@/components/ui/Section";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { Button } from "@/components/ui/Button";
+import { TelegramIcon, telegramAttrs } from "@/components/ui/Telegram";
 
 // «Вопросы» (#faq): five <details>/<summary> items, no JS. The first one is open,
 // the chevron turns with the `open` attribute. <summary> is focusable and toggles on Enter/Space.
+// Under the list — «didn't find an answer?» with the Telegram button.
 export function Faq() {
   const t = useTranslations("faq");
   const items = t.raw("items") as FaqItem[];
@@ -23,6 +26,13 @@ export function Faq() {
             <p className="t-body mt-3 max-w-[640px] leading-[1.6] text-ink-muted">{it.a}</p>
           </details>
         ))}
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+          <p className="t-body text-ink-muted">{t("more")}</p>
+          <Button {...telegramAttrs("faq")} variant="secondary" size="sm">
+            <TelegramIcon />
+            {t("telegram")}
+          </Button>
+        </div>
       </div>
     </Section>
   );

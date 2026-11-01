@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { LeadForm } from "./LeadForm";
 
 // The navy start band (#start): headline, three steps 01–03, the light main button and the
-// «already have an account» link; the lead form for large fleets sits beside them.
+// «already have an account» link; the lead form for large fleets (with the Telegram button) sits beside them.
 export function Start() {
   const t = useTranslations("start");
   const l = useTranslations("lead");
@@ -25,6 +25,8 @@ export function Start() {
     success: l("success"),
     error: l("error"),
     required: l("required"),
+    or: l("or"),
+    telegram: l("telegram"),
   };
 
   return (

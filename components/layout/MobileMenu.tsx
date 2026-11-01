@@ -2,20 +2,22 @@
 
 import { useEffect, useId, useState } from "react";
 import { Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/Button";
+import { TelegramIcon, telegramAttrs } from "@/components/ui/Telegram";
 
 type Item = { href: string; label: string };
 
-// Phone-width menu: a button in the bar, a navy panel under it with the anchors,
-// «Войти» and the main button. Closes on a link tap and on Escape.
+// Phone-width menu: a button in the bar, a navy panel under it: the anchors, a line, the main
+// button and «Написать в Telegram» under it. «Войти» stays in the bar. Closes on a link tap and on Escape.
 export function MobileMenu({
   items,
-  login,
   start,
+  telegram,
   menuLabel,
 }: {
   items: Item[];
-  login: Item;
   start: Item;
+  telegram: string;
   menuLabel: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -36,14 +38,14 @@ export function MobileMenu({
         aria-expanded={open}
         aria-controls={id}
         onClick={() => setOpen((v) => !v)}
-        className="-mr-2 grid h-10 w-10 place-items-center rounded-button text-surface transition hover:bg-white/5"
+        className="-mr-2.5 grid h-11 w-11 place-items-center rounded-button text-surface transition hover:bg-white/5"
       >
-        {open ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
+        {open ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
       </button>
       {open && (
         <div
           id={id}
-          className="absolute inset-x-0 top-full z-40 border-t border-line bg-bg px-5 pb-6 pt-2"
+          className="absolute inset-x-0 top-full z-40 border-t border-line bg-bg px-5 pb-7 pt-3"
         >
           <nav className="flex flex-col">
             {items.map((it) => (
@@ -51,28 +53,26 @@ export function MobileMenu({
                 key={it.href}
                 href={it.href}
                 onClick={() => setOpen(false)}
-                className="py-3 text-base font-medium text-white/80 transition hover:text-white"
+                className="py-3.5 text-[17px] font-medium text-white/85 transition hover:text-white"
               >
                 {it.label}
               </a>
             ))}
-            <a
-              href={login.href}
-              data-track="login"
-              onClick={() => setOpen(false)}
-              className="py-3 text-base font-medium text-surface transition hover:text-white"
-            >
-              {login.label}
-            </a>
           </nav>
-          <a
-            href={start.href}
-            data-track="nav_cta"
-            onClick={() => setOpen(false)}
-            className="mt-3 inline-flex h-12 w-full items-center justify-center rounded-button bg-accent-deep text-base font-semibold text-white"
-          >
-            {start.label}
-          </a>
+          <div className="mt-3 flex flex-col gap-2 border-t border-line pt-5">
+            <a
+              href={start.href}
+              data-track="nav_cta"
+              onClick={() => setOpen(false)}
+              className="inline-flex h-12 w-full items-center justify-center rounded-button bg-accent-deep text-base font-semibold text-white"
+            >
+              {start.label}
+            </a>
+            <Button {...telegramAttrs("menu")} variant="outline" onClick={() => setOpen(false)} className="h-12 w-full text-base">
+              <TelegramIcon />
+              {telegram}
+            </Button>
+          </div>
         </div>
       )}
     </div>

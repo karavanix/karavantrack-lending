@@ -29,4 +29,6 @@ export type LeadLabels = {
   success: string;
   error: string;
   required: string;
+  or: string;
+  telegram: string;
 };
