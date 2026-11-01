@@ -1,7 +1,7 @@
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
 
-type Variant = "primary" | "secondary";
+type Variant = "primary" | "secondary" | "light";
 type Size = "md" | "sm";
 
 const base =
@@ -12,6 +12,8 @@ const variants: Record<Variant, string> = {
   // One primary button per screen: `accent-deep` fill, white text (6.7:1), the only shadow on the page.
   primary: "bg-accent-deep text-white shadow-glow hover:brightness-110",
   secondary: "bg-card text-ink border border-line-soft hover:border-ink-muted",
+  // Main button on the navy bands (the start block): `surface` fill, `bg` text, no shadow.
+  light: "bg-surface text-bg hover:bg-white",
 };
 
 const sizes: Record<Size, string> = {
