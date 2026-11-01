@@ -116,6 +116,14 @@ Next.js 15.1 (App Router, `output: "standalone"`), React 19, Tailwind v4 (`@tail
 - Языки: см. раздел ниже.
 - **Приёмка:** `view-source` содержит title, description, OG, JSON-LD; без env-переменных в HTML нет скриптов счётчиков; с тестовыми ID (`NEXT_PUBLIC_YM_ID=1` на dev) клик по кнопке вызывает `track` (проверить через `window` заглушку); ссылка «Попробовать бесплатно» на `/ru?utm_source=test` несёт `utm_source=test`.
 
+**Что владелец заводит сам до/во время сессии 5 (код без этого не ломается, счётчики просто не ставятся):**
+- Яндекс Метрика (metrika.yandex.ru → «Добавить счётчик», адрес `yool.live`, часовой пояс Ташкент, Вебвизор и карта кликов включить, «Принимать данные только с указанных адресов» — `yool.live`) → номер счётчика (8 цифр) → `NEXT_PUBLIC_YM_ID`. Цели заводить **по JavaScript-событиям** с идентификаторами из `track(name)`: `hero_cta`, `nav_cta`, `start_cta`, `final_cta`, `lead_submit`, `store_google`, `store_apple`, `login`. Код для вставки с сайта не копировать — ставим свой через env.
+- Google Analytics 4 (analytics.google.com → Администратор → Создать ресурс → поток данных «Веб» `yool.live`) → идентификатор потока `G-XXXXXXX` → `NEXT_PUBLIC_GA4_ID`. В потоке включить улучшенную статистику; события с теми же именами появятся сами, ключевыми отметить `lead_submit` и `*_cta`.
+- Оба значения — в GitHub → репозиторий `karavanix/karavantrack-lending` → Settings → Secrets and variables → Actions → **Variables** (не Secrets: `NEXT_PUBLIC_*` вшиваются в сборку и видны в браузере). Сессия 5 пробрасывает их как `build-arg` в workflow и `ARG/ENV` в Dockerfile.
+- Google Search Console (search.google.com/search-console, ресурс «Доменный» `yool.live`, подтверждение TXT-записью в DNS) и Яндекс Вебмастер (webmaster.yandex.ru, тоже DNS или мета-тег) — после выкладки отправить `https://yool.live/sitemap.xml`. Если выберут подтверждение мета-тегом, коды → сессия 5 добавит в `metadata.verification`.
+- Проверка превью ссылки после выкладки: Telegram — бот `@WebpageBot` (сбрасывает кэш превью), Facebook Sharing Debugger, opengraph.xyz.
+- UTM-договорённость для рекламы: `utm_source` (telegram, instagram, google, yandex), `utm_medium` (cpc, post, story, qr), `utm_campaign` (например `launch_ru_2026_11`); лендинг сохраняет UTM в `localStorage` и передаёт в ссылку регистрации (сессия 5).
+
 ### 6. Проверка, вес, телефон, PR
 - Прод-сборка в копии репо в scratchpad (см. «Грабли»), `pnpm start -p 3124`, `tools/vitals.mjs http://localhost:3124/ru` → `BUDGETS OK`. Если JS > 100 КБ — смотреть, что тянет клиентские компоненты (`next build` печатает First Load JS).
 - `tools/shot.mjs` на 360/390/1440 всей страницы, сравнить с макетом глазами; сложить скриншоты в `design/built-*.png` для владельца.
