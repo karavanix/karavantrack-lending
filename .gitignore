@@ -34,3 +34,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# raw landing recordings (7 GB of frames), see docs/funnel/recordings.md
+/docs/funnel/recordings/raw/
