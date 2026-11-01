@@ -127,8 +127,8 @@
     "success": "Request sent. We’ll get in touch by phone.",
     "error": "Couldn’t send it. Try again or write to support@yool.live.",
     "required": "Please fill in this field",
-    "telegramHint": "Prefer messaging?",
-    "telegram": "Write to us on Telegram"
+    "or": "or",
+    "telegram": "Message us on Telegram"
   },
   "faq": {
     "eyebrow": "FAQ",
@@ -156,7 +156,7 @@
       }
     ],
     "more": "Didn’t find your answer?",
-    "telegram": "Ask us on Telegram"
+    "telegram": "Ask on Telegram"
   },
   "final": {
     "title": "Stop calling",
@@ -168,7 +168,7 @@
     "tagline": "Freight tracking: a dashboard for shippers and an app for drivers.",
     "product": "Product",
     "contacts": "Contacts",
-    "telegram": "Message us on Telegram",
+    "telegram": "Telegram",
     "address": "Mirabad district, Tashkent, Uzbekistan",
     "docs": "Documents",
     "privacy": "Privacy policy",

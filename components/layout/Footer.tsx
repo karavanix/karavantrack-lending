@@ -5,8 +5,9 @@ import { TelegramLink } from "@/components/ui/Telegram";
 import type { Locale } from "@/i18n/routing";
 import { Languages } from "./Languages";
 
-// Navy footer: brand and tagline, link columns (contacts: Telegram, phones, e-mail, office
-// address — the address is what Yandex Webmaster needs to set the region), © line with the languages.
+// Navy footer: brand and tagline, link columns, © line with the language pill. Contacts are one
+// list in one colour — Telegram, phones (mono: they are data), e-mail — and the office address as a
+// quiet line under them (the address is what Yandex Webmaster needs to set the region).
 export function Footer() {
   const t = useTranslations("footer");
   const locale = useLocale() as Locale;
@@ -30,7 +31,7 @@ export function Footer() {
               <FooterLink href={ANCHORS.faq}>{n("faq")}</FooterLink>
             </FooterCol>
             <FooterCol title={t("contacts")}>
-              <TelegramLink place="footer" className="text-accent-soft transition hover:text-white">
+              <TelegramLink place="footer" className="text-white/80 transition hover:text-white">
                 {t("telegram")}
               </TelegramLink>
               {SITE.phones.map((p) => (
@@ -38,15 +39,13 @@ export function Footer() {
                   key={p.tel}
                   href={`tel:${p.tel}`}
                   data-track="phone_click"
-                  className="whitespace-nowrap text-white/80 transition hover:text-white"
+                  className="t-data whitespace-nowrap text-white/80 transition hover:text-white"
                 >
                   {p.display}
                 </a>
               ))}
-              <a href={`mailto:${SITE.email}`} className="text-accent-soft transition hover:text-white">
-                {SITE.email}
-              </a>
-              <address className="max-w-[220px] not-italic leading-[1.5] text-white/70">{t("address")}</address>
+              <FooterLink href={`mailto:${SITE.email}`}>{SITE.email}</FooterLink>
+              <address className="mt-1.5 max-w-[220px] text-[13px] not-italic leading-[1.5] text-white/55">{t("address")}</address>
             </FooterCol>
             <FooterCol title={t("docs")}>
               <FooterLink href={SITE.privacy} external>
@@ -61,7 +60,7 @@ export function Footer() {
 
         <div className="flex flex-wrap justify-between gap-3 border-t border-line pt-6 text-[13px] text-white/55">
           <span>{t("rights")}</span>
-          <Languages current={locale} label={t("language")} variant="names" className="gap-x-5 gap-y-2" />
+          <Languages current={locale} label={t("language")} />
         </div>
       </div>
     </footer>

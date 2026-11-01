@@ -127,8 +127,8 @@
     "success": "Ariza yuborildi. Siz bilan telefon orqali bogʻlanamiz.",
     "error": "Yuborib boʻlmadi. Qayta urinib koʻring yoki support@yool.live manziliga yozing.",
     "required": "Bu maydonni toʻldiring",
-    "telegramHint": "Messenjerda qulayroqmi?",
-    "telegram": "Bizga Telegramda yozing"
+    "or": "yoki",
+    "telegram": "Telegramda yozish"
   },
   "faq": {
     "eyebrow": "Savollar",
@@ -156,7 +156,7 @@
       }
     ],
     "more": "Javob topmadingizmi?",
-    "telegram": "Telegramda soʻrang"
+    "telegram": "Telegramda soʻrash"
   },
   "final": {
     "title": "Haydovchiga endi qoʻngʻiroq",
@@ -168,7 +168,7 @@
     "tagline": "Yuk tashishni kuzatish: yuk egasi uchun kabinet va haydovchi uchun ilova.",
     "product": "Mahsulot",
     "contacts": "Aloqa",
-    "telegram": "Telegramda yozish",
+    "telegram": "Telegram",
     "address": "Toshkent sh., Mirobod tumani",
     "docs": "Hujjatlar",
     "privacy": "Maxfiylik siyosati",

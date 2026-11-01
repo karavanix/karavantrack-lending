@@ -36,8 +36,10 @@ export function Nav() {
         </nav>
 
         <div className="flex items-center gap-5 text-sm font-medium">
-          <Languages current={locale} label={t("language")} variant="codes" className="hidden gap-3 text-[13px] lg:flex" />
-          <a href={login} data-track="login" className="whitespace-nowrap py-3 text-surface transition hover:text-white">
+          <span className="hidden lg:block">
+            <Languages current={locale} label={t("language")} />
+          </span>
+          <a href={login} data-track="login" className="whitespace-nowrap py-3 text-[15px] text-surface transition hover:text-white md:text-sm">
             {t("login")}
           </a>
           <span className="hidden md:block">
@@ -47,7 +49,6 @@ export function Nav() {
           </span>
           <MobileMenu
             items={items}
-            login={{ href: login, label: t("login") }}
             start={{ href: register, label: t("start") }}
             telegram={t("telegram")}
             locale={locale}
